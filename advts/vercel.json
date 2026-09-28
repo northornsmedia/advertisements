@@ -1,8 +1,12 @@
 {
+  "version": 2,
   "cleanUrls": true,
-  "rewrites": [
-    { "source": "/advts", "destination": "/index.html" },
-    { "source": "/advts/", "destination": "/index.html" },
-    { "source": "/advts/(.*)", "destination": "/$1" }
-  ]
+  "functions": {
+    "server.js": {
+      "includeFiles": "**"
+    },
+    "index.js": {
+      "includeFiles": "**"
+    }
+  }
 }
