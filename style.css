@@ -1,0 +1,394 @@
+@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Mono:wght@400;600;700&family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+:root {
+  --white: #ffffff;
+  --black: #000000;
+  --font-editorial: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-heavy: 'Archivo Black', 'Inter', -apple-system, BlinkMacSystemFont, 'Arial Black', sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+}
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: var(--white);
+  color: var(--black);
+  font-family: var(--font-editorial);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  user-select: none;
+}
+
+/* ----------------------------------------------------
+   HERO CONTAINER & WRAPPER
+---------------------------------------------------- */
+.section-w {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+  background-color: var(--white);
+}
+
+/* Hidden video used purely as WebGL reveal texture */
+.video-hero-bg {
+  display: none;
+}
+
+/* WebGL Canvas */
+.mask-reveal-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* SVG / Center Typography Layer */
+.section.hero-home {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.container.hero-home {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 1.5rem;
+}
+
+.nothin-hero-w {
+  width: 100%;
+  max-width: 1560px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-title {
+  font-family: var(--font-heavy);
+  font-size: clamp(3.8rem, 15vw, 16.5rem);
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+  color: var(--black);
+  line-height: 0.9;
+  text-align: center;
+  white-space: nowrap;
+  margin: 0;
+  padding: 0;
+}
+
+/* ----------------------------------------------------
+   TOP NAVIGATION
+---------------------------------------------------- */
+.nav-boiler {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 4.5rem;
+  padding: 1.5rem 2.25rem;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+  z-index: 100;
+  mix-blend-mode: difference;
+  color: var(--white);
+  pointer-events: none;
+}
+
+.menu-w {
+  pointer-events: auto;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.menu-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-editorial);
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--white);
+  transition: opacity 0.25s ease;
+}
+
+.menu-w:hover .menu-btn {
+  opacity: 0.75;
+}
+
+.menu-svg {
+  width: 0.625rem;
+  height: 0.625rem;
+  display: block;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.menu-w:hover .menu-svg {
+  transform: rotate(45deg);
+}
+
+/* ----------------------------------------------------
+   OVERLAY EDITORIAL UI (difference blend mode)
+---------------------------------------------------- */
+.section-fake-hero {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 2.25rem;
+  pointer-events: none;
+  mix-blend-mode: difference;
+  color: var(--white);
+}
+
+/* Top Left Slogan + CTA */
+.div-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  max-width: 440px;
+}
+
+.p-l {
+  font-family: var(--font-editorial);
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--white);
+}
+
+.space-24 {
+  height: 1.5rem;
+}
+
+/* Pill Call To Action Button */
+.btn.black-blend {
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.9rem;
+  background-color: var(--white);
+  color: var(--black);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 9999px;
+  padding: 0.85rem 1.65rem 0.85rem 1.4rem;
+  font-family: var(--font-editorial);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+}
+
+.btn.black-blend:hover {
+  border-color: rgba(255, 255, 255, 1);
+  transform: translateY(-1px);
+}
+
+.arrow-w {
+  display: flex;
+  align-items: center;
+  position: relative;
+  width: 1.2rem;
+  height: 0.75rem;
+  overflow: hidden;
+}
+
+.arrow.black-blend {
+  display: flex;
+  align-items: center;
+  position: absolute;
+  left: 0;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.line-arrow {
+  background-color: var(--black);
+  width: 0.85rem;
+  height: 1.5px;
+}
+
+.shape-arrow {
+  width: 0.38rem;
+  height: 0.38rem;
+  border-style: solid;
+  border-width: 1.5px 1.5px 0 0;
+  border-color: var(--black);
+  transform: rotate(45deg);
+  margin-left: -0.22rem;
+}
+
+.btn.black-blend:hover .arrow.black-blend {
+  transform: translateX(4px);
+}
+
+/* ----------------------------------------------------
+   BOTTOM METADATA & LINKS
+---------------------------------------------------- */
+.link-hero-bottom-w {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  font-family: var(--font-editorial);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--white);
+}
+
+.link-hero-lang-w {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.link-hero-w {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.link-hero-w a {
+  pointer-events: auto;
+  color: var(--white);
+  text-decoration: none;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transition: opacity 0.25s ease;
+}
+
+.link-hero-w a:hover {
+  opacity: 0.7;
+}
+
+.link-hero-w .separator {
+  opacity: 0.6;
+}
+
+.link-lang {
+  pointer-events: auto;
+  border: 1px solid var(--white);
+  border-radius: 4px;
+  padding: 0.22rem 0.45rem;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--white);
+  text-decoration: none;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+.link-lang:hover {
+  background-color: var(--white);
+  color: var(--black);
+}
+
+/* Subtle interaction hint */
+.interaction-hint {
+  position: absolute;
+  bottom: 5.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--white);
+  opacity: 0.35;
+  pointer-events: none;
+  animation: pulseHint 3s infinite ease-in-out;
+  mix-blend-mode: difference;
+  z-index: 10;
+}
+
+@keyframes pulseHint {
+  0%, 100% { opacity: 0.2; }
+  50% { opacity: 0.55; }
+}
+
+/* ----------------------------------------------------
+   RESPONSIVENESS
+---------------------------------------------------- */
+@media screen and (max-width: 991px) {
+  .nav-boiler {
+    padding: 1.25rem 1.5rem;
+  }
+  .section-fake-hero {
+    padding: 1.5rem;
+  }
+  .p-l {
+    font-size: 1.25rem;
+  }
+  .hero-title {
+    font-size: clamp(3rem, 14vw, 9rem);
+  }
+  .interaction-hint {
+    bottom: 4.5rem;
+  }
+}
+
+@media screen and (max-width: 479px) {
+  .nav-boiler {
+    padding: 1rem 1.25rem;
+  }
+  .section-fake-hero {
+    padding: 1.25rem;
+  }
+  .p-l {
+    font-size: 1.1rem;
+  }
+  .btn.black-blend {
+    padding: 0.75rem 1.25rem;
+    font-size: 0.72rem;
+  }
+  .hero-title {
+    font-size: clamp(2.4rem, 13vw, 5rem);
+  }
+  .link-hero-bottom-w {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+  .link-hero-lang-w {
+    width: 100%;
+    justify-content: space-between;
+  }
+}

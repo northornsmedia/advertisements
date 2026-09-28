@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Advertiser Portal | WIPA ADS</title>
+  <meta name="description" content="Sign in or create an account for WIPA ADS. Manage in-feed campaigns and ad credits.">
+  <style>
+    :root {
+      --bg: #ffffff;
+      --surface: #f5f5f7;
+      --surface-hover: #ebebee;
+      --card-bg: #ffffff;
+      --border: #e5e5ea;
+      --border-subtle: rgba(0, 0, 0, 0.08);
+      --text: #1d1d1f;
+      --text-secondary: #86868b;
+      --text-tertiary: #6e6e73;
+      --accent: #0071e3;
+      --accent-hover: #0077ed;
+      --font-apple: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      --font-mono: "SF Mono", Menlo, Monaco, Consolas, "Courier New", monospace;
+    }
+
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-apple);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      line-height: 1.47059;
+      letter-spacing: -0.022em;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* -----------------------------------------------
+       APPLE-STYLE HEADER
+    ----------------------------------------------- */
+    .top-nav {
+      position: sticky;
+      top: 0;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: saturate(180%) blur(20px);
+      -webkit-backdrop-filter: saturate(180%) blur(20px);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 1rem 2.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--accent);
+      text-decoration: none;
+      transition: opacity 0.2s ease;
+    }
+
+    .back-btn:hover {
+      opacity: 0.8;
+      text-decoration: underline;
+    }
+
+    .brand-stamp {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: -0.01em;
+    }
+
+    .nav-link {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    .nav-link:hover {
+      color: var(--text);
+    }
+
+    /* -----------------------------------------------
+       AUTH WRAPPER
+    ----------------------------------------------- */
+    .auth-wrapper {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 1.5rem;
+      background: linear-gradient(180deg, #ffffff 0%, #fbfbfd 100%);
+    }
+
+    .auth-card {
+      width: 100%;
+      max-width: 440px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 2.75rem 2.25rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+    }
+
+    .auth-header {
+      text-align: center;
+      margin-bottom: 1.75rem;
+    }
+
+    .badge-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1rem;
+    }
+
+    .auth-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      color: var(--text);
+      margin-bottom: 0.4rem;
+    }
+
+    .auth-subtitle {
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      font-weight: 400;
+    }
+
+
+    /* SEGMENTED CONTROL / TABS */
+    .tab-segment {
+      display: flex;
+      background: var(--surface);
+      border-radius: 12px;
+      padding: 0.25rem;
+      margin-bottom: 1.75rem;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .tab-btn {
+      flex: 1;
+      text-align: center;
+      padding: 0.6rem;
+      border: none;
+      background: transparent;
+      border-radius: 10px;
+      font-family: var(--font-apple);
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .tab-btn.active {
+      background: #ffffff;
+      color: var(--text);
+      font-weight: 600;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    /* FORM STYLES */
+    .form-group {
+      margin-bottom: 1.25rem;
+      text-align: left;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 0.4rem;
+    }
+
+    .form-input {
+      width: 100%;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 0.8rem 1rem;
+      font-family: var(--font-apple);
+      font-size: 0.95rem;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .form-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.15);
+    }
+
+    .form-input::placeholder {
+      color: #c7c7cc;
+    }
+
+    .form-submit-btn {
+      width: 100%;
+      background: var(--text);
+      color: #ffffff;
+      border: none;
+      border-radius: 980px;
+      padding: 0.9rem;
+      font-family: var(--font-apple);
+      font-size: 0.92rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      margin-top: 0.5rem;
+    }
+
+    .form-submit-btn:hover {
+      background: #333336;
+      transform: translateY(-1px);
+    }
+
+    /* ERROR NOTIFICATION */
+    .error-msg {
+      display: none;
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #dc2626;
+      border-radius: 10px;
+      padding: 0.65rem 0.9rem;
+      font-size: 0.82rem;
+      margin-bottom: 1.25rem;
+      text-align: center;
+    }
+
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid var(--border-subtle);
+      padding: 2rem 2.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      background: var(--bg);
+    }
+
+    footer a {
+      color: var(--text);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .top-nav {
+        padding: 1rem 1.5rem;
+      }
+      .stats-cards-grid {
+        grid-template-columns: 1fr;
+      }
+      .campaign-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+      .camp-actions {
+        width: 100%;
+      }
+      .camp-btn {
+        flex: 1;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Apple Nav -->
+  <header class="top-nav">
+    <a href="index.html" class="back-btn">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+      </svg>
+      <span>Back to WIPA ADS</span>
+    </a>
+
+    <div class="brand-stamp">
+      WIPA ADS // PORTAL
+    </div>
+
+    <a href="how-it-works.html" class="nav-link">
+      How It Works
+    </a>
+  </header>
+
+  <div class="auth-wrapper">
+
+    <!-- Auth Card (Sign In / Sign Up) -->
+    <div class="auth-card" id="auth-card">
+      
+      <div class="auth-header">
+        <div class="badge-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1d1d1f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+        </div>
+        <h1 class="auth-title" id="auth-title">Sign in to WIPA Ads</h1>
+        <p class="auth-subtitle" id="auth-subtitle">Manage in-feed campaigns and ad credits</p>
+      </div>
+
+
+      <!-- Segmented Tab Switcher -->
+      <div class="tab-segment">
+        <button type="button" class="tab-btn active" id="tab-login" onclick="switchTab('login')">Sign In</button>
+        <button type="button" class="tab-btn" id="tab-signup" onclick="switchTab('signup')">Create Account</button>
+      </div>
+
+      <!-- Error Message -->
+      <div class="error-msg" id="error-msg">
+        Invalid credentials. Please check your username and password.
+      </div>
+
+      <!-- SIGN IN FORM -->
+      <form id="login-form" onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label class="form-label" for="login-username">Username or Email</label>
+          <input type="text" id="login-username" class="form-input" placeholder="e.g. 1 or name@lawfirm.com" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="login-password">Password</label>
+          <input type="password" id="login-password" class="form-input" placeholder="e.g. 1" required>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; font-size: 0.8rem;">
+          <label style="display: flex; align-items: center; gap: 0.4rem; color: var(--text-secondary); cursor: pointer;">
+            <input type="checkbox" checked style="accent-color: var(--accent);"> Remember me
+          </label>
+          <a href="#" style="color: var(--accent); text-decoration: none;" onclick="alert('Demo password is 1'); return false;">Forgot password?</a>
+        </div>
+
+        <button type="submit" class="form-submit-btn">
+          Sign In &rarr;
+        </button>
+      </form>
+
+      <!-- SIGN UP FORM (Initially Hidden) -->
+      <form id="signup-form" style="display: none;" onsubmit="handleSignup(event)">
+        <div class="form-group">
+          <label class="form-label" for="signup-name">Full Name / Law Firm</label>
+          <input type="text" id="signup-name" class="form-input" placeholder="e.g. Sterling & Partners IP" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="signup-email">Work Email</label>
+          <input type="email" id="signup-email" class="form-input" placeholder="counsel@firm.com" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="signup-password">Create Password</label>
+          <input type="password" id="signup-password" class="form-input" placeholder="At least 6 characters" required>
+        </div>
+
+        <button type="submit" class="form-submit-btn">
+          Create Account &rarr;
+        </button>
+      </form>
+
+    </div>
+
+
+  </div>
+
+  <footer>
+    <div>
+      &copy; 2026 WIPA ADS &bull; Women's IP Alliance
+    </div>
+    <div>
+      Platform developed in London &bull; <a href="index.html">Home</a>
+    </div>
+  </footer>
+
+  <script>
+    // Tab Switching
+    function switchTab(tab) {
+      const loginForm = document.getElementById('login-form');
+      const signupForm = document.getElementById('signup-form');
+      const tabLogin = document.getElementById('tab-login');
+      const tabSignup = document.getElementById('tab-signup');
+      const authTitle = document.getElementById('auth-title');
+      const authSubtitle = document.getElementById('auth-subtitle');
+      const errorMsg = document.getElementById('error-msg');
+
+      errorMsg.style.display = 'none';
+
+      if (tab === 'login') {
+        loginForm.style.display = 'block';
+        signupForm.style.display = 'none';
+        tabLogin.classList.add('active');
+        tabSignup.classList.remove('active');
+        authTitle.textContent = 'Sign in to WIPA Ads';
+        authSubtitle.textContent = 'Manage in-feed campaigns and ad credits';
+      } else {
+        loginForm.style.display = 'none';
+        signupForm.style.display = 'block';
+        tabLogin.classList.remove('active');
+        tabSignup.classList.add('active');
+        authTitle.textContent = 'Create Advertiser Account';
+        authSubtitle.textContent = 'Start reaching verified IP professionals';
+      }
+    }
+
+    // Handle Login
+    function handleLogin(e) {
+      e.preventDefault();
+      const user = document.getElementById('login-username').value.trim();
+      const pass = document.getElementById('login-password').value.trim();
+      const errorMsg = document.getElementById('error-msg');
+
+      // Valid if username: 1 and password: 1, or created user
+      const savedUser = localStorage.getItem('wipa_mock_user');
+      const isDemo = (user === '1' && pass === '1');
+      const isSaved = (savedUser && user === savedUser);
+
+      if (isDemo || isSaved) {
+        errorMsg.style.display = 'none';
+        sessionStorage.setItem('wipa_auth_name', user === '1' ? 'Global Tech' : user);
+        window.location.href = 'dashboard.html';
+      } else {
+        errorMsg.style.display = 'block';
+      }
+    }
+
+    // Handle Signup
+    function handleSignup(e) {
+      e.preventDefault();
+      const name = document.getElementById('signup-name').value.trim();
+      const email = document.getElementById('signup-email').value.trim();
+      localStorage.setItem('wipa_mock_user', email);
+      sessionStorage.setItem('wipa_auth_name', name || 'Global Tech');
+      window.location.href = 'dashboard.html';
+    }
+  </script>
+</body>
+</html>

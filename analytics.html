@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Campaign Analytics | WIPA ADS</title>
+  <meta name="description" content="Precise in-feed advertising performance metrics and audience analytics for WIPA ADS.">
+  <style>
+    :root {
+      --bg: #ffffff;
+      --surface: #f5f5f7;
+      --surface-hover: #ebebee;
+      --card-bg: #ffffff;
+      --border: #e5e5ea;
+      --border-subtle: rgba(0, 0, 0, 0.08);
+      --text: #1d1d1f;
+      --text-secondary: #86868b;
+      --text-tertiary: #6e6e73;
+      --accent: #0071e3;
+      --accent-hover: #0077ed;
+      --success: #15803d;
+      --success-bg: #dcfce7;
+      --warning: #b45309;
+      --warning-bg: #fef3c7;
+      --font-apple: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      --font-mono: "SF Mono", Menlo, Monaco, Consolas, monospace;
+    }
+
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-apple);
+      -webkit-font-smoothing: antialiased;
+      line-height: 1.47059;
+      letter-spacing: -0.022em;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* TOP APPLE NAV */
+    .top-nav {
+      position: sticky;
+      top: 0;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: saturate(180%) blur(20px);
+      -webkit-backdrop-filter: saturate(180%) blur(20px);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 1rem 2.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--accent);
+      text-decoration: none;
+      transition: opacity 0.2s ease;
+    }
+
+    .back-btn:hover {
+      opacity: 0.8;
+      text-decoration: underline;
+    }
+
+    .brand-stamp {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: -0.01em;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .nav-btn {
+      padding: 0.45rem 1rem;
+      border-radius: 980px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.15s ease;
+      cursor: pointer;
+    }
+
+    .nav-btn.secondary {
+      background: var(--surface);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .nav-btn.secondary:hover {
+      background: var(--surface-hover);
+    }
+
+    .nav-btn.primary {
+      background: var(--text);
+      color: #ffffff;
+      border: none;
+    }
+
+    .nav-btn.primary:hover {
+      background: #333336;
+    }
+
+    /* FULL PAGE CONTAINER */
+    .analytics-container {
+      flex: 1;
+      max-width: 1080px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 3rem 1.5rem 5rem 1.5rem;
+    }
+
+    /* HEADER */
+    .page-header {
+      margin-bottom: 2.25rem;
+    }
+
+    .header-badges-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.65rem;
+    }
+
+    .status-badge {
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 0.2rem 0.65rem;
+      border-radius: 9999px;
+    }
+
+    .status-badge.active {
+      background: var(--success-bg);
+      color: var(--success);
+    }
+
+    .status-badge.paused {
+      background: var(--warning-bg);
+      color: var(--warning);
+    }
+
+    .cadence-pill {
+      font-size: 0.72rem;
+      font-weight: 600;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      padding: 0.2rem 0.65rem;
+      border-radius: 9999px;
+    }
+
+    .ad-main-title {
+      font-size: 2.25rem;
+      font-weight: 700;
+      letter-spacing: -0.035em;
+      color: var(--text);
+      line-height: 1.2;
+      margin-bottom: 0.5rem;
+    }
+
+    .dest-link-bar {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      font-family: var(--font-mono);
+      color: var(--accent);
+      text-decoration: none;
+      background: #f0f7ff;
+      border: 1px solid #dbeafe;
+      padding: 0.35rem 0.85rem;
+      border-radius: 8px;
+      transition: background 0.15s ease;
+    }
+
+    .dest-link-bar:hover {
+      background: #e0f0fe;
+    }
+
+    /* FULL HERO CREATIVE BANNER */
+    .banner-hero-card {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+      margin-bottom: 2.5rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+    }
+
+    .banner-aspect-box {
+      width: 100%;
+      height: 380px;
+      background: #0b1120;
+      position: relative;
+    }
+
+    .banner-aspect-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .banner-footer-strip {
+      padding: 0.85rem 1.5rem;
+      background: #fafafc;
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+    }
+
+    /* KEY STATS 4-COLUMN GRID */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.25rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 18px;
+      padding: 1.5rem;
+    }
+
+    .stat-title {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 0.4rem;
+    }
+
+    .stat-num {
+      font-size: 2.1rem;
+      font-weight: 700;
+      letter-spacing: -0.035em;
+      color: var(--text);
+      line-height: 1.1;
+      margin-bottom: 0.35rem;
+    }
+
+    .stat-note {
+      font-size: 0.75rem;
+      color: #10b981;
+      font-weight: 600;
+    }
+
+    /* CHART CONTAINER */
+    .chart-container {
+      background: var(--surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px;
+      padding: 2rem 2.25rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .chart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .chart-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .range-selector {
+      display: flex;
+      gap: 0.25rem;
+      background: #e5e5ea;
+      padding: 0.2rem;
+      border-radius: 10px;
+    }
+
+    .range-btn {
+      border: none;
+      background: transparent;
+      padding: 0.35rem 0.75rem;
+      border-radius: 8px;
+      font-family: var(--font-apple);
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+
+    .range-btn.active {
+      background: #ffffff;
+      color: var(--text);
+      font-weight: 600;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+
+    .barchart-wrapper {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      height: 180px;
+      padding-top: 2rem;
+      gap: 1rem;
+    }
+
+    .barchart-col {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100%;
+      justify-content: flex-end;
+      gap: 0.5rem;
+    }
+
+    .barchart-fill {
+      width: 100%;
+      max-width: 52px;
+      background: #1d1d1f;
+      border-radius: 8px 8px 0 0;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .barchart-fill:hover {
+      background: var(--accent);
+      transform: scaleY(1.03);
+    }
+
+    .barchart-val {
+      font-size: 0.75rem;
+      font-weight: 600;
+      font-family: var(--font-mono);
+      color: var(--text-secondary);
+    }
+
+    .barchart-day {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    /* 2-COLUMN BREAKDOWNS */
+    .breakdowns-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .breakdown-card {
+      background: var(--surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px;
+      padding: 1.75rem 2rem;
+    }
+
+    .breakdown-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 1.25rem;
+      letter-spacing: -0.015em;
+    }
+
+    .breakdown-row {
+      margin-bottom: 1.1rem;
+    }
+
+    .breakdown-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .breakdown-label-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      font-weight: 500;
+      margin-bottom: 0.4rem;
+    }
+
+    .progress-bar {
+      height: 7px;
+      background: #e5e5ea;
+      border-radius: 9999px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--text);
+      border-radius: 9999px;
+      transition: width 0.5s ease;
+    }
+
+    /* RECENT ENGAGEMENT FEED TABLE */
+    .log-card {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 1.75rem 2rem;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+    }
+
+    .log-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.85rem;
+    }
+
+    .log-table th {
+      color: var(--text-secondary);
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding-bottom: 0.85rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .log-table td {
+      padding: 0.9rem 0;
+      border-bottom: 1px solid var(--border-subtle);
+      color: var(--text);
+    }
+
+    .log-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .verified-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 0.72rem;
+      font-weight: 600;
+      background: var(--success-bg);
+      color: var(--success);
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+    }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid var(--border-subtle);
+      padding: 2rem 2.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      background: var(--bg);
+    }
+
+    footer a {
+      color: var(--text);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    @media (max-width: 860px) {
+      .top-nav {
+        padding: 1rem 1.5rem;
+      }
+      .banner-aspect-box {
+        height: 220px;
+      }
+      .stats-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+      .breakdowns-grid {
+        grid-template-columns: 1fr;
+      }
+      .barchart-wrapper {
+        gap: 0.4rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Apple Nav -->
+  <header class="top-nav">
+    <a href="dashboard.html" class="back-btn">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+      </svg>
+      <span>Back to Campaigns</span>
+    </a>
+
+    <div class="brand-stamp">
+      WIPA ADS // CAMPAIGN ANALYTICS
+    </div>
+
+    <div class="nav-actions">
+      <a id="nav-edit-link" href="edit-ad.html?id=camp1" class="nav-btn primary">
+        Edit Campaign &rarr;
+      </a>
+    </div>
+  </header>
+
+  <main class="analytics-container">
+
+    <!-- Header Block -->
+    <div class="page-header">
+      <div class="header-badges-row">
+        <span class="status-badge active" id="ad-status">Active</span>
+        <span class="cadence-pill">Guaranteed Cadence: Every 4 Cards</span>
+        <span style="font-size: 0.8rem; color: var(--text-secondary);" id="ad-id-label">Campaign ID: WIPA-AD-01</span>
+      </div>
+      <h1 class="ad-main-title" id="ad-title">Global Patent Practice & AI Innovation Banner</h1>
+      <div>
+        <a id="ad-link" href="https://globalpatents.law/ai-practice" target="_blank" rel="noopener noreferrer" class="dest-link-bar">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+          <span id="ad-link-text">https://globalpatents.law/ai-practice</span>
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+        </a>
+      </div>
+    </div>
+
+    <!-- Full Banner Hero Preview -->
+    <div class="banner-hero-card">
+      <div class="banner-aspect-box">
+        <img id="ad-banner-img" src="assets/patent_ad_creative.jpg" alt="Active Creative Banner">
+      </div>
+      <div class="banner-footer-strip">
+        <span>Active Creative Asset &bull; 16:9 In-Feed Aspect Ratio &bull; High Resolution</span>
+        <span>Rendered at position #5 (after every 4th feed card)</span>
+      </div>
+    </div>
+
+    <!-- 4 KPI Metrics -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-title">Total Impressions</div>
+        <div class="stat-num" id="stat-impressions">3,820</div>
+        <div class="stat-note">100% In-Feed Delivery</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-title">Verified Clicks</div>
+        <div class="stat-num" id="stat-clicks">168</div>
+        <div class="stat-note" id="stat-cpc">&pound;0.23 Effective CPC</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-title">Click-Through Rate</div>
+        <div class="stat-num" id="stat-ctr">4.40%</div>
+        <div class="stat-note">2.4x Legal Industry Benchmark</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-title">Unique IP Reach</div>
+        <div class="stat-num" id="stat-reach">3,110</div>
+        <div class="stat-note">Verified IP Professionals</div>
+      </div>
+    </div>
+
+    <!-- 7-Day Performance Bar Chart -->
+    <div class="chart-container">
+      <div class="chart-header">
+        <div>
+          <h2 class="chart-title">7-Day In-Feed Impression Trend</h2>
+          <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.2rem;">Daily impressions served into verified member streams</p>
+        </div>
+        <div class="range-selector">
+          <button class="range-btn active">Last 7 Days</button>
+          <button class="range-btn" onclick="alert('Showing last 14 days')">14 Days</button>
+          <button class="range-btn" onclick="alert('Showing last 30 days')">30 Days</button>
+        </div>
+      </div>
+
+      <div class="barchart-wrapper" id="barchart-row">
+        <!-- Injected via JS -->
+      </div>
+    </div>
+
+    <!-- 2-Column Audience Demographics & Geography -->
+    <div class="breakdowns-grid">
+      <div class="breakdown-card">
+        <h3 class="breakdown-title">Audience Seniority & Practice Area</h3>
+        <div class="breakdown-row">
+          <div class="breakdown-label-row">
+            <span id="aud-label-1">Patent Partners & Litigators</span>
+            <span id="aud-val-1">48%</span>
+          </div>
+          <div class="progress-bar"><div class="progress-fill" id="aud-bar-1" style="width: 48%;"></div></div>
+        </div>
+        <div class="breakdown-row">
+          <div class="breakdown-label-row">
+            <span id="aud-label-2">In-House General Counsel</span>
+            <span id="aud-val-2">32%</span>
+          </div>
+          <div class="progress-bar"><div class="progress-fill" id="aud-bar-2" style="width: 32%;"></div></div>
+        </div>
+        <div class="breakdown-row">
+          <div class="breakdown-label-row">
+            <span id="aud-label-3">Legal Tech / IP Operations</span>
+            <span id="aud-val-3">20%</span>
+          </div>
+          <div class="progress-bar"><div class="progress-fill" id="aud-bar-3" style="width: 20%;"></div></div>
+        </div>
+      </div>
+
+      <div class="breakdown-card">
+        <h3 class="breakdown-title">Top Geographic IP Hubs</h3>
+        <div class="breakdown-row">
+          <div class="breakdown-label-row">
+            <span id="geo-label-1">London & Southeast UK</span>
+            <span id="geo-val-1">44%</span>
+          </div>
+          <div class="progress-bar"><div class="progress-fill" id="geo-bar-1" style="width: 44%;"></div></div>
+        </div>
+        <div class="breakdown-row">
+          <div class="breakdown-label-row">
+            <span id="geo-label-2">Munich & Frankfurt (EPO Corridor)</span>
+            <span id="geo-val-2">28%</span>
+          </div>
+          <div class="progress-bar"><div class="progress-fill" id="geo-bar-2" style="width: 28%;"></div></div>
+        </div>
+        <div class="breakdown-row">
+          <div class="breakdown-label-row">
+            <span id="geo-label-3">New York & Boston Tech Hub</span>
+            <span id="geo-val-3">28%</span>
+          </div>
+          <div class="progress-bar"><div class="progress-fill" id="geo-bar-3" style="width: 28%;"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Verified Engagement Audit Table -->
+    <div class="log-card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+        <h3 style="font-size: 1.1rem; font-weight: 700; letter-spacing: -0.015em;">Verified Engagement Log</h3>
+        <span style="font-size: 0.78rem; color: var(--text-secondary);">Real-time feed impression verification</span>
+      </div>
+      <table class="log-table">
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>Member Role</th>
+            <th>Location</th>
+            <th>Event</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="log-table-body">
+          <!-- Dynamically populated rows -->
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+
+  <footer>
+    <div>
+      &copy; 2026 WIPA ADS &bull; Women's IP Alliance
+    </div>
+    <div>
+      Platform developed in London &bull; <a href="dashboard.html">Dashboard</a> &bull; <a href="index.html">Home</a>
+    </div>
+  </footer>
+
+  <script>
+    // Get query param 'id'
+    const urlParams = new URLSearchParams(window.location.search);
+    const adId = urlParams.get('id') || 'camp1';
+
+    // Retrieve campaigns from storage or defaults
+    const defaultCampaigns = {
+      camp1: {
+        id: 'camp1',
+        title: 'Global Patent Practice & AI Innovation Banner',
+        url: 'https://globalpatents.law/ai-practice',
+        image: 'assets/patent_ad_creative.jpg',
+        status: 'Active',
+        impressions: '3,820',
+        clicks: '168',
+        ctr: '4.40%',
+        reach: '3,110',
+        cpc: '£0.23',
+        chartData: [
+          { day: 'Mon', imp: 480, clicks: 21 },
+          { day: 'Tue', imp: 560, clicks: 28 },
+          { day: 'Wed', imp: 610, clicks: 32 },
+          { day: 'Thu', imp: 590, clicks: 25 },
+          { day: 'Fri', imp: 720, clicks: 34 },
+          { day: 'Sat', imp: 420, clicks: 14 },
+          { day: 'Sun', imp: 440, clicks: 14 }
+        ],
+        audience: [
+          { label: 'Patent Partners & Litigators', val: '48%' },
+          { label: 'In-House General Counsel', val: '32%' },
+          { label: 'Legal Tech / IP Operations', val: '20%' }
+        ],
+        geo: [
+          { label: 'London & Southeast UK', val: '44%' },
+          { label: 'Munich & Frankfurt (EPO)', val: '28%' },
+          { label: 'New York & Boston Tech Hub', val: '28%' }
+        ],
+        logs: [
+          { time: '2 mins ago', role: 'Senior Patent Attorney', loc: 'London, UK', event: 'In-Feed Click' },
+          { time: '14 mins ago', role: 'Head of Intellectual Property', loc: 'Munich, Germany', event: 'Card Impression' },
+          { time: '38 mins ago', role: 'General Counsel (AI Startup)', loc: 'Cambridge, UK', event: 'In-Feed Click' },
+          { time: '1 hour ago', role: 'Partner, IP Litigation', loc: 'New York, US', event: 'Card Impression' },
+          { time: '2 hours ago', role: 'EPO Registered Patent Agent', loc: 'Paris, France', event: 'In-Feed Click' }
+        ]
+      },
+      camp2: {
+        id: 'camp2',
+        title: 'European Trademark Counsel Recruitment Spotlight',
+        url: 'https://lexington.com/careers/trademark',
+        image: 'assets/tm_ad_creative.jpg',
+        status: 'Active',
+        impressions: '2,600',
+        clicks: '114',
+        ctr: '4.38%',
+        reach: '2,180',
+        cpc: '£0.23',
+        chartData: [
+          { day: 'Mon', imp: 320, clicks: 14 },
+          { day: 'Tue', imp: 390, clicks: 18 },
+          { day: 'Wed', imp: 410, clicks: 20 },
+          { day: 'Thu', imp: 440, clicks: 22 },
+          { day: 'Fri', imp: 490, clicks: 23 },
+          { day: 'Sat', imp: 260, clicks: 8 },
+          { day: 'Sun', imp: 290, clicks: 9 }
+        ],
+        audience: [
+          { label: 'Senior Trademark Attorneys', val: '52%' },
+          { label: 'Brand Protection Directors', val: '31%' },
+          { label: 'Managing Law Partners', val: '17%' }
+        ],
+        geo: [
+          { label: 'London & UK Central', val: '50%' },
+          { label: 'Paris & Brussels Hub', val: '30%' },
+          { label: 'Zurich & Geneva', val: '20%' }
+        ],
+        logs: [
+          { time: '5 mins ago', role: 'Senior Trademark Partner', loc: 'London, UK', event: 'In-Feed Click' },
+          { time: '22 mins ago', role: 'Brand Protection Director', loc: 'Paris, France', event: 'Card Impression' },
+          { time: '45 mins ago', role: 'IP Recruitment Candidate', loc: 'Brussels, Belgium', event: 'In-Feed Click' },
+          { time: '1 hour ago', role: 'Trademark Examiner', loc: 'Alicante, Spain', event: 'Card Impression' },
+          { time: '3 hours ago', role: 'IP Portfolio Manager', loc: 'Zurich, Switzerland', event: 'In-Feed Click' }
+        ]
+      }
+    };
+
+    const savedData = JSON.parse(localStorage.getItem('wipa_campaigns') || '{}');
+    const data = Object.assign({}, defaultCampaigns[adId], savedData[adId]);
+
+    // Populate DOM
+    document.getElementById('ad-title').textContent = data.title;
+    document.getElementById('ad-link').href = data.url;
+    document.getElementById('ad-link-text').textContent = data.url;
+    document.getElementById('ad-banner-img').src = data.image;
+    document.getElementById('nav-edit-link').href = 'edit-ad.html?id=' + adId;
+
+    const statusBadge = document.getElementById('ad-status');
+    statusBadge.textContent = data.status;
+    statusBadge.className = 'status-badge ' + data.status.toLowerCase();
+
+    document.getElementById('stat-impressions').textContent = data.impressions;
+    document.getElementById('stat-clicks').textContent = data.clicks;
+    document.getElementById('stat-ctr').textContent = data.ctr;
+    document.getElementById('stat-reach').textContent = data.reach;
+    document.getElementById('stat-cpc').textContent = data.cpc + ' Effective CPC';
+    document.getElementById('ad-id-label').textContent = 'Campaign ID: WIPA-' + adId.toUpperCase();
+
+    // Render Bars
+    const chartContainer = document.getElementById('barchart-row');
+    const maxImp = Math.max(...data.chartData.map(d => d.imp));
+    chartContainer.innerHTML = '';
+    data.chartData.forEach(item => {
+      const height = Math.round((item.imp / maxImp) * 120);
+      const col = document.createElement('div');
+      col.className = 'barchart-col';
+      col.innerHTML = `
+        <span class="barchart-val">${item.imp}</span>
+        <div class="barchart-fill" style="height: ${height}px;" title="${item.day}: ${item.imp} impressions, ${item.clicks} clicks"></div>
+        <span class="barchart-day">${item.day}</span>
+      `;
+      chartContainer.appendChild(col);
+    });
+
+    // Demographics
+    document.getElementById('aud-label-1').textContent = data.audience[0].label;
+    document.getElementById('aud-val-1').textContent = data.audience[0].val;
+    document.getElementById('aud-bar-1').style.width = data.audience[0].val;
+
+    document.getElementById('aud-label-2').textContent = data.audience[1].label;
+    document.getElementById('aud-val-2').textContent = data.audience[1].val;
+    document.getElementById('aud-bar-2').style.width = data.audience[1].val;
+
+    document.getElementById('aud-label-3').textContent = data.audience[2].label;
+    document.getElementById('aud-val-3').textContent = data.audience[2].val;
+    document.getElementById('aud-bar-3').style.width = data.audience[2].val;
+
+    // Geo
+    document.getElementById('geo-label-1').textContent = data.geo[0].label;
+    document.getElementById('geo-val-1').textContent = data.geo[0].val;
+    document.getElementById('geo-bar-1').style.width = data.geo[0].val;
+
+    document.getElementById('geo-label-2').textContent = data.geo[1].label;
+    document.getElementById('geo-val-2').textContent = data.geo[1].val;
+    document.getElementById('geo-bar-2').style.width = data.geo[1].val;
+
+    document.getElementById('geo-label-3').textContent = data.geo[2].label;
+    document.getElementById('geo-val-3').textContent = data.geo[2].val;
+    document.getElementById('geo-bar-3').style.width = data.geo[2].val;
+
+    // Logs
+    const logBody = document.getElementById('log-table-body');
+    logBody.innerHTML = '';
+    data.logs.forEach(log => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td style="color: var(--text-secondary); font-family: var(--font-mono); font-size: 0.78rem;">${log.time}</td>
+        <td style="font-weight: 600;">${log.role}</td>
+        <td>${log.loc}</td>
+        <td><span style="font-weight: 500;">${log.event}</span></td>
+        <td><span class="verified-pill">&bull; Verified</span></td>
+      `;
+      logBody.appendChild(tr);
+    });
+  </script>
+</body>
+</html>
