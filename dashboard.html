@@ -4,7 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Advertiser Dashboard | WIPA ADS</title>
-  <meta name="description" content="Manage in-feed campaigns and ad credits on WIPA ADS.">
+  <meta name="description" content="Manage live in-feed campaigns and ad credits on WIPA ADS with Supabase production database.">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/supabase-config.js"></script>
   <style>
     :root {
       --bg: #ffffff;
@@ -80,6 +82,9 @@
       font-weight: 600;
       color: var(--text);
       letter-spacing: -0.01em;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
 
     .nav-link {
@@ -94,32 +99,109 @@
       color: var(--text);
     }
 
+    /* ENVIRONMENT BANNER (DEMO VS LIVE) */
+    .env-banner {
+      width: 100%;
+      padding: 0.65rem 2rem;
+      font-size: 0.8rem;
+      font-weight: 500;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid transparent;
+      z-index: 90;
+    }
+
+    .env-banner.demo {
+      background: #fefce8;
+      color: #854d0e;
+      border-color: #fef08a;
+    }
+
+    .env-banner.live {
+      background: #f0fdf4;
+      color: #166534;
+      border-color: #bbf7d0;
+    }
+
+    .env-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-weight: 600;
+    }
+
+    .env-switch-btn {
+      color: inherit;
+      text-decoration: underline;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .pulse-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 6px #10b981;
+      display: inline-block;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 0.6; transform: scale(0.95); }
+      50% { opacity: 1; transform: scale(1.15); }
+      100% { opacity: 0.6; transform: scale(0.95); }
+    }
+
     /* MAIN CONTAINER */
     .dashboard-wrapper {
       flex: 1;
       max-width: 1040px;
       width: 100%;
       margin: 0 auto;
-      padding: 3.5rem 1.5rem;
+      padding: 3rem 1.5rem 5rem 1.5rem;
     }
 
     .dash-header {
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      margin-bottom: 2.5rem;
+      margin-bottom: 2.25rem;
     }
 
     .dash-greeting {
       font-size: 2.1rem;
       font-weight: 700;
       letter-spacing: -0.03em;
-      margin-bottom: 0.25rem;
+      margin-bottom: 0.35rem;
     }
 
     .dash-meta {
       font-size: 0.95rem;
       color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .meta-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      background: var(--surface);
+      padding: 0.2rem 0.65rem;
+      border-radius: 980px;
+      font-size: 0.76rem;
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
     }
 
     .logout-btn {
@@ -152,33 +234,43 @@
       border: 1px solid var(--border-subtle);
       border-radius: 18px;
       padding: 1.75rem;
+      transition: transform 0.2s ease;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-2px);
     }
 
     .stat-card-title {
       font-size: 0.82rem;
       color: var(--text-secondary);
       font-weight: 600;
-      margin-bottom: 0.65rem;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
+      margin-bottom: 0.4rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
     .stat-card-num {
-      font-size: 2.4rem;
+      font-size: 2.25rem;
       font-weight: 700;
-      letter-spacing: -0.04em;
+      letter-spacing: -0.035em;
       color: var(--text);
-      line-height: 1;
-      margin-bottom: 0.35rem;
+      font-family: var(--font-apple);
+      transition: color 0.3s ease;
+    }
+
+    .stat-card-num.updated {
+      color: #16a34a;
     }
 
     .stat-card-sub {
-      font-size: 0.78rem;
-      color: #10b981;
-      font-weight: 600;
+      font-size: 0.8rem;
+      color: var(--text-tertiary);
+      margin-top: 0.35rem;
     }
 
-    /* CAMPAIGN LIST */
+    /* CAMPAIGNS SECTION */
     .dash-section-header {
       display: flex;
       justify-content: space-between;
@@ -187,166 +279,32 @@
     }
 
     .dash-section-title {
-      font-size: 1.45rem;
+      font-size: 1.35rem;
       font-weight: 700;
-      letter-spacing: -0.02em;
+      letter-spacing: -0.025em;
     }
 
-    .campaign-item {
-      background: #ffffff;
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 1.5rem;
+    .section-actions {
       display: flex;
-      align-items: center;
-      gap: 1.75rem;
-      margin-bottom: 1.25rem;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
-      transition: border-color 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .campaign-item:hover {
-      border-color: #d1d1d6;
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.04);
-    }
-
-    /* CREATIVE IMAGE THUMBNAIL */
-    .camp-creative-thumb {
-      width: 170px;
-      height: 96px;
-      min-width: 170px;
-      border-radius: 12px;
-      overflow: hidden;
-      border: 1px solid var(--border);
-      background: #0b1120;
-      position: relative;
-      cursor: pointer;
-      text-decoration: none;
-      display: block;
-    }
-
-    .camp-creative-thumb img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-      transition: transform 0.3s ease;
-    }
-
-    .camp-creative-thumb:hover img {
-      transform: scale(1.05);
-    }
-
-    .thumb-zoom-badge {
-      position: absolute;
-      bottom: 6px;
-      right: 6px;
-      background: rgba(0, 0, 0, 0.7);
-      color: #fff;
-      font-size: 0.65rem;
-      padding: 2px 6px;
-      border-radius: 4px;
-      backdrop-filter: blur(4px);
-      pointer-events: none;
-      font-weight: 500;
-    }
-
-    .camp-info {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .camp-title-row {
-      display: flex;
-      align-items: center;
-      gap: 0.65rem;
-      margin-bottom: 0.4rem;
-    }
-
-    .camp-info h4 {
-      font-size: 1.1rem;
-      font-weight: 600;
-      color: var(--text);
-      letter-spacing: -0.015em;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .camp-badge {
-      display: inline-block;
-      font-size: 0.7rem;
-      font-weight: 600;
-      padding: 0.2rem 0.6rem;
-      border-radius: 9999px;
-      flex-shrink: 0;
-    }
-
-    .camp-badge.active {
-      background: var(--success-bg);
-      color: var(--success);
-    }
-
-    .camp-badge.paused {
-      background: var(--warning-bg);
-      color: var(--warning);
-    }
-
-    .camp-meta-text {
-      font-size: 0.85rem;
-      color: var(--text-secondary);
-      margin-bottom: 0.65rem;
-      line-height: 1.4;
-    }
-
-    /* DESTINATION LINK */
-    .camp-dest-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      font-size: 0.82rem;
-      font-family: var(--font-mono);
-      color: var(--accent);
-      text-decoration: none;
-      background: #f0f7ff;
-      border: 1px solid #dbeafe;
-      padding: 0.25rem 0.65rem;
-      border-radius: 6px;
-      max-width: 100%;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      transition: all 0.15s ease;
-    }
-
-    .camp-dest-link:hover {
-      background: #e0f0fe;
-      border-color: #bfdbfe;
-    }
-
-    .camp-actions {
-      display: flex;
-      gap: 0.65rem;
-      flex-shrink: 0;
+      gap: 0.75rem;
     }
 
     .camp-btn {
-      padding: 0.55rem 1.15rem;
-      border-radius: 980px;
-      font-size: 0.84rem;
-      font-weight: 600;
-      font-family: var(--font-apple);
-      text-decoration: none;
-      cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 0.35rem;
+      gap: 0.4rem;
+      padding: 0.5rem 1rem;
+      border-radius: 980px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
       transition: all 0.15s ease;
     }
 
     .camp-btn.primary {
       background: var(--text);
-      color: #fff;
+      color: #ffffff;
       border: none;
     }
 
@@ -362,7 +320,130 @@
 
     .camp-btn.secondary:hover {
       background: var(--surface-hover);
-      border-color: #d1d1d6;
+    }
+
+    /* CAMPAIGN CARD ITEM */
+    .campaign-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .campaign-item {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1.75rem;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.02);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .campaign-item:hover {
+      border-color: #c7c7cc;
+      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.04);
+    }
+
+    .camp-creative-thumb {
+      width: 170px;
+      height: 100px;
+      border-radius: 12px;
+      overflow: hidden;
+      flex-shrink: 0;
+      background: #000;
+      position: relative;
+      cursor: pointer;
+      display: block;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .camp-creative-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+
+    .camp-creative-thumb:hover img {
+      transform: scale(1.05);
+    }
+
+    .thumb-zoom-badge {
+      position: absolute;
+      bottom: 6px;
+      right: 6px;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(4px);
+      color: #ffffff;
+      font-size: 0.65rem;
+      font-weight: 600;
+      padding: 2px 6px;
+      border-radius: 6px;
+    }
+
+    .camp-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .camp-title-row {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      margin-bottom: 0.35rem;
+      flex-wrap: wrap;
+    }
+
+    .camp-title-row h4 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text);
+    }
+
+    .camp-badge {
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 0.18rem 0.6rem;
+      border-radius: 9999px;
+    }
+
+    .camp-badge.active {
+      background: var(--success-bg);
+      color: var(--success);
+    }
+
+    .camp-badge.paused {
+      background: var(--warning-bg);
+      color: var(--warning);
+    }
+
+    .camp-meta-text {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin-bottom: 0.4rem;
+    }
+
+    .camp-dest-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.8rem;
+      color: var(--accent);
+      text-decoration: none;
+      word-break: break-all;
+    }
+
+    .camp-dest-link:hover {
+      text-decoration: underline;
+    }
+
+    .camp-actions {
+      display: flex;
+      gap: 0.6rem;
+      flex-shrink: 0;
     }
 
     /* FOOTER */
@@ -383,6 +464,10 @@
       font-weight: 500;
     }
 
+    footer a:hover {
+      text-decoration: underline;
+    }
+
     @media (max-width: 768px) {
       .top-nav {
         padding: 1rem 1.5rem;
@@ -393,7 +478,7 @@
       .campaign-item {
         flex-direction: column;
         align-items: flex-start;
-        gap: 1.25rem;
+        gap: 1rem;
       }
       .camp-creative-thumb {
         width: 100%;
@@ -422,7 +507,7 @@
     </a>
 
     <div class="brand-stamp">
-      WIPA ADS // PORTAL
+      <span>WIPA ADS // PORTAL</span>
     </div>
 
     <a href="how-it-works.html" class="nav-link">
@@ -430,118 +515,84 @@
     </a>
   </header>
 
+  <!-- Environment Status Banner -->
+  <div id="env-banner" class="env-banner demo">
+    <div class="env-badge" id="env-badge-text">
+      <span>⚡ DEMO SANDBOX ACTIVE</span>
+      <span>&bull;</span>
+      <span>Logged in as Global Tech (Demo Partner)</span>
+    </div>
+    <div>
+      <a href="login.html" class="env-switch-btn" id="env-action-btn">Switch to Live Supabase DB</a>
+    </div>
+  </div>
+
   <main class="dashboard-wrapper">
     <div class="dash-header">
       <div>
         <h1 class="dash-greeting" id="dash-greeting">Welcome, Global Tech</h1>
-        <p class="dash-meta">In-Feed Ad Placement &bull; Active Cadence: Guaranteed every 4 cards</p>
+        <div class="dash-meta">
+          <span class="meta-tag">
+            <span class="pulse-dot"></span>
+            Guaranteed Cadence 4:1 Feed Injection
+          </span>
+          <span class="meta-tag">
+            Live Database Synced
+          </span>
+        </div>
       </div>
-      <a href="login.html" class="logout-btn" onclick="sessionStorage.removeItem('wipa_auth_name');">Sign Out</a>
+      <div class="header-actions">
+        <a href="edit-ad.html?new=1" class="camp-btn primary">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          <span>Create New Ad</span>
+        </a>
+        <a href="login.html" class="logout-btn" onclick="clearWipaAuth();">Sign Out</a>
+      </div>
     </div>
 
     <!-- Stats Overview -->
     <div class="stats-cards-grid">
       <div class="stat-card">
-        <div class="stat-card-title">Available Credits</div>
-        <div class="stat-card-num" id="dash-credits">50</div>
+        <div class="stat-card-title">
+          <span>Available Credits</span>
+          <span>⚡ Active</span>
+        </div>
+        <div class="stat-card-num" id="stat-credits">50</div>
         <div class="stat-card-sub">&pound;100 Balance Value</div>
       </div>
       <div class="stat-card">
-        <div class="stat-card-title">Total In-Feed Impressions</div>
-        <div class="stat-card-num">6,420</div>
-        <div class="stat-card-sub">+18% this week</div>
+        <div class="stat-card-title">
+          <span>Total In-Feed Impressions</span>
+          <span class="pulse-dot" title="Live telemetry tracking"></span>
+        </div>
+        <div class="stat-card-num" id="stat-total-impressions">6,420</div>
+        <div class="stat-card-sub" id="stat-imp-sub">Live delivered from WIPA feed</div>
       </div>
       <div class="stat-card">
-        <div class="stat-card-title">Average CTR</div>
-        <div class="stat-card-num">4.40%</div>
-        <div class="stat-card-sub">Verified IP audience</div>
+        <div class="stat-card-title">
+          <span>Average Click-Through Rate</span>
+          <span>🎯 Verified</span>
+        </div>
+        <div class="stat-card-num" id="stat-avg-ctr">4.39%</div>
+        <div class="stat-card-sub" id="stat-clicks-sub">282 Total clicks captured</div>
       </div>
     </div>
 
     <!-- Active Campaigns Header -->
     <div class="dash-section-header">
       <h2 class="dash-section-title">Your In-Feed Campaigns</h2>
-      <a href="how-it-works.html#calculator" class="camp-btn primary" style="text-decoration:none;">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-        <span>Buy Credits</span>
-      </a>
-    </div>
-
-    <!-- CAMPAIGN CARD 1 -->
-    <div class="campaign-item" id="camp-card-1">
-      <!-- Creative Image Running -->
-      <a href="analytics.html?id=camp1" class="camp-creative-thumb" title="Open full-page analytics">
-        <img id="camp1-img" src="assets/patent_ad_creative.jpg" alt="Patent Ad Creative">
-        <span class="thumb-zoom-badge">Creative 16:9</span>
-      </a>
-
-      <!-- Campaign Details & Link -->
-      <div class="camp-info">
-        <div class="camp-title-row">
-          <span class="camp-badge active" id="camp1-badge">Active</span>
-          <h4 id="camp1-title">Global Patent Practice & AI Innovation Banner</h4>
-        </div>
-        <p class="camp-meta-text" id="camp1-meta">
-          Injected after every 4th feed card &bull; 3,820 impressions &bull; 168 clicks (4.40% CTR)
-        </p>
-        <div>
-          <a id="camp1-link" href="https://globalpatents.law/ai-practice" target="_blank" rel="noopener noreferrer" class="camp-dest-link">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
-            <span id="camp1-link-text">https://globalpatents.law/ai-practice</span>
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-          </a>
-        </div>
-      </div>
-
-      <!-- Action Buttons -->
-      <div class="camp-actions">
-        <a href="analytics.html?id=camp1" class="camp-btn secondary">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V10"></path><path d="M12 20V4"></path><path d="M6 20v-6"></path></svg>
-          <span>Analytics</span>
-        </a>
-        <a href="edit-ad.html?id=camp1" class="camp-btn secondary">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-          <span>Edit Ad</span>
+      <div class="section-actions">
+        <a href="how-it-works.html#calculator" class="camp-btn secondary">
+          <span>Buy Credits</span>
         </a>
       </div>
     </div>
 
-    <!-- CAMPAIGN CARD 2 -->
-    <div class="campaign-item" id="camp-card-2">
-      <!-- Creative Image Running -->
-      <a href="analytics.html?id=camp2" class="camp-creative-thumb" title="Open full-page analytics">
-        <img id="camp2-img" src="assets/tm_ad_creative.jpg" alt="Trademark Ad Creative">
-        <span class="thumb-zoom-badge">Creative 16:9</span>
-      </a>
-
-      <!-- Campaign Details & Link -->
-      <div class="camp-info">
-        <div class="camp-title-row">
-          <span class="camp-badge active" id="camp2-badge">Active</span>
-          <h4 id="camp2-title">European Trademark Counsel Recruitment Spotlight</h4>
-        </div>
-        <p class="camp-meta-text" id="camp2-meta">
-          Injected after every 4th feed card &bull; 2,600 impressions &bull; 114 clicks (4.38% CTR)
-        </p>
-        <div>
-          <a id="camp2-link" href="https://lexington.com/careers/trademark" target="_blank" rel="noopener noreferrer" class="camp-dest-link">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
-            <span id="camp2-link-text">https://lexington.com/careers/trademark</span>
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-          </a>
-        </div>
-      </div>
-
-      <!-- Action Buttons -->
-      <div class="camp-actions">
-        <a href="analytics.html?id=camp2" class="camp-btn secondary">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V10"></path><path d="M12 20V4"></path><path d="M6 20v-6"></path></svg>
-          <span>Analytics</span>
-        </a>
-        <a href="edit-ad.html?id=camp2" class="camp-btn secondary">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-          <span>Edit Ad</span>
-        </a>
+    <!-- CAMPAIGNS CONTAINER -->
+    <div class="campaign-list" id="campaigns-container">
+      <!-- Dynamically generated campaign items will be inserted here -->
+      <div style="text-align: center; padding: 2rem; color: var(--text-secondary);">
+        Connecting to live database and fetching campaigns...
       </div>
     </div>
 
@@ -552,33 +603,173 @@
       &copy; 2026 WIPA ADS &bull; Women's IP Alliance
     </div>
     <div>
-      Platform developed in London &bull; <a href="index.html">Home</a>
+      Connected to Supabase DB &bull; <a href="index.html">Home</a>
     </div>
   </footer>
 
   <script>
-    // Set username from session
-    const user = sessionStorage.getItem('wipa_auth_name') || 'Global Tech';
-    document.getElementById('dash-greeting').textContent = 'Welcome, ' + user;
+    // 1. Identify Environment & User
+    const auth = getWipaAuth();
+    const envBanner = document.getElementById('env-banner');
+    const envBadgeText = document.getElementById('env-badge-text');
+    const envActionBtn = document.getElementById('env-action-btn');
+    const dashGreeting = document.getElementById('dash-greeting');
 
-    // Load any saved updates from localStorage
-    const saved = JSON.parse(localStorage.getItem('wipa_campaigns') || '{}');
-    ['camp1', 'camp2'].forEach(id => {
-      if (saved[id]) {
-        const item = saved[id];
-        if (item.title) document.getElementById(id + '-title').textContent = item.title;
-        if (item.image) document.getElementById(id + '-img').src = item.image;
-        if (item.url) {
-          document.getElementById(id + '-link').href = item.url;
-          document.getElementById(id + '-link-text').textContent = item.url;
-        }
-        if (item.status) {
-          const badge = document.getElementById(id + '-badge');
-          badge.textContent = item.status;
-          badge.className = 'camp-badge ' + item.status.toLowerCase();
-        }
+    if (auth.isDemo) {
+      envBanner.className = 'env-banner demo';
+      envBadgeText.innerHTML = `<span>⚡ DEMO SANDBOX ACTIVE</span> <span>&bull;</span> <span>Logged in as ${auth.name} (Demo Partner)</span>`;
+      envActionBtn.textContent = 'Switch to Live Database Account';
+      envActionBtn.onclick = () => { clearWipaAuth(); };
+      dashGreeting.textContent = `Welcome, ${auth.name}`;
+    } else {
+      envBanner.className = 'env-banner live';
+      envBadgeText.innerHTML = `<span>🟢 LIVE SUPABASE DATABASE</span> <span>&bull;</span> <span>${auth.email || auth.name} &bull; Production Feed Active</span>`;
+      envActionBtn.textContent = 'Sign Out';
+      envActionBtn.onclick = () => { clearWipaAuth(); };
+      dashGreeting.textContent = `Welcome, ${auth.name}`;
+    }
+
+    // 2. Fetch and render campaigns from live Supabase DB
+    let currentCampaigns = [];
+
+    async function loadCampaigns() {
+      try {
+        const campaigns = await fetchCampaigns();
+        currentCampaigns = campaigns;
+        renderCampaigns(campaigns);
+        updateAggregateKPIs(campaigns);
+      } catch (err) {
+        console.error('Error loading campaigns:', err);
       }
+    }
+
+    function renderCampaigns(campaigns) {
+      const container = document.getElementById('campaigns-container');
+      if (!campaigns || campaigns.length === 0) {
+        container.innerHTML = `
+          <div style="text-align:center; padding: 3rem 1.5rem; background: var(--surface); border-radius: 20px;">
+            <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem;">No Active Campaigns Found</h3>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.5rem;">Create your first in-feed campaign to reach verified IP attorneys in the feed.</p>
+            <a href="edit-ad.html?new=1" class="camp-btn primary">Create In-Feed Campaign &rarr;</a>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = '';
+      campaigns.forEach((camp) => {
+        const id = camp.id;
+        const impressions = Number(camp.impressions_count || 0);
+        const clicks = Number(camp.clicks_count || 0);
+        const ctr = impressions > 0 ? ((clicks / impressions) * 100).toFixed(2) + '%' : '0.00%';
+        const status = camp.is_active ? 'Active' : 'Paused';
+        const image = camp.banner_image_url || 'assets/patent_ad_creative.jpg';
+        const title = camp.headline || camp.title || 'In-Feed Ad Placement';
+        const targetUrl = camp.target_url || 'https://womensipalliance.com';
+
+        const item = document.createElement('div');
+        item.className = 'campaign-item';
+        item.id = `camp-card-${id}`;
+        item.innerHTML = `
+          <a href="analytics.html?id=${id}" class="camp-creative-thumb" title="Open full-page analytics">
+            <img id="img-${id}" src="${image}" alt="${title}">
+            <span class="thumb-zoom-badge">16:9 Banner</span>
+          </a>
+
+          <div class="camp-info">
+            <div class="camp-title-row">
+              <span class="camp-badge ${status.toLowerCase()}">${status}</span>
+              <span style="font-size: 0.72rem; color: var(--text-secondary); font-weight: 600;">Feed Native</span>
+              <h4>${title}</h4>
+            </div>
+            <p class="camp-meta-text" id="meta-${id}">
+              Injected after every 4th feed card &bull; 
+              <strong id="imp-${id}">${impressions.toLocaleString()}</strong> impressions &bull; 
+              <strong id="clk-${id}">${clicks.toLocaleString()}</strong> clicks 
+              (<span id="ctr-${id}">${ctr}</span> CTR)
+            </p>
+            <div>
+              <a href="${targetUrl}" target="_blank" rel="noopener noreferrer" class="camp-dest-link">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+                <span>${targetUrl}</span>
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+              </a>
+            </div>
+          </div>
+
+          <div class="camp-actions">
+            <a href="analytics.html?id=${id}" class="camp-btn secondary">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V10"></path><path d="M12 20V4"></path><path d="M6 20v-6"></path></svg>
+              <span>Analytics</span>
+            </a>
+            <a href="edit-ad.html?id=${id}" class="camp-btn secondary">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+              <span>Edit Ad</span>
+            </a>
+          </div>
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    function updateAggregateKPIs(campaigns) {
+      let totalImp = 0;
+      let totalClicks = 0;
+
+      campaigns.forEach(c => {
+        totalImp += Number(c.impressions_count || 0);
+        totalClicks += Number(c.clicks_count || 0);
+      });
+
+      const avgCtr = totalImp > 0 ? ((totalClicks / totalImp) * 100).toFixed(2) + '%' : '0.00%';
+
+      const impElem = document.getElementById('stat-total-impressions');
+      const ctrElem = document.getElementById('stat-avg-ctr');
+      const clicksSub = document.getElementById('stat-clicks-sub');
+
+      if (impElem) impElem.textContent = totalImp.toLocaleString();
+      if (ctrElem) ctrElem.textContent = avgCtr;
+      if (clicksSub) clicksSub.textContent = `${totalClicks.toLocaleString()} Total clicks captured`;
+    }
+
+    // 3. Initialize & Listen for Realtime Metrics Updates
+    loadCampaigns();
+
+    // Subscribe to updates for the main campaigns
+    const unsub1 = subscribeToCampaignMetrics(WIPA_SUPABASE_CONFIG.demoCampaignId, (updated) => {
+      handleLiveMetricsUpdate(updated);
     });
+
+    function handleLiveMetricsUpdate(updated) {
+      if (!updated) return;
+      const id = updated.id;
+      const impSpan = document.getElementById(`imp-${id}`);
+      const clkSpan = document.getElementById(`clk-${id}`);
+      const ctrSpan = document.getElementById(`ctr-${id}`);
+
+      if (impSpan && updated.impressions_count !== undefined) {
+        impSpan.textContent = Number(updated.impressions_count).toLocaleString();
+        impSpan.style.color = '#16a34a';
+        setTimeout(() => { impSpan.style.color = ''; }, 1500);
+      }
+      if (clkSpan && updated.clicks_count !== undefined) {
+        clkSpan.textContent = Number(updated.clicks_count).toLocaleString();
+        clkSpan.style.color = '#16a34a';
+        setTimeout(() => { clkSpan.style.color = ''; }, 1500);
+      }
+      if (ctrSpan && updated.impressions_count && updated.clicks_count) {
+        const ctr = ((updated.clicks_count / updated.impressions_count) * 100).toFixed(2) + '%';
+        ctrSpan.textContent = ctr;
+      }
+
+      // Update aggregate KPIs
+      const match = currentCampaigns.find(c => c.id === id);
+      if (match) {
+        match.impressions_count = updated.impressions_count;
+        match.clicks_count = updated.clicks_count;
+        updateAggregateKPIs(currentCampaigns);
+      }
+    }
   </script>
 </body>
 </html>

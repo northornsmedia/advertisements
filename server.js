@@ -63,6 +63,13 @@ function resolveFile(pathname) {
 const handler = (req, res) => {
   try {
     const parsedUrl = new URL(req.url, `http://${req.headers.host || 'localhost:3344'}`);
+    
+    // API endpoint routing for Supabase campaigns integration
+    if (parsedUrl.pathname === '/api/campaigns' || parsedUrl.pathname.startsWith('/api/campaigns/')) {
+      const campaignsHandler = require('./api/campaigns.js');
+      return campaignsHandler(req, res);
+    }
+
     const filePath = resolveFile(parsedUrl.pathname);
 
     if (!filePath) {

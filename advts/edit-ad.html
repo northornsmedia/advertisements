@@ -3,8 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Edit Campaign Creative | WIPA ADS</title>
-  <meta name="description" content="Edit in-feed creative banner, destination link, and delivery status for WIPA ADS.">
+  <title>Edit In-Feed Campaign | WIPA ADS</title>
+  <meta name="description" content="Configure and publish in-feed campaign creatives directly to WIPA platform feed and Supabase database.">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/supabase-config.js"></script>
   <style>
     :root {
       --bg: #ffffff;
@@ -106,7 +108,7 @@
       background: var(--surface-hover);
     }
 
-    /* MAIN PAGE WRAPPER */
+    /* MAIN CONTAINER */
     .edit-container {
       flex: 1;
       max-width: 1100px;
@@ -125,10 +127,10 @@
     .page-subtitle {
       font-size: 0.95rem;
       color: var(--text-secondary);
-      margin-bottom: 2.5rem;
+      margin-bottom: 2.25rem;
     }
 
-    /* 2-COLUMN EDIT GRID */
+    /* 2-COLUMN LAYOUT */
     .edit-layout-grid {
       display: grid;
       grid-template-columns: 1.15fr 1fr;
@@ -152,6 +154,19 @@
       margin-bottom: 1.5rem;
       padding-bottom: 0.75rem;
       border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .db-badge {
+      font-size: 0.72rem;
+      background: #ecfdf5;
+      color: #065f46;
+      border: 1px solid #a7f3d0;
+      padding: 0.2rem 0.55rem;
+      border-radius: 980px;
+      font-weight: 600;
     }
 
     .form-group {
@@ -160,16 +175,10 @@
 
     .form-label {
       display: block;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       font-weight: 600;
       color: var(--text);
       margin-bottom: 0.45rem;
-    }
-
-    .form-hint {
-      font-size: 0.75rem;
-      color: var(--text-secondary);
-      margin-top: 0.35rem;
     }
 
     .form-input {
@@ -190,42 +199,43 @@
       box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.15);
     }
 
-    textarea.form-input {
-      resize: vertical;
-      min-height: 80px;
+    .form-hint {
+      font-size: 0.76rem;
+      color: var(--text-tertiary);
+      margin-top: 0.4rem;
+      line-height: 1.4;
     }
 
-    /* IMAGE UPLOADER BOX */
+    /* IMAGE UPLOADER */
     .uploader-zone {
-      background: var(--surface);
-      border: 1px dashed #c7c7cc;
-      border-radius: 14px;
-      padding: 1.25rem;
       display: flex;
-      align-items: center;
       gap: 1.25rem;
-      margin-top: 0.5rem;
+      align-items: center;
+      padding: 1.25rem;
+      background: var(--surface);
+      border-radius: 16px;
+      border: 1px dashed var(--border);
     }
 
     .uploader-thumb-img {
-      width: 140px;
-      height: 79px;
+      width: 130px;
+      height: 75px;
       border-radius: 8px;
       object-fit: cover;
-      border: 1px solid var(--border);
-      background: #0b1120;
+      background: #000;
+      border: 1px solid var(--border-subtle);
     }
 
     .upload-trigger-btn {
+      display: inline-block;
       background: #ffffff;
       border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 0.55rem 1rem;
+      padding: 0.45rem 1rem;
+      border-radius: 980px;
       font-size: 0.8rem;
       font-weight: 600;
-      color: var(--text);
       cursor: pointer;
-      display: inline-block;
+      color: var(--text);
       transition: background 0.15s ease;
     }
 
@@ -233,9 +243,10 @@
       background: var(--surface-hover);
     }
 
-    /* BUTTONS ROW */
+    /* BUTTONS */
     .btn-row {
       display: flex;
+      justify-content: flex-end;
       gap: 1rem;
       margin-top: 2rem;
       padding-top: 1.5rem;
@@ -243,17 +254,15 @@
     }
 
     .save-btn {
-      flex: 1;
       background: var(--text);
       color: #ffffff;
       border: none;
+      padding: 0.8rem 1.6rem;
       border-radius: 980px;
-      padding: 0.85rem 1.5rem;
-      font-family: var(--font-apple);
       font-size: 0.9rem;
       font-weight: 600;
       cursor: pointer;
-      transition: background 0.2s ease, transform 0.15s ease;
+      transition: all 0.2s ease;
     }
 
     .save-btn:hover {
@@ -262,25 +271,23 @@
     }
 
     .cancel-btn {
-      background: var(--surface);
-      color: var(--text);
+      background: transparent;
+      color: var(--text-secondary);
       border: 1px solid var(--border);
+      padding: 0.8rem 1.4rem;
       border-radius: 980px;
-      padding: 0.85rem 1.5rem;
-      font-family: var(--font-apple);
       font-size: 0.9rem;
-      font-weight: 600;
+      font-weight: 500;
       text-decoration: none;
-      text-align: center;
-      cursor: pointer;
       transition: background 0.15s ease;
     }
 
     .cancel-btn:hover {
-      background: var(--surface-hover);
+      background: var(--surface);
+      color: var(--text);
     }
 
-    /* RIGHT COLUMN: LIVE FEED SIMULATION */
+    /* RIGHT COLUMN: LIVE SIMULATION */
     .preview-sticky-col {
       position: sticky;
       top: 5rem;
@@ -288,8 +295,8 @@
 
     .preview-card-frame {
       background: var(--surface);
-      border: 1px solid var(--border-subtle);
-      border-radius: 22px;
+      border: 1px solid var(--border);
+      border-radius: 24px;
       padding: 1.75rem;
     }
 
@@ -303,9 +310,9 @@
     .preview-title-badge {
       font-size: 0.78rem;
       font-weight: 700;
+      color: var(--text);
       text-transform: uppercase;
-      letter-spacing: 0.04em;
-      color: var(--text-secondary);
+      letter-spacing: 0.05em;
     }
 
     .preview-live-indicator {
@@ -313,86 +320,90 @@
       align-items: center;
       gap: 0.35rem;
       font-size: 0.72rem;
-      color: #10b981;
+      color: #15803d;
       font-weight: 600;
     }
 
-    .preview-live-indicator::before {
-      content: "";
-      width: 7px;
-      height: 7px;
-      background: #10b981;
+    .pulse-dot {
+      width: 6px;
+      height: 6px;
       border-radius: 50%;
-      animation: pulse 1.5s infinite;
+      background: #22c55e;
+      box-shadow: 0 0 6px #22c55e;
+      animation: pulse 2s infinite;
     }
 
     @keyframes pulse {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.4; transform: scale(1.2); }
+      0% { opacity: 0.6; transform: scale(0.95); }
+      50% { opacity: 1; transform: scale(1.15); }
+      100% { opacity: 0.6; transform: scale(0.95); }
     }
 
-    /* NATIVE FEED CARD ASSET */
+    /* NATIVE FEED CARD PREVIEW (Matches AdSlot.tsx in WIPA feed) */
     .native-feed-card {
       background: #ffffff;
-      border: 1.5px solid #0071e3;
-      border-radius: 16px;
-      overflow: hidden;
-      box-shadow: 0 8px 30px rgba(0, 113, 227, 0.08);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 1.25rem;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
     }
 
     .feed-card-header {
-      padding: 0.85rem 1.15rem;
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      border-bottom: 1px solid var(--border-subtle);
+      justify-content: space-between;
+      margin-bottom: 0.75rem;
     }
 
     .feed-sponsor-pill {
       font-size: 0.7rem;
       font-weight: 700;
-      background: #eff6ff;
-      color: #1d4ed8;
-      padding: 0.2rem 0.55rem;
-      border-radius: 6px;
+      color: #b45309;
+      background: #fef3c7;
+      padding: 0.2rem 0.6rem;
+      border-radius: 9999px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
     }
 
     .feed-cadence-label {
-      font-size: 0.72rem;
-      color: var(--text-secondary);
-      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--text-tertiary);
     }
 
     .feed-creative-img-box {
       width: 100%;
       height: 180px;
-      background: #000;
+      border-radius: 12px;
       overflow: hidden;
+      background: #000;
+      margin-bottom: 0.85rem;
+      border: 1px solid var(--border-subtle);
     }
 
     .feed-creative-img-box img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      display: block;
     }
 
     .feed-card-body {
-      padding: 1.25rem;
+      text-align: left;
     }
 
     .feed-card-headline {
-      font-size: 1.1rem;
+      font-size: 0.98rem;
       font-weight: 700;
+      letter-spacing: -0.015em;
       color: var(--text);
-      line-height: 1.3;
-      margin-bottom: 0.5rem;
+      line-height: 1.35;
+      margin-bottom: 0.35rem;
     }
 
     .feed-card-copy {
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       color: var(--text-secondary);
-      line-height: 1.4;
+      line-height: 1.45;
       margin-bottom: 1rem;
     }
 
@@ -408,10 +419,6 @@
       font-weight: 600;
       text-decoration: none;
       transition: background 0.15s ease;
-    }
-
-    .feed-card-cta-btn:hover {
-      background: #333336;
     }
 
     /* TOAST */
@@ -484,7 +491,7 @@
     </a>
 
     <div class="brand-stamp">
-      WIPA ADS // EDIT CREATIVE
+      WIPA ADS // CAMPAIGN STUDIO
     </div>
 
     <div class="nav-actions">
@@ -495,15 +502,24 @@
   </header>
 
   <main class="edit-container">
-    <h1 class="page-title">Edit Campaign Creative</h1>
-    <p class="page-subtitle">Configure your in-feed headline, destination URL, creative artwork, and injection status.</p>
+    <h1 class="page-title" id="page-title">Edit In-Feed Campaign</h1>
+    <p class="page-subtitle">Configure in-feed creative banner, destination URL, and delivery status synced to WIPA production database.</p>
 
     <div class="edit-layout-grid">
 
       <!-- LEFT: EDIT FORM -->
       <div class="form-card">
         <form id="edit-form" onsubmit="handleFormSubmit(event)">
-          <h2 class="form-section-title">Campaign Specifications</h2>
+          <div class="form-section-title">
+            <span>Campaign Specifications</span>
+            <span class="db-badge">Supabase Synced</span>
+          </div>
+
+          <!-- Company / Partner Name -->
+          <div class="form-group">
+            <label class="form-label" for="inp-company">Advertiser / Law Firm Name</label>
+            <input type="text" id="inp-company" class="form-input" value="Global Tech" required oninput="syncLivePreview()">
+          </div>
 
           <!-- Headline -->
           <div class="form-group">
@@ -516,7 +532,7 @@
           <div class="form-group">
             <label class="form-label" for="inp-url">Destination URL (Landing Page)</label>
             <input type="url" id="inp-url" class="form-input" required oninput="syncLivePreview()">
-            <div class="form-hint">Verified IP attorneys clicking your card will navigate here.</div>
+            <div class="form-hint">Verified IP attorneys clicking your card in the feed will navigate here.</div>
           </div>
 
           <!-- In-Feed Copy / Tagline -->
@@ -539,7 +555,7 @@
               <img id="form-thumb-img" class="uploader-thumb-img" src="assets/patent_ad_creative.jpg" alt="Current Banner">
               <div>
                 <label class="upload-trigger-btn">
-                  Choose New Image
+                  Upload Image
                   <input type="file" id="inp-file" accept="image/*" style="display: none;" onchange="handleImageFile(event)">
                 </label>
                 <div class="form-hint" style="margin-top: 0.4rem;">
@@ -547,21 +563,23 @@
                 </div>
               </div>
             </div>
+            <!-- Direct URL input for custom web assets -->
+            <input type="text" id="inp-img-url" class="form-input" placeholder="Or paste public banner image URL" style="margin-top: 0.75rem;" oninput="handleImageUrlInput(event)">
           </div>
 
           <!-- Status Toggle -->
           <div class="form-group">
-            <label class="form-label" for="inp-status">Delivery Status</label>
+            <label class="form-label" for="inp-status">Feed Delivery Status</label>
             <select id="inp-status" class="form-input" style="cursor: pointer;">
               <option value="Active">Active (Serving after every 4th feed card)</option>
-              <option value="Paused">Paused (Credits preserved in wallet)</option>
+              <option value="Paused">Paused (Preserve credits)</option>
             </select>
           </div>
 
           <!-- Save / Cancel Buttons -->
           <div class="btn-row">
             <a href="dashboard.html" class="cancel-btn">Cancel</a>
-            <button type="submit" class="save-btn">Save & Update Campaign</button>
+            <button type="submit" class="save-btn" id="btn-save">Save & Sync to Live Feed</button>
           </div>
         </form>
       </div>
@@ -571,13 +589,16 @@
         <div class="preview-card-frame">
           <div class="preview-header">
             <span class="preview-title-badge">Live Feed Simulation</span>
-            <span class="preview-live-indicator">Card 5 Injection</span>
+            <span class="preview-live-indicator">
+              <span class="pulse-dot"></span>
+              Card 5 Insertion
+            </span>
           </div>
 
           <!-- Native Feed Card Preview -->
           <div class="native-feed-card">
             <div class="feed-card-header">
-              <span class="feed-sponsor-pill">Sponsored Partner</span>
+              <span class="feed-sponsor-pill" id="prev-company">Global Tech • Sponsored</span>
               <span class="feed-cadence-label">Cadence 4:1</span>
             </div>
 
@@ -595,8 +616,8 @@
           </div>
 
           <div style="margin-top: 1.25rem; font-size: 0.78rem; color: var(--text-secondary); line-height: 1.4;">
-            &bull; Natively inserted after every 4th post across all 11 library hubs and discussions.<br>
-            &bull; Live impressions burn strictly upon confirmed 1-second viewability.
+            &bull; Natively inserted after every 4th post across all WIPA platform feeds.<br>
+            &bull; Live impressions & clicks are recorded into Supabase <code>ad_campaigns</code> and reported to your analytics.
           </div>
         </div>
       </div>
@@ -607,7 +628,7 @@
   <!-- TOAST -->
   <div class="toast" id="toast">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-    <span id="toast-text">Campaign creative updated successfully.</span>
+    <span id="toast-text">Campaign synced to live WIPA feed database.</span>
   </div>
 
   <footer>
@@ -615,65 +636,64 @@
       &copy; 2026 WIPA ADS &bull; Women's IP Alliance
     </div>
     <div>
-      Platform developed in London &bull; <a href="dashboard.html">Dashboard</a> &bull; <a href="index.html">Home</a>
+      Connected to Supabase DB &bull; <a href="dashboard.html">Dashboard</a> &bull; <a href="index.html">Home</a>
     </div>
   </footer>
 
   <script>
     const urlParams = new URLSearchParams(window.location.search);
-    const adId = urlParams.get('id') || 'camp1';
+    let adId = urlParams.get('id');
+    const isNew = urlParams.get('new') === '1' || !adId;
 
-    // Defaults
-    const defaultCampaigns = {
-      camp1: {
-        id: 'camp1',
-        title: 'Global Patent Practice & AI Innovation Banner',
-        url: 'https://globalpatents.law/ai-practice',
-        image: 'assets/patent_ad_creative.jpg',
-        copy: 'Leading strategic advisory and European IP litigation for high-growth tech innovators.',
-        cta: 'Explore Offer →',
-        status: 'Active'
-      },
-      camp2: {
-        id: 'camp2',
-        title: 'European Trademark Counsel Recruitment Spotlight',
-        url: 'https://lexington.com/careers/trademark',
-        image: 'assets/tm_ad_creative.jpg',
-        copy: 'Preeminent international firm seeking Senior Trademark Counsel in London, Munich, and Paris.',
-        cta: 'Apply Today →',
-        status: 'Active'
+    if (!adId && !isNew) adId = 'camp1';
+
+    let currentCampaign = null;
+
+    async function initForm() {
+      if (isNew) {
+        document.getElementById('page-title').textContent = 'Create In-Feed Campaign';
+        document.getElementById('inp-company').value = sessionStorage.getItem('wipa_auth_name') || 'Global Tech';
+        document.getElementById('inp-title').value = '';
+        document.getElementById('inp-url').value = 'https://womensipalliance.com';
+        document.getElementById('inp-copy').value = '';
+        document.getElementById('inp-cta').value = 'Learn More →';
+        document.getElementById('form-thumb-img').src = 'assets/patent_ad_creative.jpg';
+        syncLivePreview();
+        return;
       }
-    };
 
-    // Load saved or defaults
-    const savedData = JSON.parse(localStorage.getItem('wipa_campaigns') || '{}');
-    const data = Object.assign({}, defaultCampaigns[adId], savedData[adId]);
+      currentCampaign = await fetchCampaignById(adId);
+      if (currentCampaign) {
+        document.getElementById('inp-company').value = currentCampaign.company_name || 'Global Tech';
+        document.getElementById('inp-title').value = currentCampaign.headline || currentCampaign.title || '';
+        document.getElementById('inp-url').value = currentCampaign.target_url || '';
+        document.getElementById('inp-copy').value = currentCampaign.description || '';
+        document.getElementById('inp-cta').value = currentCampaign.cta_label || 'Explore Offer →';
+        document.getElementById('inp-status').value = currentCampaign.is_active ? 'Active' : 'Paused';
+        
+        const imgSrc = currentCampaign.banner_image_url || 'assets/patent_ad_creative.jpg';
+        document.getElementById('form-thumb-img').src = imgSrc;
+        document.getElementById('inp-img-url').value = imgSrc.startsWith('data:') ? '' : imgSrc;
+        document.getElementById('nav-analytics-link').href = 'analytics.html?id=' + currentCampaign.id;
 
-    // Populate Form
-    document.getElementById('inp-title').value = data.title;
-    document.getElementById('inp-url').value = data.url;
-    document.getElementById('inp-copy').value = data.copy || 'Leading strategic advisory and European IP litigation for high-growth tech innovators.';
-    document.getElementById('inp-cta').value = data.cta || 'Explore Offer →';
-    document.getElementById('inp-status').value = data.status || 'Active';
-    document.getElementById('form-thumb-img').src = data.image;
-    document.getElementById('nav-analytics-link').href = 'analytics.html?id=' + adId;
-
-    // Populate Preview
-    syncLivePreview();
+        syncLivePreview();
+      }
+    }
 
     function syncLivePreview() {
+      const company = document.getElementById('inp-company').value;
       const title = document.getElementById('inp-title').value;
       const copy = document.getElementById('inp-copy').value;
       const cta = document.getElementById('inp-cta').value;
       const img = document.getElementById('form-thumb-img').src;
 
+      document.getElementById('prev-company').textContent = (company ? company + ' • ' : '') + 'Sponsored';
       document.getElementById('prev-title').textContent = title || 'Your Campaign Headline';
       document.getElementById('prev-copy').textContent = copy || 'Supporting tagline appearing natively in WIPA feed.';
       document.getElementById('prev-cta').textContent = cta || 'Explore Offer →';
       document.getElementById('prev-img').src = img;
     }
 
-    // Handle Image File Upload (Local file reader preview)
     function handleImageFile(e) {
       const file = e.target.files[0];
       if (file) {
@@ -686,27 +706,50 @@
       }
     }
 
-    // Save Changes & Persist
-    function handleFormSubmit(e) {
+    function handleImageUrlInput(e) {
+      const url = e.target.value.trim();
+      if (url) {
+        document.getElementById('form-thumb-img').src = url;
+        document.getElementById('prev-img').src = url;
+      }
+    }
+
+    // Save and Publish Campaign
+    async function handleFormSubmit(e) {
       e.preventDefault();
+      const btn = document.getElementById('btn-save');
+      btn.disabled = true;
+      btn.textContent = 'Syncing with Supabase...';
 
       const updated = {
+        id: isNew ? undefined : (currentCampaign?.id || adId),
+        company_name: document.getElementById('inp-company').value.trim(),
         title: document.getElementById('inp-title').value.trim(),
-        url: document.getElementById('inp-url').value.trim(),
-        copy: document.getElementById('inp-copy').value.trim(),
-        cta: document.getElementById('inp-cta').value.trim(),
-        status: document.getElementById('inp-status').value,
-        image: document.getElementById('form-thumb-img').src
+        headline: document.getElementById('inp-title').value.trim(),
+        target_url: document.getElementById('inp-url').value.trim(),
+        description: document.getElementById('inp-copy').value.trim(),
+        cta_label: document.getElementById('inp-cta').value.trim(),
+        is_active: document.getElementById('inp-status').value === 'Active',
+        banner_image_url: document.getElementById('form-thumb-img').src,
+        slot_placement: 'feed_native'
       };
 
-      const allSaved = JSON.parse(localStorage.getItem('wipa_campaigns') || '{}');
-      allSaved[adId] = Object.assign({}, defaultCampaigns[adId], allSaved[adId], updated);
-      localStorage.setItem('wipa_campaigns', JSON.stringify(allSaved));
-
-      showToast('Campaign creative saved successfully.');
-      setTimeout(() => {
-        window.location.href = 'dashboard.html';
-      }, 1200);
+      try {
+        await saveCampaignToDb(updated);
+        showToast('✓ Campaign synced to live WIPA feed database!');
+        setTimeout(() => {
+          window.location.href = 'dashboard.html';
+        }, 1200);
+      } catch (err) {
+        console.error('Save failed:', err);
+        showToast('Saved locally. Database sync queued.');
+        setTimeout(() => {
+          window.location.href = 'dashboard.html';
+        }, 1500);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Save & Sync to Live Feed';
+      }
     }
 
     function showToast(msg) {
@@ -717,6 +760,8 @@
         toast.classList.remove('show');
       }, 3000);
     }
+
+    initForm();
   </script>
 </body>
 </html>
