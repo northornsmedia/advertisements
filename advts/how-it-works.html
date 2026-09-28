@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>How Advertising Works | WIPA ADS</title>
+  <meta name="description" content="Discover how advertising on WIPA ADS works. Injected after every 4 cards across a verified global community of IP professionals. 1 Credit = £2, minimum 10 credits.">
+  <style>
+    :root {
+      --bg: #ffffff;
+      --surface: #f5f5f7;
+      --surface-hover: #ebebee;
+      --card-bg: #ffffff;
+      --border: #e5e5ea;
+      --border-subtle: rgba(0, 0, 0, 0.06);
+      --text: #1d1d1f;
+      --text-secondary: #86868b;
+      --text-tertiary: #6e6e73;
+      --accent: #0071e3;
+      --accent-hover: #0077ed;
+      --font-apple: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      --font-mono: "SF Mono", Menlo, Monaco, Consolas, "Courier New", monospace;
+    }
+
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-apple);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      line-height: 1.47059;
+      letter-spacing: -0.022em;
+      overflow-x: hidden;
+    }
+
+    /* -----------------------------------------------
+       APPLE-STYLE MINIMAL TOP BAR
+    ----------------------------------------------- */
+    .top-nav {
+      position: sticky;
+      top: 0;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: saturate(180%) blur(20px);
+      -webkit-backdrop-filter: saturate(180%) blur(20px);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 1rem 2.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--accent);
+      text-decoration: none;
+      transition: opacity 0.2s ease;
+    }
+
+    .back-btn:hover {
+      opacity: 0.8;
+      text-decoration: underline;
+    }
+
+    .brand-stamp {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: -0.01em;
+    }
+
+    .nav-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: var(--text);
+      color: #ffffff;
+      padding: 0.5rem 1.15rem;
+      border-radius: 980px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .nav-cta:hover {
+      background: #333336;
+    }
+
+    /* -----------------------------------------------
+       MAIN CONTAINER
+    ----------------------------------------------- */
+    .container {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 4.5rem 2rem 6rem;
+    }
+
+    /* HERO HEADER */
+    .hero-header {
+      margin-bottom: 4rem;
+      text-align: left;
+    }
+
+    .eyebrow {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 0.75rem;
+    }
+
+    .page-title {
+      font-size: clamp(2.6rem, 5.5vw, 4rem);
+      font-weight: 700;
+      line-height: 1.08;
+      letter-spacing: -0.035em;
+      color: var(--text);
+      margin-bottom: 1.25rem;
+    }
+
+    .page-subtitle {
+      font-size: 1.3rem;
+      color: var(--text-tertiary);
+      line-height: 1.45;
+      font-weight: 400;
+      max-width: 720px;
+      letter-spacing: -0.015em;
+    }
+
+    /* -----------------------------------------------
+       CADENCE SECTION (CLEAN APPLE SURFACE, NO BLACK/GRADIENT)
+    ----------------------------------------------- */
+    .cadence-panel {
+      background: var(--surface);
+      border-radius: 22px;
+      padding: 3rem;
+      margin-bottom: 4.5rem;
+      display: grid;
+      grid-template-columns: 1fr 1.05fr;
+      gap: 3.5rem;
+      align-items: center;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .cadence-eyebrow {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 0.75rem;
+    }
+
+    .cadence-headline {
+      font-size: 2.1rem;
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -0.03em;
+      color: var(--text);
+      margin-bottom: 1rem;
+    }
+
+    .cadence-desc {
+      font-size: 1.05rem;
+      color: var(--text-tertiary);
+      line-height: 1.5;
+      margin-bottom: 2rem;
+      font-weight: 400;
+    }
+
+    .stat-row {
+      display: flex;
+      gap: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .stat-value {
+      font-size: 1.75rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      color: var(--text);
+      line-height: 1.1;
+    }
+
+    .stat-label {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      font-weight: 500;
+      margin-top: 0.2rem;
+    }
+
+    /* FEED SIMULATION MOCKUP (CLEAN WHITE CARDS) */
+    .feed-preview {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+    }
+
+    .feed-card {
+      background: #fafafc;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.75rem 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.82rem;
+      color: var(--text-tertiary);
+    }
+
+    .feed-card-badge {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      background: #ffffff;
+      border: 1px solid var(--border);
+      padding: 0.15rem 0.45rem;
+      border-radius: 5px;
+      white-space: nowrap;
+    }
+
+    .feed-card-text {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: var(--text);
+      font-weight: 400;
+    }
+
+    /* The 5th Sponsored Card */
+    .feed-ad-card {
+      background: #ffffff;
+      border: 1.5px solid var(--text);
+      border-radius: 12px;
+      padding: 1rem 1.15rem;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
+      position: relative;
+    }
+
+    .ad-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.4rem;
+    }
+
+    .ad-tag {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .ad-cadence-pill {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--accent);
+      background: #eff6ff;
+      padding: 0.15rem 0.5rem;
+      border-radius: 9999px;
+    }
+
+    .ad-headline {
+      font-size: 0.98rem;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.3;
+      margin-bottom: 0.7rem;
+      letter-spacing: -0.015em;
+    }
+
+    .ad-btn {
+      display: inline-block;
+      background: var(--text);
+      color: #ffffff;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.4rem 0.9rem;
+      border-radius: 980px;
+      text-decoration: none;
+    }
+
+    /* -----------------------------------------------
+       STEP-BY-STEP PROCESS
+    ----------------------------------------------- */
+    .section-wrap {
+      margin-bottom: 4.5rem;
+    }
+
+    .section-headline {
+      font-size: 1.85rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+    }
+
+    .section-sub {
+      color: var(--text-secondary);
+      font-size: 1.05rem;
+      margin-bottom: 2rem;
+      font-weight: 400;
+    }
+
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.25rem;
+    }
+
+    .step-box {
+      background: var(--surface);
+      border-radius: 18px;
+      padding: 1.75rem 1.5rem;
+      border: 1px solid var(--border-subtle);
+      transition: background 0.2s ease;
+    }
+
+    .step-box:hover {
+      background: var(--surface-hover);
+    }
+
+    .step-digit {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 1rem;
+      display: block;
+    }
+
+    .step-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.015em;
+      line-height: 1.25;
+    }
+
+    .step-desc {
+      font-size: 0.9rem;
+      color: var(--text-tertiary);
+      line-height: 1.45;
+    }
+
+    /* -----------------------------------------------
+       PRICING PACKAGES
+    ----------------------------------------------- */
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      margin-bottom: 4.5rem;
+    }
+
+    .pricing-card {
+      background: var(--surface);
+      border-radius: 20px;
+      padding: 2.5rem 2rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border: 1px solid var(--border-subtle);
+      position: relative;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .pricing-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.04);
+    }
+
+    .pricing-card.featured {
+      background: #ffffff;
+      border: 1.5px solid var(--text);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.06);
+    }
+
+    .badge-featured {
+      position: absolute;
+      top: -11px;
+      left: 2rem;
+      background: var(--text);
+      color: #ffffff;
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 0.25rem 0.75rem;
+      border-radius: 980px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .pkg-label {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 0.75rem;
+    }
+
+    .pkg-cost {
+      font-size: 2.8rem;
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      line-height: 1;
+      color: var(--text);
+      margin-bottom: 0.4rem;
+    }
+
+    .pkg-rate {
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+      margin-bottom: 1.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .pkg-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+      margin-bottom: 2rem;
+      font-size: 0.9rem;
+      color: var(--text-tertiary);
+    }
+
+    .pkg-list li {
+      display: flex;
+      align-items: baseline;
+      gap: 0.5rem;
+    }
+
+    .pkg-list li::before {
+      content: "•";
+      color: var(--text);
+      font-weight: bold;
+    }
+
+    .action-btn {
+      display: block;
+      width: 100%;
+      text-align: center;
+      padding: 0.85rem;
+      border-radius: 980px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .action-btn.primary {
+      background: var(--text);
+      color: #ffffff;
+    }
+
+    .action-btn.primary:hover {
+      background: #333336;
+    }
+
+    .action-btn.secondary {
+      background: #ffffff;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .action-btn.secondary:hover {
+      background: var(--surface-hover);
+    }
+
+    /* -----------------------------------------------
+       INTERACTIVE CAMPAIGN CALCULATOR
+    ----------------------------------------------- */
+    .calculator-panel {
+      background: var(--surface);
+      border-radius: 22px;
+      padding: 3rem;
+      margin-bottom: 4.5rem;
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      gap: 3.5rem;
+      align-items: center;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .calc-slider-group {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .slider-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .calc-slider {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 6px;
+      border-radius: 9999px;
+      background: #d1d1d6;
+      outline: none;
+    }
+
+    .calc-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 0.5px solid rgba(0, 0, 0, 0.04);
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15), 0 1px 1px rgba(0, 0, 0, 0.16);
+      cursor: pointer;
+      transition: transform 0.15s ease;
+    }
+
+    .calc-slider::-webkit-slider-thumb:hover {
+      transform: scale(1.1);
+    }
+
+    .calc-summary-card {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 2.25rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 0.85rem;
+      border-bottom: 1px solid var(--border-subtle);
+      gap: 1rem;
+    }
+
+    .summary-label {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+
+    .summary-val {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.02em;
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    /* -----------------------------------------------
+       FOOTER
+    ----------------------------------------------- */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 3rem 2.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+    }
+
+    footer a {
+      color: var(--text);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* -----------------------------------------------
+       RESPONSIVE
+    ----------------------------------------------- */
+    @media (max-width: 991px) {
+      .cadence-panel {
+        grid-template-columns: 1fr;
+        padding: 2rem;
+        gap: 2rem;
+      }
+      .calculator-panel {
+        grid-template-columns: 1fr;
+        padding: 2rem;
+        gap: 2rem;
+      }
+      .pricing-grid {
+        grid-template-columns: 1fr;
+      }
+      .steps-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .top-nav {
+        padding: 1rem 1.5rem;
+      }
+      .container {
+        padding: 3rem 1.5rem 4rem;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .steps-grid {
+        grid-template-columns: 1fr;
+      }
+      .stat-row {
+        flex-direction: column;
+        gap: 1rem;
+      }
+      footer {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Minimal Top Navigation -->
+  <header class="top-nav">
+    <a href="index.html" class="back-btn">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+      </svg>
+      <span>Back to WIPA ADS</span>
+    </a>
+
+    <div class="brand-stamp">
+      WIPA ADS
+    </div>
+
+    <div style="display: flex; align-items: center; gap: 1.25rem;">
+      <a href="login.html" style="font-size: 0.85rem; font-weight: 500; color: var(--text-secondary); text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text-secondary)'">Sign In</a>
+      <a href="#calculator" class="nav-cta">
+        <span>Get Credits</span>
+      </a>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- Hero Header -->
+    <section class="hero-header">
+      <h1 class="page-title">How Advertising Works on WIPA</h1>
+      <p class="page-subtitle">
+        Reach practicing patent attorneys, IP directors, trademark counsels, and legal tech innovators. 
+        Your ad is natively placed after every 4 posts across WIPA’s verified community feed.
+      </p>
+    </section>
+
+    <!-- Cadence Section (Clean Apple Surface) -->
+    <section class="cadence-panel">
+      <div>
+        <div class="cadence-eyebrow">Guaranteed Frequency</div>
+        <h2 class="cadence-headline">Injected after every 4 cards in the feed.</h2>
+        <p class="cadence-desc">
+          No buried banners or hidden sidebars. Every sponsor ad is inserted directly into the live community stream at an exact 4:1 cadence — seamlessly blending with native discussions, case updates, and resource cards.
+        </p>
+
+        <div class="stat-row">
+          <div class="stat-item">
+            <span class="stat-value">4 : 1</span>
+            <span class="stat-label">Feed Cadence</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value">100%</span>
+            <span class="stat-label">Verified IP Audience</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value">4.2%</span>
+            <span class="stat-label">Average CTR</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feed Simulation (Clean White Cards) -->
+      <div class="feed-preview">
+        <div class="feed-card">
+          <span class="feed-card-badge">Post 01</span>
+          <span class="feed-card-text">Patent Strategy: EPO updates new AI examination guidelines</span>
+        </div>
+        <div class="feed-card">
+          <span class="feed-card-badge">Post 02</span>
+          <span class="feed-card-text">Trademark Counsel: Best practices under the Madrid Protocol</span>
+        </div>
+        <div class="feed-card">
+          <span class="feed-card-badge">Post 03</span>
+          <span class="feed-card-text">WIPA Event: Women in IP Global Roundtable London</span>
+        </div>
+        <div class="feed-card">
+          <span class="feed-card-badge">Post 04</span>
+          <span class="feed-card-text">Resource Library: Q3 Tech Transfer & Licensing Checklist</span>
+        </div>
+
+        <!-- The 5th Sponsored Card -->
+        <div class="feed-ad-card">
+          <div class="ad-header">
+            <span class="ad-tag">Sponsored Partner</span>
+            <span class="ad-cadence-pill">Card 5 (Every 4th)</span>
+          </div>
+          <div class="ad-headline">Your Law Firm or Legal Tech Solution Here</div>
+          <span class="ad-btn">Explore Offer &rarr;</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4-Step Process -->
+    <section class="section-wrap">
+      <h2 class="section-headline">Simple 4-Step Process</h2>
+      <p class="section-sub">From purchasing credits to verified impressions in minutes.</p>
+
+      <div class="steps-grid">
+        <div class="step-box">
+          <span class="step-digit">01</span>
+          <h3 class="step-title">Buy Credits</h3>
+          <p class="step-desc">
+            Simple and transparent: <strong>1 Credit = £2</strong>. Minimum purchase is <strong>10 Credits (£20)</strong>. No monthly subscription lock-in.
+          </p>
+        </div>
+
+        <div class="step-box">
+          <span class="step-digit">02</span>
+          <h3 class="step-title">Upload Ad</h3>
+          <p class="step-desc">
+            Submit your creative banner, headline, description, and link. Instantly preview your card across mobile and desktop.
+          </p>
+        </div>
+
+        <div class="step-box">
+          <span class="step-digit">03</span>
+          <h3 class="step-title">Auto Injection</h3>
+          <p class="step-desc">
+            Your ad is automatically served after every 4 posts across the WIPA feed, reaching active IP attorneys and decision makers.
+          </p>
+        </div>
+
+        <div class="step-box">
+          <span class="step-digit">04</span>
+          <h3 class="step-title">Live Analytics</h3>
+          <p class="step-desc">
+            Track verified impressions, clicks, and CTR in real time. Credits burn strictly on confirmed in-view delivery.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Transparent Packages -->
+    <section class="section-wrap">
+      <h2 class="section-headline">Credit Packages</h2>
+      <p class="section-sub">Fixed rate of £2 per credit. Choose the scale that fits your campaign.</p>
+
+      <div class="pricing-grid">
+        <!-- Tier 1 -->
+        <div class="pricing-card">
+          <div>
+            <div class="pkg-label">Starter</div>
+            <div class="pkg-cost">£20</div>
+            <div class="pkg-rate">10 Credits &bull; Minimum Purchase</div>
+            <ul class="pkg-list">
+              <li>Approx. 1,000 - 1,400 Verified In-Feed Impressions</li>
+              <li>Injected after every 4 feed cards</li>
+              <li>Live click & impression tracking</li>
+            </ul>
+          </div>
+          <a href="#calculator" class="action-btn secondary">Select 10 Credits</a>
+        </div>
+
+        <!-- Tier 2 (Featured) -->
+        <div class="pricing-card featured">
+          <span class="badge-featured">Most Popular</span>
+          <div>
+            <div class="pkg-label">Growth</div>
+            <div class="pkg-cost">£50</div>
+            <div class="pkg-rate">25 Credits &bull; £2 / credit</div>
+            <ul class="pkg-list">
+              <li>Approx. 2,500 - 3,500 High-Intent IP Impressions</li>
+              <li>In-Feed Native + Sidebar Spotlight</li>
+              <li>Weekly performance analytics summary</li>
+            </ul>
+          </div>
+          <a href="#calculator" class="action-btn primary">Select 25 Credits</a>
+        </div>
+
+        <!-- Tier 3 -->
+        <div class="pricing-card">
+          <div>
+            <div class="pkg-label">Firm Dominance</div>
+            <div class="pkg-cost">£100</div>
+            <div class="pkg-rate">50 Credits &bull; Maximum Reach</div>
+            <ul class="pkg-list">
+              <li>Approx. 5,000 - 7,000 Targeted Impressions</li>
+              <li>Priority placement across all 11 library hubs</li>
+              <li>Dedicated account support</li>
+            </ul>
+          </div>
+          <a href="#calculator" class="action-btn secondary">Select 50 Credits</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Interactive Calculator -->
+    <section id="calculator" class="calculator-panel">
+      <div class="calc-slider-group">
+        <div class="eyebrow" style="margin-bottom: 0.25rem;">Live Estimator</div>
+        <h3 style="font-size: 1.75rem; font-weight: 700; letter-spacing: -0.03em; color: var(--text);">
+          Custom Credit Calculator
+        </h3>
+        <p style="color: var(--text-secondary); font-size: 0.95rem;">
+          Select your desired credits (Minimum 10 credits at £2 each).
+        </p>
+
+        <div style="margin-top: 1rem;">
+          <div class="slider-header" style="margin-bottom: 0.75rem;">
+            <span>10 Credits</span>
+            <span id="slider-label" style="color: var(--accent);">25 Credits</span>
+            <span>200 Credits</span>
+          </div>
+          <input type="range" min="10" max="200" step="5" value="25" class="calc-slider" id="credit-slider">
+        </div>
+      </div>
+
+      <div class="calc-summary-card">
+        <div class="summary-row">
+          <span class="summary-label">Total Credits</span>
+          <span class="summary-val" id="res-credits">25</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">Total Cost (@ £2/credit)</span>
+          <span class="summary-val" id="res-cost">£50</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">Est. In-Feed Reach</span>
+          <span class="summary-val" id="res-reach">Approx. 2,500 - 3,500</span>
+        </div>
+        <button class="action-btn primary" onclick="alert('Order for ' + document.getElementById('res-credits').innerText + ' credits (£' + document.getElementById('res-cost').innerText.replace('£','') + ') confirmed. Redirecting to checkout.')">
+          Proceed to Checkout &rarr;
+        </button>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <div>
+      &copy; 2026 WIPA ADS &bull; Women's IP Alliance
+    </div>
+    <div>
+      Platform developed in London &bull; <a href="index.html">Home</a>
+    </div>
+  </footer>
+
+  <script>
+    // Real-time Credit Calculator
+    const slider = document.getElementById('credit-slider');
+    const resCredits = document.getElementById('res-credits');
+    const resCost = document.getElementById('res-cost');
+    const resReach = document.getElementById('res-reach');
+    const sliderLabel = document.getElementById('slider-label');
+
+    function updateCalc() {
+      const credits = parseInt(slider.value, 10);
+      const cost = credits * 2;
+      const minReach = (credits * 100).toLocaleString();
+      const maxReach = (credits * 140).toLocaleString();
+
+      resCredits.textContent = credits;
+      resCost.textContent = '£' + cost;
+      resReach.textContent = 'Approx. ' + minReach + ' - ' + maxReach;
+      sliderLabel.textContent = credits + ' Credits';
+    }
+
+    slider.addEventListener('input', updateCalc);
+    updateCalc();
+  </script>
+</body>
+</html>
