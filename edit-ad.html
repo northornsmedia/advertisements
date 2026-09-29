@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Edit In-Feed Campaign | WIPA ADS</title>
-  <meta name="description" content="Configure and publish in-feed campaign creatives directly to WIPA platform feed and Supabase database.">
+  <meta name="description" content="Configure and publish in-feed campaign creatives directly to WIPA platform feed.">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="assets/supabase-config.js"></script>
   <style>
@@ -512,7 +512,7 @@
         <form id="edit-form" onsubmit="handleFormSubmit(event)">
           <div class="form-section-title">
             <span>Campaign Specifications</span>
-            <span class="db-badge">Supabase Synced</span>
+            <span class="db-badge">Live Synced</span>
           </div>
 
           <!-- Company / Partner Name -->
@@ -617,7 +617,7 @@
 
           <div style="margin-top: 1.25rem; font-size: 0.78rem; color: var(--text-secondary); line-height: 1.4;">
             &bull; Natively inserted after every 4th post across all WIPA platform feeds.<br>
-            &bull; Live impressions & clicks are recorded into Supabase <code>ad_campaigns</code> and reported to your analytics.
+            &bull; Live impressions & clicks are recorded via verified feed telemetry and delivered to your analytics.
           </div>
         </div>
       </div>
@@ -636,7 +636,7 @@
       &copy; 2026 WIPA ADS &bull; Women's IP Alliance
     </div>
     <div>
-      Connected to Supabase DB &bull; <a href="dashboard.html">Dashboard</a> &bull; <a href="index.html">Home</a>
+      Platform developed in London &bull; <a href="dashboard.html">Dashboard</a> &bull; <a href="index.html">Home</a>
     </div>
   </footer>
 
@@ -719,7 +719,7 @@
       e.preventDefault();
       const btn = document.getElementById('btn-save');
       btn.disabled = true;
-      btn.textContent = 'Syncing with Supabase...';
+      btn.textContent = 'Syncing Campaign...';
 
       const updated = {
         id: isNew ? undefined : (currentCampaign?.id || adId),

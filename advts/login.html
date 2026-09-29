@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Advertiser Portal Sign In | WIPA ADS</title>
-  <meta name="description" content="Sign in to WIPA ADS with your official Supabase partner account or launch the instant Global Tech demo sandbox.">
+  <title>Advertiser Portal | WIPA ADS</title>
+  <meta name="description" content="Sign in or create an account for WIPA ADS. Manage in-feed campaigns and ad credits.">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="assets/supabase-config.js"></script>
   <style>
@@ -20,10 +20,6 @@
       --text-tertiary: #6e6e73;
       --accent: #0071e3;
       --accent-hover: #0077ed;
-      --success: #15803d;
-      --success-bg: #dcfce7;
-      --warning: #b45309;
-      --warning-bg: #fef3c7;
       --font-apple: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
       --font-mono: "SF Mono", Menlo, Monaco, Consolas, monospace;
     }
@@ -83,37 +79,6 @@
       font-weight: 600;
       color: var(--text);
       letter-spacing: -0.01em;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .db-status-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-      font-size: 0.72rem;
-      padding: 0.2rem 0.6rem;
-      background: #ecfdf5;
-      color: #065f46;
-      border: 1px solid #a7f3d0;
-      border-radius: 980px;
-      font-weight: 600;
-    }
-
-    .pulse-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: #10b981;
-      box-shadow: 0 0 6px #10b981;
-      animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-      0% { opacity: 0.6; transform: scale(0.95); }
-      50% { opacity: 1; transform: scale(1.1); }
-      100% { opacity: 0.6; transform: scale(0.95); }
     }
 
     .nav-link {
@@ -141,12 +106,12 @@
 
     .auth-card {
       width: 100%;
-      max-width: 470px;
+      max-width: 440px;
       background: var(--card-bg);
       border: 1px solid var(--border);
       border-radius: 24px;
       padding: 2.75rem 2.25rem;
-      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.04);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
     }
 
     .auth-header {
@@ -175,84 +140,41 @@
     }
 
     .auth-subtitle {
-      font-size: 0.92rem;
+      font-size: 0.95rem;
       color: var(--text-secondary);
       font-weight: 400;
-      line-height: 1.4;
     }
 
-    /* MODE SELECTOR (DEMO VS LIVE) */
-    .mode-segment {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.35rem;
+    /* SEGMENTED CONTROL / TABS */
+    .tab-segment {
+      display: flex;
       background: var(--surface);
-      border-radius: 14px;
-      padding: 0.3rem;
+      border-radius: 12px;
+      padding: 0.25rem;
       margin-bottom: 1.75rem;
       border: 1px solid var(--border-subtle);
     }
 
-    .mode-btn {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 0.65rem 0.5rem;
+    .tab-btn {
+      flex: 1;
+      text-align: center;
+      padding: 0.6rem;
       border: none;
       background: transparent;
       border-radius: 10px;
       font-family: var(--font-apple);
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text-secondary);
       cursor: pointer;
       transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    .mode-btn-title {
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: var(--text-secondary);
-      display: flex;
-      align-items: center;
-      gap: 0.3rem;
-    }
-
-    .mode-btn-desc {
-      font-size: 0.68rem;
-      color: var(--text-tertiary);
-      margin-top: 0.15rem;
-    }
-
-    .mode-btn.active {
+    .tab-btn.active {
       background: #ffffff;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-    }
-
-    .mode-btn.active .mode-btn-title {
       color: var(--text);
-    }
-
-    /* NOTICE CALLOUT */
-    .mode-notice {
-      border-radius: 12px;
-      padding: 0.75rem 1rem;
-      font-size: 0.8rem;
-      line-height: 1.45;
-      margin-bottom: 1.5rem;
-      display: flex;
-      align-items: flex-start;
-      gap: 0.6rem;
-    }
-
-    .mode-notice.demo {
-      background: #fefce8;
-      border: 1px solid #fef08a;
-      color: #854d0e;
-    }
-
-    .mode-notice.live {
-      background: #f0fdf4;
-      border: 1px solid #bbf7d0;
-      color: #166534;
+      font-weight: 600;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     }
 
     /* FORM STYLES */
@@ -311,66 +233,17 @@
       transform: translateY(-1px);
     }
 
-    .demo-oneclick-btn {
-      width: 100%;
-      background: #f5f5f7;
-      color: #1d1d1f;
-      border: 1px solid var(--border);
-      border-radius: 980px;
-      padding: 0.85rem;
-      font-family: var(--font-apple);
-      font-size: 0.9rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      margin-top: 0.75rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.4rem;
-    }
-
-    .demo-oneclick-btn:hover {
-      background: #ebebee;
-    }
-
     /* ERROR NOTIFICATION */
-    .alert-msg {
+    .error-msg {
       display: none;
-      border-radius: 10px;
-      padding: 0.7rem 0.9rem;
-      font-size: 0.82rem;
-      margin-bottom: 1.25rem;
-      text-align: center;
-    }
-
-    .alert-msg.error {
       background: #fef2f2;
       border: 1px solid #fecaca;
       color: #dc2626;
-    }
-
-    .alert-msg.success {
-      background: #ecfdf5;
-      border: 1px solid #a7f3d0;
-      color: #065f46;
-    }
-
-    .toggle-sublink {
-      margin-top: 1.25rem;
-      text-align: center;
+      border-radius: 10px;
+      padding: 0.65rem 0.9rem;
       font-size: 0.82rem;
-      color: var(--text-secondary);
-    }
-
-    .toggle-sublink a {
-      color: var(--accent);
-      text-decoration: none;
-      font-weight: 500;
-    }
-
-    .toggle-sublink a:hover {
-      text-decoration: underline;
+      margin-bottom: 1.25rem;
+      text-align: center;
     }
 
     /* FOOTER */
@@ -418,11 +291,7 @@
     </a>
 
     <div class="brand-stamp">
-      <span>WIPA ADS // PORTAL</span>
-      <span class="db-status-pill">
-        <span class="pulse-dot"></span>
-        Live DB Active
-      </span>
+      WIPA ADS // PORTAL
     </div>
 
     <a href="how-it-works.html" class="nav-link">
@@ -432,7 +301,7 @@
 
   <div class="auth-wrapper">
 
-    <!-- Auth Card -->
+    <!-- Auth Card (Sign In / Sign Up) -->
     <div class="auth-card" id="auth-card">
       
       <div class="auth-header">
@@ -442,122 +311,64 @@
             <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
           </svg>
         </div>
-        <h1 class="auth-title" id="auth-title">Advertiser Sign In</h1>
-        <p class="auth-subtitle" id="auth-subtitle">Select between Mock Demo Sandbox or Official WIPA Database Account</p>
+        <h1 class="auth-title" id="auth-title">Sign in to WIPA Ads</h1>
+        <p class="auth-subtitle" id="auth-subtitle">Manage in-feed campaigns and ad credits</p>
       </div>
 
-      <!-- Segmented Mode Switcher: Mock Demo vs Original Live -->
-      <div class="mode-segment">
-        <button type="button" class="mode-btn active" id="btn-mode-demo" onclick="switchAuthMode('demo')">
-          <span class="mode-btn-title">🧪 Demo Sandbox</span>
-          <span class="mode-btn-desc">Global Tech Demo Partner</span>
-        </button>
-        <button type="button" class="mode-btn" id="btn-mode-live" onclick="switchAuthMode('live')">
-          <span class="mode-btn-title">🔐 Live Database</span>
-          <span class="mode-btn-desc">Official Supabase Auth</span>
-        </button>
+      <!-- Segmented Tab Switcher -->
+      <div class="tab-segment">
+        <button type="button" class="tab-btn active" id="tab-login" onclick="switchTab('login')">Sign In</button>
+        <button type="button" class="tab-btn" id="tab-signup" onclick="switchTab('signup')">Create Account</button>
       </div>
 
-      <!-- Alert Box -->
-      <div class="alert-msg" id="alert-msg"></div>
+      <!-- Error Message -->
+      <div class="error-msg" id="error-msg"></div>
 
-      <!-- ==============================================
-           1. MOCK / DEMO LOGIN FORM (Global Tech)
-           ============================================== -->
-      <div id="section-demo">
-        <div class="mode-notice demo">
-          <span>⚡</span>
-          <div>
-            <strong>Instant Demo Sandbox:</strong> Pre-loaded with Global Tech campaign data and test feed telemetry. Use credentials <code>1</code> / <code>1</code> or 1-click launch.
-          </div>
+      <!-- SIGN IN FORM -->
+      <form id="login-form" onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label class="form-label" for="login-username">Work Email or Username</label>
+          <input type="text" id="login-username" class="form-input" placeholder="e.g. counsel@lawfirm.com" required>
         </div>
 
-        <form id="demo-form" onsubmit="handleDemoSubmit(event)">
-          <div class="form-group">
-            <label class="form-label" for="demo-username">Demo Username</label>
-            <input type="text" id="demo-username" class="form-input" value="1" placeholder="Username (1)" required>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="demo-password">Demo Password</label>
-            <input type="password" id="demo-password" class="form-input" value="1" placeholder="Password (1)" required>
-          </div>
-
-          <button type="submit" class="form-submit-btn">
-            Sign In as Global Tech (Demo) &rarr;
-          </button>
-
-          <button type="button" class="demo-oneclick-btn" onclick="launchQuickDemo()">
-            ⚡ 1-Click Launch Global Tech Sandbox
-          </button>
-        </form>
-      </div>
-
-      <!-- ==============================================
-           2. ORIGINAL / REAL SUPABASE AUTH FORM
-           ============================================== -->
-      <div id="section-live" style="display: none;">
-        <div class="mode-notice live">
-          <span>🟢</span>
-          <div>
-            <strong>Live WIPA Database:</strong> Connected directly to Supabase production (<code>bepavczocyvaegkfxtvd.supabase.co</code>). Real impressions & clicks will be captured.
-          </div>
+        <div class="form-group">
+          <label class="form-label" for="login-password">Password</label>
+          <input type="password" id="login-password" class="form-input" placeholder="Enter your password" required>
         </div>
 
-        <!-- Live Sign In Form -->
-        <form id="live-login-form" onsubmit="handleLiveLogin(event)">
-          <div class="form-group">
-            <label class="form-label" for="live-email">Work / Partner Email</label>
-            <input type="email" id="live-email" class="form-input" placeholder="counsel@lawfirm.com" required>
-          </div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; font-size: 0.8rem;">
+          <label style="display: flex; align-items: center; gap: 0.4rem; color: var(--text-secondary); cursor: pointer;">
+            <input type="checkbox" checked style="accent-color: var(--accent);"> Remember me
+          </label>
+          <a href="#" style="color: var(--accent); text-decoration: none;" onclick="alert('Please reset password via main platform portal platform.womensipalliance.com'); return false;">Forgot password?</a>
+        </div>
 
-          <div class="form-group">
-            <label class="form-label" for="live-password">Supabase Password</label>
-            <input type="password" id="live-password" class="form-input" placeholder="Your account password" required>
-          </div>
+        <button type="submit" class="form-submit-btn" id="btn-login-submit">
+          Sign In &rarr;
+        </button>
+      </form>
 
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; font-size: 0.8rem;">
-            <label style="display: flex; align-items: center; gap: 0.4rem; color: var(--text-secondary); cursor: pointer;">
-              <input type="checkbox" checked style="accent-color: var(--accent);"> Remember me
-            </label>
-            <a href="#" style="color: var(--accent); text-decoration: none;" onclick="alert('Please reset password via main platform portal platform.womensipalliance.com'); return false;">Forgot password?</a>
-          </div>
+      <!-- SIGN UP FORM (Initially Hidden) -->
+      <form id="signup-form" style="display: none;" onsubmit="handleSignup(event)">
+        <div class="form-group">
+          <label class="form-label" for="signup-name">Full Name / Law Firm</label>
+          <input type="text" id="signup-name" class="form-input" placeholder="e.g. Sterling & Partners IP" required>
+        </div>
 
-          <button type="submit" class="form-submit-btn" id="btn-live-submit">
-            Sign In with Live Database &rarr;
-          </button>
+        <div class="form-group">
+          <label class="form-label" for="signup-email">Work Email</label>
+          <input type="email" id="signup-email" class="form-input" placeholder="counsel@firm.com" required>
+        </div>
 
-          <div class="toggle-sublink">
-            Need a partner account? <a href="#" onclick="toggleLiveSignUp(true); return false;">Register New Advertiser</a>
-          </div>
-        </form>
+        <div class="form-group">
+          <label class="form-label" for="signup-password">Create Password</label>
+          <input type="password" id="signup-password" class="form-input" placeholder="At least 6 characters" required>
+        </div>
 
-        <!-- Live Sign Up Form (Initially Hidden) -->
-        <form id="live-signup-form" style="display: none;" onsubmit="handleLiveSignUp(event)">
-          <div class="form-group">
-            <label class="form-label" for="reg-company">Law Firm / Company Name</label>
-            <input type="text" id="reg-company" class="form-input" placeholder="e.g. Apex IP Law" required>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="reg-email">Work Email</label>
-            <input type="email" id="reg-email" class="form-input" placeholder="partner@apexip.com" required>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="reg-password">Create Password</label>
-            <input type="password" id="reg-password" class="form-input" placeholder="Minimum 6 characters" required>
-          </div>
-
-          <button type="submit" class="form-submit-btn" id="btn-reg-submit">
-            Register Partner Account &rarr;
-          </button>
-
-          <div class="toggle-sublink">
-            Already have an account? <a href="#" onclick="toggleLiveSignUp(false); return false;">Sign In to Live Database</a>
-          </div>
-        </form>
-      </div>
+        <button type="submit" class="form-submit-btn" id="btn-signup-submit">
+          Create Account &rarr;
+        </button>
+      </form>
 
     </div>
 
@@ -568,171 +379,155 @@
       &copy; 2026 WIPA ADS &bull; Women's IP Alliance
     </div>
     <div>
-      Connected to Supabase DB &bull; <a href="index.html">Home</a>
+      Platform developed in London &bull; <a href="index.html">Home</a>
     </div>
   </footer>
 
   <script>
-    let currentMode = 'demo'; // 'demo' | 'live'
-
-    function switchAuthMode(mode) {
-      currentMode = mode;
-      const btnDemo = document.getElementById('btn-mode-demo');
-      const btnLive = document.getElementById('btn-mode-live');
-      const secDemo = document.getElementById('section-demo');
-      const secLive = document.getElementById('section-live');
+    // Tab Switching
+    function switchTab(tab) {
+      const loginForm = document.getElementById('login-form');
+      const signupForm = document.getElementById('signup-form');
+      const tabLogin = document.getElementById('tab-login');
+      const tabSignup = document.getElementById('tab-signup');
       const authTitle = document.getElementById('auth-title');
       const authSubtitle = document.getElementById('auth-subtitle');
-      clearAlert();
+      const errorMsg = document.getElementById('error-msg');
 
-      if (mode === 'demo') {
-        btnDemo.classList.add('active');
-        btnLive.classList.remove('active');
-        secDemo.style.display = 'block';
-        secLive.style.display = 'none';
-        authTitle.textContent = 'Demo Sandbox Access';
-        authSubtitle.textContent = 'Explore WIPA Ads as Global Tech with pre-loaded mock campaigns';
+      errorMsg.style.display = 'none';
+
+      if (tab === 'login') {
+        loginForm.style.display = 'block';
+        signupForm.style.display = 'none';
+        tabLogin.classList.add('active');
+        tabSignup.classList.remove('active');
+        authTitle.textContent = 'Sign in to WIPA Ads';
+        authSubtitle.textContent = 'Manage in-feed campaigns and ad credits';
       } else {
-        btnDemo.classList.remove('active');
-        btnLive.classList.add('active');
-        secDemo.style.display = 'none';
-        secLive.style.display = 'block';
-        authTitle.textContent = 'Official Partner Sign In';
-        authSubtitle.textContent = 'Authenticate directly against WIPA production Supabase database';
+        loginForm.style.display = 'none';
+        signupForm.style.display = 'block';
+        tabLogin.classList.remove('active');
+        tabSignup.classList.add('active');
+        authTitle.textContent = 'Create Advertiser Account';
+        authSubtitle.textContent = 'Start reaching verified IP professionals';
       }
     }
 
-    function toggleLiveSignUp(showSignUp) {
-      clearAlert();
-      document.getElementById('live-login-form').style.display = showSignUp ? 'none' : 'block';
-      document.getElementById('live-signup-form').style.display = showSignUp ? 'block' : 'none';
-    }
-
-    function showAlert(msg, isSuccess = false) {
-      const box = document.getElementById('alert-msg');
-      box.textContent = msg;
-      box.className = 'alert-msg ' + (isSuccess ? 'success' : 'error');
-      box.style.display = 'block';
-    }
-
-    function clearAlert() {
-      const box = document.getElementById('alert-msg');
-      box.style.display = 'none';
-    }
-
-    // 1. Handle Mock / Demo Submit
-    function handleDemoSubmit(e) {
+    // Unified Handle Login: supports both 1/1 (Global Tech) and real Supabase Auth
+    async function handleLogin(e) {
       e.preventDefault();
-      const user = document.getElementById('demo-username').value.trim();
-      const pass = document.getElementById('demo-password').value.trim();
+      const user = document.getElementById('login-username').value.trim();
+      const pass = document.getElementById('login-password').value.trim();
+      const errorMsg = document.getElementById('error-msg');
+      const submitBtn = document.getElementById('btn-login-submit');
 
+      errorMsg.style.display = 'none';
+
+      // 1. Check partner access (credentials 1 / 1)
       if (user === '1' && pass === '1') {
-        setWipaAuthDemo('Global Tech');
-        showAlert('Demo authentication successful. Launching Global Tech sandbox...', true);
-        setTimeout(() => {
-          window.location.href = 'dashboard.html';
-        }, 500);
-      } else {
-        showAlert('Invalid demo credentials. Enter 1 for username and 1 for password.');
+        sessionStorage.setItem('wipa_auth_name', 'Global Tech');
+        sessionStorage.setItem('wipa_auth_mode', 'partner');
+        window.location.href = 'dashboard.html';
+        return;
       }
-    }
 
-    function launchQuickDemo() {
-      setWipaAuthDemo('Global Tech');
-      window.location.href = 'dashboard.html';
-    }
-
-    // 2. Handle Real Supabase Live Login
-    async function handleLiveLogin(e) {
-      e.preventDefault();
-      clearAlert();
-      const email = document.getElementById('live-email').value.trim();
-      const password = document.getElementById('live-password').value.trim();
-      const btn = document.getElementById('btn-live-submit');
-
-      btn.disabled = true;
-      btn.textContent = 'Verifying with Supabase...';
+      // 2. Try Supabase Auth verification
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Signing in...';
 
       try {
         const sb = getSupabaseClient();
-        if (!sb) {
-          throw new Error('Supabase client failed to initialize. Please check network.');
-        }
+        if (sb && user.includes('@')) {
+          const { data, error } = await sb.auth.signInWithPassword({
+            email: user,
+            password: pass
+          });
 
-        const { data, error } = await sb.auth.signInWithPassword({
-          email: email,
-          password: password
-        });
+          if (!error && data && data.user) {
+            let companyName = '';
+            try {
+              const { data: profile } = await sb
+                .from('profiles')
+                .select('full_name, role')
+                .eq('id', data.user.id)
+                .single();
+              if (profile && profile.full_name) {
+                companyName = profile.full_name;
+              }
+            } catch (pe) {}
 
-        if (error) {
-          throw error;
-        }
-
-        // Fetch company profile if exists
-        let companyName = '';
-        try {
-          const { data: profile } = await sb
-            .from('profiles')
-            .select('full_name, role')
-            .eq('id', data.user.id)
-            .single();
-          if (profile && profile.full_name) {
-            companyName = profile.full_name;
-          }
-        } catch (pe) {}
-
-        setWipaAuthLive(data.user, companyName);
-        showAlert('Authentication verified. Redirecting to live database dashboard...', true);
-        setTimeout(() => {
-          window.location.href = 'dashboard.html';
-        }, 800);
-      } catch (err) {
-        console.error('Live login error:', err);
-        showAlert(err.message || 'Failed to authenticate with Supabase. Check credentials.');
-      } finally {
-        btn.disabled = false;
-        btn.textContent = 'Sign In with Live Database →';
-      }
-    }
-
-    // 3. Handle Real Supabase Sign Up
-    async function handleLiveSignUp(e) {
-      e.preventDefault();
-      clearAlert();
-      const company = document.getElementById('reg-company').value.trim();
-      const email = document.getElementById('reg-email').value.trim();
-      const password = document.getElementById('reg-password').value.trim();
-      const btn = document.getElementById('btn-reg-submit');
-
-      btn.disabled = true;
-      btn.textContent = 'Registering on Supabase...';
-
-      try {
-        const sb = getSupabaseClient();
-        if (!sb) throw new Error('Supabase client unavailable.');
-
-        const { data, error } = await sb.auth.signUp({
-          email: email,
-          password: password,
-          options: {
-            data: { full_name: company }
-          }
-        });
-
-        if (error) throw error;
-
-        if (data.user) {
-          setWipaAuthLive(data.user, company);
-          showAlert('Account registered on live database! Launching dashboard...', true);
-          setTimeout(() => {
+            sessionStorage.setItem('wipa_auth_name', companyName || data.user.email.split('@')[0]);
+            sessionStorage.setItem('wipa_auth_email', data.user.email);
+            sessionStorage.setItem('wipa_user_id', data.user.id);
+            sessionStorage.setItem('wipa_auth_mode', 'live');
             window.location.href = 'dashboard.html';
-          }, 1000);
+            return;
+          }
         }
+
+        // Check local saved user
+        const savedUser = localStorage.getItem('wipa_mock_user');
+        if (savedUser && user === savedUser) {
+          sessionStorage.setItem('wipa_auth_name', user);
+          sessionStorage.setItem('wipa_auth_mode', 'partner');
+          window.location.href = 'dashboard.html';
+          return;
+        }
+
+        throw new Error('Invalid credentials. Please check your email and password.');
       } catch (err) {
-        showAlert(err.message || 'Registration failed.');
+        errorMsg.textContent = err.message || 'Invalid credentials. Please check your email and password.';
+        errorMsg.style.display = 'block';
       } finally {
-        btn.disabled = false;
-        btn.textContent = 'Register Partner Account →';
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Sign In →';
+      }
+    }
+
+    // Handle Signup
+    async function handleSignup(e) {
+      e.preventDefault();
+      const name = document.getElementById('signup-name').value.trim();
+      const email = document.getElementById('signup-email').value.trim();
+      const pass = document.getElementById('signup-password').value.trim();
+      const errorMsg = document.getElementById('error-msg');
+      const submitBtn = document.getElementById('btn-signup-submit');
+
+      errorMsg.style.display = 'none';
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Creating account...';
+
+      try {
+        const sb = getSupabaseClient();
+        if (sb) {
+          const { data, error } = await sb.auth.signUp({
+            email: email,
+            password: pass,
+            options: {
+              data: { full_name: name }
+            }
+          });
+
+          if (!error && data && data.user) {
+            sessionStorage.setItem('wipa_auth_name', name || email.split('@')[0]);
+            sessionStorage.setItem('wipa_auth_email', email);
+            sessionStorage.setItem('wipa_user_id', data.user.id);
+            sessionStorage.setItem('wipa_auth_mode', 'live');
+            window.location.href = 'dashboard.html';
+            return;
+          }
+        }
+
+        // Fallback
+        localStorage.setItem('wipa_mock_user', email);
+        sessionStorage.setItem('wipa_auth_name', name || 'Global Tech');
+        window.location.href = 'dashboard.html';
+      } catch (err) {
+        errorMsg.textContent = err.message || 'Registration failed. Please try again.';
+        errorMsg.style.display = 'block';
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Create Account →';
       }
     }
   </script>
