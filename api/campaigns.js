@@ -28,9 +28,16 @@ module.exports = async (req, res) => {
 
     // GET - Fetch campaigns
     if (req.method === 'GET') {
-      const endpoint = id 
-        ? `${SUPABASE_URL}/rest/v1/ad_campaigns?id=eq.${encodeURIComponent(id)}&select=*`
-        : `${SUPABASE_URL}/rest/v1/ad_campaigns?select=*&order=created_at.desc`;
+      const company = url.searchParams.get('company');
+      let endpoint;
+
+      if (id) {
+        endpoint = `${SUPABASE_URL}/rest/v1/ad_campaigns?id=eq.${encodeURIComponent(id)}&select=*`;
+      } else if (company) {
+        endpoint = `${SUPABASE_URL}/rest/v1/ad_campaigns?company_name=ilike.*${encodeURIComponent(company)}*&select=*&order=created_at.desc`;
+      } else {
+        endpoint = `${SUPABASE_URL}/rest/v1/ad_campaigns?select=*&order=created_at.desc`;
+      }
 
       const response = await fetch(endpoint, {
         headers: {

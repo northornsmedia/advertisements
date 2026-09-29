@@ -62,62 +62,79 @@ function clearWipaAuth() {
   sessionStorage.removeItem('wipa_is_demo');
 }
 
-// Load Campaigns from Supabase or Backend API
+// Load Campaigns from Supabase or Backend API for the current advertiser
 async function fetchCampaigns() {
   const sb = getSupabaseClient();
   const auth = getWipaAuth();
+  const companyName = auth.name || 'Global Tech';
 
+  // 1. If logged in as Global Tech (demo/partner account 1 / 1)
+  if (companyName === 'Global Tech') {
+    try {
+      if (sb) {
+        const { data, error } = await sb
+          .from('ad_campaigns')
+          .select('*')
+          .ilike('company_name', '%Global Tech%')
+          .order('created_at', { ascending: false });
+        if (!error && data && data.length > 0) return data;
+      }
+      const res = await fetch('/api/campaigns?company=Global%20Tech');
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data) && data.length > 0) return data;
+      }
+    } catch (e) {}
+
+    return [
+      {
+        id: WIPA_SUPABASE_CONFIG.demoCampaignId,
+        company_name: 'Global Tech',
+        title: 'Global Patent Practice & AI Innovation Suite',
+        headline: 'Global Patent Practice & AI Innovation Banner',
+        description: 'Leading strategic advisory and European IP litigation for high-growth tech innovators.',
+        cta_label: 'Explore Offer →',
+        target_url: 'https://globalpatents.law/ai-practice',
+        banner_image_url: 'assets/patent_ad_creative.jpg',
+        slot_placement: 'feed_native',
+        is_active: true,
+        impressions_count: 3820,
+        clicks_count: 168
+      }
+    ];
+  }
+
+  // 2. Real registered advertiser (e.g. INTA or user email)
   try {
-    // 1. First try Supabase direct client
     if (sb) {
-      let query = sb.from('ad_campaigns').select('*').order('created_at', { ascending: false });
-      const { data, error } = await query;
-      if (!error && data && data.length > 0) {
-        return data;
+      const { data, error } = await sb
+        .from('ad_campaigns')
+        .select('*')
+        .ilike('company_name', `%${companyName}%`)
+        .order('created_at', { ascending: false });
+
+      if (!error && Array.isArray(data)) {
+        return data; // Return exact campaigns for this advertiser (or empty [] if brand new)
       }
     }
 
-    // 2. Fallback to API route
-    const res = await fetch('/api/campaigns');
+    const res = await fetch(`/api/campaigns?company=${encodeURIComponent(companyName)}`);
     if (res.ok) {
       const data = await res.json();
-      if (Array.isArray(data) && data.length > 0) return data;
+      if (Array.isArray(data)) return data;
     }
   } catch (e) {
-    console.warn('Campaign fetch error, using cache/defaults:', e);
+    console.warn('Campaign fetch error:', e);
   }
 
-  // Local fallback defaults
-  return [
-    {
-      id: WIPA_SUPABASE_CONFIG.demoCampaignId,
-      company_name: 'Global Tech',
-      title: 'Global Patent Practice & AI Innovation Suite',
-      headline: 'Global Patent Practice & AI Innovation Banner',
-      description: 'Leading strategic advisory and European IP litigation for high-growth tech innovators.',
-      cta_label: 'Explore Offer →',
-      target_url: 'https://globalpatents.law/ai-practice',
-      banner_image_url: 'assets/patent_ad_creative.jpg',
-      slot_placement: 'feed_native',
-      is_active: true,
-      impressions_count: 3820,
-      clicks_count: 168
-    },
-    {
-      id: WIPA_SUPABASE_CONFIG.demoSecondaryId,
-      company_name: 'Lexington Partners',
-      title: 'European Trademark Counsel Recruitment Spotlight',
-      headline: 'European Trademark Counsel Recruitment Spotlight',
-      description: 'Preeminent international firm seeking Senior Trademark Counsel in London, Munich, and Paris.',
-      cta_label: 'Apply Today →',
-      target_url: 'https://lexington.com/careers/trademark',
-      banner_image_url: 'assets/tm_ad_creative.jpg',
-      slot_placement: 'feed_native',
-      is_active: true,
-      impressions_count: 2600,
-      clicks_count: 114
-    }
-  ];
+  // Check if this advertiser created campaigns stored locally under their name
+  const saved = JSON.parse(localStorage.getItem(`wipa_campaigns_${companyName}`) || '[]');
+  if (Array.isArray(saved) && saved.length > 0) {
+    return saved;
+  }
+
+  // Brand new user has 0 campaigns - return empty array! Do NOT show mock campaigns!
+  return [];
 }
 
 // Fetch single campaign by ID
@@ -160,7 +177,15 @@ async function saveCampaignToDb(campaign) {
 
     if (res.ok) {
       const result = await res.json();
-      return { success: true, data: result };
+      const savedItem = (result && result.data) || campaign;
+      const cName = campaign.company_name || auth.name;
+      const userKey = `wipa_campaigns_${cName}`;
+      const userList = JSON.parse(localStorage.getItem(userKey) || '[]');
+      const idx = userList.findIndex(c => c.id === savedItem.id);
+      if (idx >= 0) userList[idx] = Object.assign(userList[idx], savedItem);
+      else userList.unshift(savedItem);
+      localStorage.setItem(userKey, JSON.stringify(userList));
+      return { success: true, data: savedItem };
     }
   } catch (e) {
     console.warn('API save failed, attempting direct Supabase write:', e);
@@ -184,18 +209,33 @@ async function saveCampaignToDb(campaign) {
         .eq('id', campaign.id)
         .select();
 
-      if (!error) return { success: true, data: data[0] };
+      if (!error && data && data[0]) {
+        const cName = campaign.company_name || auth.name;
+        const userKey = `wipa_campaigns_${cName}`;
+        const userList = JSON.parse(localStorage.getItem(userKey) || '[]');
+        const idx = userList.findIndex(c => c.id === data[0].id);
+        if (idx >= 0) userList[idx] = Object.assign(userList[idx], data[0]);
+        else userList.unshift(data[0]);
+        localStorage.setItem(userKey, JSON.stringify(userList));
+        return { success: true, data: data[0] };
+      }
     } catch (err) {
       console.error('Direct DB error:', err);
     }
   }
 
-  // Save to localStorage as backup
-  const saved = JSON.parse(localStorage.getItem('wipa_campaigns') || '{}');
-  saved[campaign.id || 'camp1'] = campaign;
-  localStorage.setItem('wipa_campaigns', JSON.stringify(saved));
+  // Save to advertiser specific localStorage
+  const cName = campaign.company_name || auth.name;
+  const userKey = `wipa_campaigns_${cName}`;
+  const userList = JSON.parse(localStorage.getItem(userKey) || '[]');
+  const newId = campaign.id || ('camp_' + Date.now());
+  campaign.id = newId;
+  const idx = userList.findIndex(c => c.id === newId);
+  if (idx >= 0) userList[idx] = Object.assign(userList[idx], campaign);
+  else userList.unshift(campaign);
+  localStorage.setItem(userKey, JSON.stringify(userList));
 
-  return { success: true, localOnly: true };
+  return { success: true, localOnly: true, data: campaign };
 }
 
 // Setup real-time listener for live impressions & clicks

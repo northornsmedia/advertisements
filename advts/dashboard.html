@@ -580,10 +580,13 @@
       const container = document.getElementById('campaigns-container');
       if (!campaigns || campaigns.length === 0) {
         container.innerHTML = `
-          <div style="text-align:center; padding: 3rem 1.5rem; background: var(--surface); border-radius: 20px;">
-            <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem;">No Active Campaigns Found</h3>
-            <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.5rem;">Create your first in-feed campaign to reach verified IP attorneys in the feed.</p>
-            <a href="edit-ad.html?new=1" class="camp-btn primary">Create In-Feed Campaign &rarr;</a>
+          <div style="text-align: center; padding: 3.5rem 2rem; background: var(--surface); border: 1px dashed var(--border); border-radius: 20px;">
+            <div style="font-size: 2.25rem; margin-bottom: 0.75rem;">📢</div>
+            <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem; letter-spacing: -0.02em;">No In-Feed Campaigns Yet</h3>
+            <p style="color: var(--text-secondary); font-size: 0.92rem; max-width: 480px; margin: 0 auto 1.5rem auto; line-height: 1.5;">
+              Welcome, <strong>${auth.name}</strong>. You have not launched any in-feed campaigns yet. Create your first campaign to start delivering natively to verified IP counsel.
+            </p>
+            <a href="edit-ad.html?new=1" class="camp-btn primary" style="font-size: 0.92rem; padding: 0.75rem 1.6rem;">+ Create First In-Feed Campaign</a>
           </div>
         `;
         return;
@@ -659,18 +662,30 @@
       const impElem = document.getElementById('stat-total-impressions');
       const ctrElem = document.getElementById('stat-avg-ctr');
       const clicksSub = document.getElementById('stat-clicks-sub');
+      const impSub = document.getElementById('stat-imp-sub');
 
       if (impElem) impElem.textContent = totalImp.toLocaleString();
       if (ctrElem) ctrElem.textContent = avgCtr;
-      if (clicksSub) clicksSub.textContent = `${totalClicks.toLocaleString()} Total clicks captured`;
+      if (clicksSub) clicksSub.textContent = totalClicks > 0 ? `${totalClicks.toLocaleString()} Total clicks captured` : '0 clicks captured';
+      if (impSub) impSub.textContent = totalImp > 0 ? 'Live delivered from WIPA feed' : 'No feed delivery yet';
+
+      // Update Credits display
+      const isPartner = auth.name === 'Global Tech';
+      const credits = isPartner ? 50 : Number(localStorage.getItem(`wipa_credits_${auth.name}`) || 0);
+      const credElem = document.getElementById('stat-credits');
+      const credSub = document.getElementById('stat-credits-sub');
+      if (credElem) credElem.textContent = credits;
+      if (credSub) credSub.textContent = credits > 0 ? `£${credits * 2} Balance Value` : '0 Balance (Buy credits to launch)';
     }
 
     // 3. Initialize & Listen for Realtime Metrics Updates
-    loadCampaigns();
-
-    // Subscribe to updates for the main campaigns
-    const unsub1 = subscribeToCampaignMetrics(WIPA_SUPABASE_CONFIG.demoCampaignId, (updated) => {
-      handleLiveMetricsUpdate(updated);
+    loadCampaigns().then(() => {
+      // Subscribe to updates for this user's active campaigns
+      currentCampaigns.forEach(c => {
+        subscribeToCampaignMetrics(c.id, (updated) => {
+          handleLiveMetricsUpdate(updated);
+        });
+      });
     });
 
     function handleLiveMetricsUpdate(updated) {
