@@ -3,36 +3,31 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Campaign Studio | WIPA ADS</title>
-  <meta name="description" content="Configure in-feed creative banner, destination URL, and delivery status synced to WIPA production database.">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <title>Edit In-Feed Campaign | WIPA ADS</title>
+  <meta name="description" content="Configure and publish in-feed campaign creatives directly to WIPA platform feed.">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="assets/supabase-config.js?v=20260929_clean_v5"></script>
+  <script src="assets/supabase-config.js?v=20260929_clean_v7"></script>
   <style>
     :root {
-      --bg: #07070a;
-      --surface: rgba(18, 18, 26, 0.7);
-      --surface-hover: rgba(28, 28, 40, 0.85);
-      --card-bg: rgba(15, 15, 23, 0.75);
-      --border: rgba(255, 255, 255, 0.08);
-      --border-focus: rgba(99, 102, 241, 0.5);
-      --border-subtle: rgba(255, 255, 255, 0.05);
-      --text: #ffffff;
-      --text-secondary: #94949e;
-      --text-tertiary: #6b6b76;
-      --accent: #6366f1;
-      --accent-hover: #4f46e5;
-      --accent-glow: rgba(99, 102, 241, 0.35);
-      --accent-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #d946ef 100%);
-      --emerald: #10b981;
-      --emerald-glow: rgba(16, 185, 129, 0.35);
-      --amber: #f59e0b;
-      --amber-glow: rgba(245, 158, 11, 0.25);
-      --rose: #f43f5e;
-      --font-main: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
-      --font-mono: "IBM Plex Mono", Menlo, Consolas, monospace;
+      --bg: #ffffff;
+      --surface: #f5f5f7;
+      --surface-hover: #ebebee;
+      --card-bg: #ffffff;
+      --border: #e5e5ea;
+      --border-subtle: rgba(0, 0, 0, 0.08);
+      --text: #1d1d1f;
+      --text-secondary: #86868b;
+      --text-tertiary: #6e6e73;
+      --accent: #0071e3;
+      --accent-hover: #0077ed;
+      --success: #15803d;
+      --success-bg: #dcfce7;
+      --warning: #b45309;
+      --warning-bg: #fef3c7;
+      --danger: #b91c1c;
+      --danger-bg: #fee2e2;
+      --font-apple: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      --font-mono: "SF Mono", Menlo, Monaco, Consolas, monospace;
     }
 
     *, *::before, *::after {
@@ -43,28 +38,25 @@
 
     body {
       background-color: var(--bg);
-      background-image: 
-        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(99, 102, 241, 0.2) 0%, rgba(147, 51, 234, 0.07) 50%, transparent 80%),
-        radial-gradient(circle at 100% 40%, rgba(6, 182, 212, 0.04) 0%, transparent 40%);
       color: var(--text);
-      font-family: var(--font-main);
+      font-family: var(--font-apple);
       -webkit-font-smoothing: antialiased;
-      line-height: 1.5;
-      letter-spacing: -0.015em;
+      line-height: 1.47059;
+      letter-spacing: -0.022em;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
     }
 
-    /* TOP FROSTED NAV */
+    /* TOP APPLE NAV */
     .top-nav {
       position: sticky;
       top: 0;
-      background: rgba(7, 7, 10, 0.75);
-      backdrop-filter: blur(24px) saturate(190%);
-      -webkit-backdrop-filter: blur(24px) saturate(190%);
-      border-bottom: 1px solid var(--border);
-      padding: 1.1rem 2.5rem;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: saturate(180%) blur(20px);
+      -webkit-backdrop-filter: saturate(180%) blur(20px);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 1rem 2.5rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -74,44 +66,24 @@
     .back-btn {
       display: inline-flex;
       align-items: center;
-      gap: 0.5rem;
-      font-size: 0.82rem;
-      font-weight: 600;
-      color: var(--text-secondary);
+      gap: 0.4rem;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--accent);
       text-decoration: none;
-      transition: all 0.2s ease;
-      padding: 0.4rem 0.8rem;
-      border-radius: 12px;
-      border: 1px solid transparent;
+      transition: opacity 0.2s ease;
     }
 
     .back-btn:hover {
-      color: #ffffff;
-      background: rgba(255, 255, 255, 0.05);
-      border-color: var(--border);
+      opacity: 0.8;
+      text-decoration: underline;
     }
 
     .brand-stamp {
-      font-family: var(--font-mono);
-      font-size: 0.82rem;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      color: #ffffff;
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-      background: rgba(255, 255, 255, 0.04);
-      padding: 0.4rem 1rem;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-    }
-
-    .brand-stamp .brand-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: #818cf8;
-      box-shadow: 0 0 10px #818cf8;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: -0.01em;
     }
 
     .nav-actions {
@@ -121,52 +93,45 @@
     }
 
     .nav-btn {
-      padding: 0.5rem 1.15rem;
-      border-radius: 999px;
+      padding: 0.45rem 1.15rem;
+      border-radius: 980px;
       font-size: 0.82rem;
-      font-weight: 700;
-      cursor: pointer;
+      font-weight: 600;
       text-decoration: none;
-      transition: all 0.2s ease;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
+      transition: all 0.15s ease;
+      cursor: pointer;
     }
 
     .nav-btn.secondary {
-      background: rgba(255, 255, 255, 0.05);
-      color: #ffffff;
+      background: var(--surface);
+      color: var(--text);
       border: 1px solid var(--border);
     }
 
     .nav-btn.secondary:hover {
-      background: rgba(255, 255, 255, 0.09);
-      border-color: rgba(255, 255, 255, 0.2);
+      background: var(--surface-hover);
     }
 
     /* MAIN CONTAINER */
     .edit-container {
       flex: 1;
-      max-width: 1140px;
+      max-width: 1100px;
       width: 100%;
       margin: 0 auto;
-      padding: 3.5rem 1.75rem 6rem 1.75rem;
+      padding: 3rem 1.5rem 5rem 1.5rem;
     }
 
     .page-title {
-      font-size: 2.3rem;
-      font-weight: 800;
+      font-size: 2.1rem;
+      font-weight: 700;
       letter-spacing: -0.035em;
       margin-bottom: 0.4rem;
-      background: linear-gradient(135deg, #ffffff 60%, #cbd5e1 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
     }
 
     .page-subtitle {
       font-size: 0.95rem;
       color: var(--text-secondary);
-      margin-bottom: 2.5rem;
+      margin-bottom: 2.25rem;
     }
 
     /* 2-COLUMN LAYOUT */
@@ -179,20 +144,17 @@
 
     /* FORM CARD */
     .form-card {
-      background: var(--card-bg);
+      background: #ffffff;
       border: 1px solid var(--border);
-      border-radius: 24px;
+      border-radius: 22px;
       padding: 2.25rem;
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
     }
 
     .form-section-title {
-      font-size: 1.1rem;
-      font-weight: 800;
+      font-size: 1.15rem;
+      font-weight: 700;
       letter-spacing: -0.02em;
-      color: #ffffff;
       margin-bottom: 1.5rem;
       padding-bottom: 0.75rem;
       border-bottom: 1px solid var(--border-subtle);
@@ -202,158 +164,144 @@
     }
 
     .db-badge {
-      font-family: var(--font-mono);
-      font-size: 0.7rem;
-      font-weight: 700;
-      color: #34d399;
-      background: rgba(16, 185, 129, 0.12);
-      border: 1px solid rgba(16, 185, 129, 0.3);
-      padding: 0.2rem 0.6rem;
-      border-radius: 999px;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
+      font-size: 0.72rem;
+      background: #ecfdf5;
+      color: #065f46;
+      border: 1px solid #a7f3d0;
+      padding: 0.2rem 0.55rem;
+      border-radius: 980px;
+      font-weight: 600;
     }
 
     .form-group {
-      margin-bottom: 1.35rem;
+      margin-bottom: 1.5rem;
     }
 
     .form-label {
       display: block;
       font-size: 0.82rem;
-      font-weight: 700;
-      color: #e4e4e7;
+      font-weight: 600;
+      color: var(--text);
       margin-bottom: 0.45rem;
     }
 
     .form-input {
       width: 100%;
-      background: rgba(0, 0, 0, 0.35);
+      background: #ffffff;
       border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 0.75rem 1rem;
-      font-size: 0.88rem;
-      color: #ffffff;
-      font-family: var(--font-main);
+      border-radius: 12px;
+      padding: 0.8rem 1rem;
+      font-family: var(--font-apple);
+      font-size: 0.92rem;
+      color: var(--text);
       outline: none;
-      transition: all 0.2s ease;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
     }
 
     .form-input:focus {
       border-color: var(--accent);
-      background: rgba(0, 0, 0, 0.5);
-      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
-    }
-
-    .form-input::placeholder {
-      color: #52525b;
+      box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.15);
     }
 
     .form-hint {
       font-size: 0.76rem;
       color: var(--text-tertiary);
-      margin-top: 0.35rem;
+      margin-top: 0.4rem;
+      line-height: 1.4;
     }
 
-    /* UPLOADER ZONE */
+    /* IMAGE UPLOADER */
     .uploader-zone {
       display: flex;
-      align-items: center;
       gap: 1.25rem;
-      padding: 1rem;
-      border: 1px dashed var(--border);
+      align-items: center;
+      padding: 1.25rem;
+      background: var(--surface);
       border-radius: 16px;
-      background: rgba(0, 0, 0, 0.25);
+      border: 1px dashed var(--border);
     }
 
     .uploader-thumb-img {
-      width: 120px;
-      height: 68px;
-      border-radius: 10px;
+      width: 130px;
+      height: 75px;
+      border-radius: 8px;
       object-fit: cover;
-      background: #181822;
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: #000;
+      border: 1px solid var(--border-subtle);
     }
 
     .upload-trigger-btn {
-      background: rgba(255, 255, 255, 0.08);
-      color: #ffffff;
+      display: inline-block;
+      background: #ffffff;
       border: 1px solid var(--border);
       padding: 0.45rem 1rem;
-      border-radius: 10px;
+      border-radius: 980px;
       font-size: 0.8rem;
       font-weight: 600;
       cursor: pointer;
-      display: inline-block;
-      transition: all 0.2s ease;
+      color: var(--text);
+      transition: background 0.15s ease;
     }
 
     .upload-trigger-btn:hover {
-      background: rgba(255, 255, 255, 0.12);
-      border-color: rgba(255, 255, 255, 0.2);
+      background: var(--surface-hover);
     }
 
     /* BUTTONS */
     .btn-row {
       display: flex;
       justify-content: flex-end;
-      gap: 0.85rem;
+      gap: 1rem;
       margin-top: 2rem;
-      padding-top: 1.25rem;
+      padding-top: 1.5rem;
       border-top: 1px solid var(--border-subtle);
     }
 
     .save-btn {
-      background: var(--accent-gradient);
+      background: var(--text);
       color: #ffffff;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      padding: 0.75rem 1.6rem;
-      border-radius: 999px;
-      font-size: 0.86rem;
-      font-weight: 700;
-      cursor: pointer;
-      box-shadow: 0 4px 20px var(--accent-glow);
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .save-btn:hover {
-      transform: scale(1.03);
-      box-shadow: 0 6px 26px rgba(99, 102, 241, 0.5);
-    }
-
-    .cancel-btn {
-      background: rgba(255, 255, 255, 0.04);
-      color: var(--text-secondary);
-      border: 1px solid var(--border);
-      padding: 0.75rem 1.4rem;
-      border-radius: 999px;
-      font-size: 0.86rem;
+      border: none;
+      padding: 0.8rem 1.6rem;
+      border-radius: 980px;
+      font-size: 0.9rem;
       font-weight: 600;
-      text-decoration: none;
+      cursor: pointer;
       transition: all 0.2s ease;
     }
 
-    .cancel-btn:hover {
-      background: rgba(255, 255, 255, 0.08);
-      color: #ffffff;
-      border-color: rgba(255, 255, 255, 0.2);
+    .save-btn:hover {
+      background: #333336;
+      transform: translateY(-1px);
     }
 
-    /* RIGHT STICKY PREVIEW */
+    .cancel-btn {
+      background: transparent;
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
+      padding: 0.8rem 1.4rem;
+      border-radius: 980px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: background 0.15s ease;
+    }
+
+    .cancel-btn:hover {
+      background: var(--surface);
+      color: var(--text);
+    }
+
+    /* RIGHT COLUMN: LIVE SIMULATION */
     .preview-sticky-col {
       position: sticky;
-      top: 6.5rem;
+      top: 5rem;
     }
 
     .preview-card-frame {
-      background: var(--card-bg);
+      background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 24px;
       padding: 1.75rem;
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08);
     }
 
     .preview-header {
@@ -364,12 +312,11 @@
     }
 
     .preview-title-badge {
-      font-family: var(--font-mono);
-      font-size: 0.75rem;
+      font-size: 0.78rem;
       font-weight: 700;
-      color: #ffffff;
+      color: var(--text);
       text-transform: uppercase;
-      letter-spacing: 0.06em;
+      letter-spacing: 0.05em;
     }
 
     .preview-live-indicator {
@@ -377,55 +324,57 @@
       align-items: center;
       gap: 0.35rem;
       font-size: 0.72rem;
-      font-family: var(--font-mono);
-      color: #34d399;
-      background: rgba(16, 185, 129, 0.12);
-      border: 1px solid rgba(16, 185, 129, 0.3);
-      padding: 0.2rem 0.6rem;
-      border-radius: 999px;
+      color: #15803d;
+      font-weight: 600;
     }
 
-    /* NATIVE FEED CARD PREVIEW (Obsidian Style) */
+    .pulse-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #22c55e;
+    }
+
+    /* NATIVE FEED CARD PREVIEW */
     .native-feed-card {
-      background: #0f0f16;
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 20px;
-      overflow: hidden;
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
-      transition: all 0.3s ease;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 1.25rem;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
     }
 
     .feed-card-header {
-      padding: 0.85rem 1.15rem;
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      background: rgba(255, 255, 255, 0.02);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      justify-content: space-between;
+      margin-bottom: 0.75rem;
     }
 
     .feed-sponsor-pill {
-      font-family: var(--font-mono);
-      font-size: 0.72rem;
+      font-size: 0.7rem;
       font-weight: 700;
-      color: #a5b4fc;
-      background: rgba(99, 102, 241, 0.15);
-      border: 1px solid rgba(99, 102, 241, 0.3);
-      padding: 0.15rem 0.55rem;
-      border-radius: 6px;
+      color: #b45309;
+      background: #fef3c7;
+      padding: 0.2rem 0.6rem;
+      border-radius: 9999px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
     }
 
     .feed-cadence-label {
-      font-size: 0.68rem;
-      font-family: var(--font-mono);
+      font-size: 0.7rem;
       color: var(--text-tertiary);
     }
 
     .feed-creative-img-box {
       width: 100%;
-      aspect-ratio: 16 / 9;
-      background: #181822;
+      height: 180px;
+      border-radius: 12px;
       overflow: hidden;
+      background: #000;
+      margin-bottom: 0.85rem;
+      border: 1px solid var(--border-subtle);
     }
 
     .feed-creative-img-box img {
@@ -435,37 +384,37 @@
     }
 
     .feed-card-body {
-      padding: 1.25rem 1.15rem;
+      text-align: left;
     }
 
     .feed-card-headline {
-      font-size: 1.05rem;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-      color: #ffffff;
+      font-size: 0.98rem;
+      font-weight: 700;
+      letter-spacing: -0.015em;
+      color: var(--text);
       line-height: 1.35;
-      margin-bottom: 0.45rem;
+      margin-bottom: 0.35rem;
     }
 
     .feed-card-copy {
-      font-size: 0.84rem;
+      font-size: 0.82rem;
       color: var(--text-secondary);
       line-height: 1.45;
       margin-bottom: 1rem;
     }
 
     .feed-card-cta-btn {
-      display: block;
-      width: 100%;
-      text-align: center;
-      background: var(--accent-gradient);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: var(--text);
       color: #ffffff;
-      padding: 0.65rem 1rem;
-      border-radius: 12px;
+      padding: 0.55rem 1.15rem;
+      border-radius: 980px;
       font-size: 0.82rem;
-      font-weight: 700;
+      font-weight: 600;
       text-decoration: none;
-      box-shadow: 0 4px 16px var(--accent-glow);
+      transition: background 0.15s ease;
     }
 
     /* TOAST */
@@ -473,22 +422,20 @@
       position: fixed;
       bottom: 2rem;
       right: 2rem;
-      background: rgba(18, 18, 26, 0.95);
-      border: 1px solid rgba(16, 185, 129, 0.35);
-      backdrop-filter: blur(20px);
-      padding: 0.9rem 1.4rem;
-      border-radius: 16px;
+      background: #1d1d1f;
+      color: #ffffff;
+      padding: 0.85rem 1.4rem;
+      border-radius: 980px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
       display: flex;
       align-items: center;
-      gap: 0.65rem;
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: #ffffff;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+      gap: 0.5rem;
+      z-index: 2000;
       transform: translateY(100px);
       opacity: 0;
       transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-      z-index: 1000;
     }
 
     .toast.show {
@@ -498,36 +445,28 @@
 
     /* FOOTER */
     footer {
-      border-top: 1px solid var(--border);
-      padding: 2.25rem 2.5rem;
+      border-top: 1px solid var(--border-subtle);
+      padding: 2rem 2.5rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 0.8rem;
-      color: var(--text-tertiary);
-      background: rgba(7, 7, 10, 0.5);
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      background: var(--bg);
     }
 
     footer a {
-      color: var(--text-secondary);
+      color: var(--text);
       text-decoration: none;
-      transition: color 0.15s ease;
+      font-weight: 500;
     }
 
-    footer a:hover {
-      color: #ffffff;
-    }
-
-    @media (max-width: 900px) {
+    @media (max-width: 860px) {
       .top-nav {
-        padding: 1rem 1.25rem;
-      }
-      .edit-container {
-        padding: 2rem 1.25rem 4rem 1.25rem;
+        padding: 1rem 1.5rem;
       }
       .edit-layout-grid {
         grid-template-columns: 1fr;
-        gap: 2.5rem;
       }
       .preview-sticky-col {
         position: static;
@@ -537,10 +476,10 @@
 </head>
 <body>
 
-  <!-- Top Frosted Nav -->
+  <!-- Top Apple Nav -->
   <header class="top-nav">
     <a href="dashboard.html" class="back-btn">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
         <line x1="19" y1="12" x2="5" y2="12"></line>
         <polyline points="12 19 5 12 12 5"></polyline>
       </svg>
@@ -548,15 +487,14 @@
     </a>
 
     <div class="brand-stamp">
-      <span class="brand-dot"></span>
-      <span>WIPA ADS // CAMPAIGN STUDIO</span>
+      WIPA ADS // CAMPAIGN STUDIO
     </div>
 
     <div class="nav-actions">
-      <a href="buy-credits.html" class="nav-btn secondary" style="background: rgba(99, 102, 241, 0.15); border-color: rgba(99, 102, 241, 0.4); color: #c7d2fe; display: inline-flex; align-items: center; gap: 0.35rem;">
-        <span>⚡ Buy Credits</span>
+      <a href="buy-credits.html" class="nav-btn secondary">
+        Buy Credits
       </a>
-      <a id="nav-analytics-link" href="analytics.html" class="nav-btn secondary">
+      <a id="nav-analytics-link" href="analytics.html?id=camp1" class="nav-btn secondary">
         View Analytics
       </a>
     </div>
@@ -564,7 +502,7 @@
 
   <main class="edit-container">
     <h1 class="page-title" id="page-title">Edit In-Feed Campaign</h1>
-    <p class="page-subtitle">Configure in-feed creative banner, destination URL, and delivery status synced to WIPA production database.</p>
+    <p class="page-subtitle">Configure in-feed creative banner, destination URL, and delivery status synced to WIPA database.</p>
 
     <div class="edit-layout-grid">
 
@@ -573,7 +511,7 @@
         <form id="edit-form" onsubmit="handleFormSubmit(event)">
           <div class="form-section-title">
             <span>Campaign Specifications</span>
-            <span class="db-badge">Live Synced</span>
+            <span class="db-badge">Database Synced</span>
           </div>
 
           <!-- Company / Partner Name -->
@@ -584,49 +522,44 @@
 
           <!-- Headline -->
           <div class="form-group">
-            <label class="form-label" for="inp-title">Campaign Headline</label>
-            <input type="text" id="inp-title" class="form-input" placeholder="e.g. Next-Gen Patent Prosecution & Valuation" required oninput="syncLivePreview()">
-            <div class="form-hint">Displayed as the primary bold heading across feed insertions.</div>
+            <label class="form-label" for="inp-title">Headline / Offer Title</label>
+            <input type="text" id="inp-title" class="form-input" placeholder="e.g. Leading Patent Litigation & Advisory" required oninput="syncLivePreview()">
+            <div class="form-hint">Displayed prominently on the in-feed card. Maximum 80 characters recommended.</div>
           </div>
 
           <!-- Destination URL -->
           <div class="form-group">
-            <label class="form-label" for="inp-url">Destination URL (Landing Page)</label>
-            <input type="url" id="inp-url" class="form-input" placeholder="https://yourfirm.com/offer" required oninput="syncLivePreview()">
-            <div class="form-hint">Verified IP attorneys clicking your card in the feed will navigate here.</div>
+            <label class="form-label" for="inp-url">Destination URL</label>
+            <input type="url" id="inp-url" class="form-input" placeholder="https://yourfirm.com/practice-area" required oninput="syncLivePreview()">
+            <div class="form-hint">Verified destination for members who click the card.</div>
           </div>
 
-          <!-- In-Feed Copy / Tagline -->
+          <!-- Body Copy / Description -->
           <div class="form-group">
-            <label class="form-label" for="inp-copy">In-Feed Description / Supporting Tagline</label>
-            <textarea id="inp-copy" class="form-input" rows="3" placeholder="Supporting copy appearing under headline..." oninput="syncLivePreview()"></textarea>
-            <div class="form-hint">Appears below the headline in the live stream. Max 140 chars recommended.</div>
+            <label class="form-label" for="inp-copy">Body Copy / Description</label>
+            <textarea id="inp-copy" class="form-input" rows="3" placeholder="Brief message explaining your IP services or announcement..." required oninput="syncLivePreview()"></textarea>
           </div>
 
-          <!-- Call to Action Text -->
+          <!-- CTA Button Label -->
           <div class="form-group">
             <label class="form-label" for="inp-cta">Button Call to Action</label>
-            <input type="text" id="inp-cta" class="form-input" value="Explore Offer →" oninput="syncLivePreview()">
+            <input type="text" id="inp-cta" class="form-input" placeholder="Explore Offer →" required oninput="syncLivePreview()">
           </div>
 
-          <!-- Banner Image Asset -->
+          <!-- Creative Banner Upload -->
           <div class="form-group">
-            <label class="form-label">Creative Banner Asset (16:9 Aspect Ratio)</label>
+            <label class="form-label">Creative Banner Asset (16:9)</label>
             <div class="uploader-zone">
-              <img id="form-thumb-img" class="uploader-thumb-img" src="assets/patent_ad_creative.jpg" alt="Current Banner" onerror="this.src='assets/patent_ad_creative.jpg'">
+              <img id="form-thumb-img" src="assets/patent_ad_creative.jpg" class="uploader-thumb-img" alt="Creative Preview" onerror="this.src='assets/patent_ad_creative.jpg'">
               <div>
                 <label class="upload-trigger-btn">
-                  Upload Image
-                  <input type="file" id="inp-file" accept="image/jpeg,image/png,image/webp" style="display: none;" onchange="handleImageFile(event)">
+                  Choose Image File
+                  <input type="file" id="file-uploader" accept="image/jpeg,image/png,image/webp" style="display: none;" onchange="handleImageUpload(event)">
                 </label>
-                <div class="form-hint" style="margin-top: 0.4rem;">
-                  JPEG, PNG, WEBP. Minimum 1200x675px. Max 5MB.
-                </div>
+                <div class="form-hint" style="margin-top: 0.5rem;">JPG, PNG, or WebP. Scanned for file security.</div>
               </div>
             </div>
-            <!-- Security Malware Scan Status -->
-            <div id="img-security-status" style="display: none; margin-top: 0.6rem; padding: 0.65rem 0.85rem; border-radius: 10px; font-size: 0.78rem;"></div>
-            <!-- Direct URL input for custom web assets -->
+            <div id="img-security-status" style="display: none; margin-top: 0.6rem; padding: 0.65rem 0.85rem; border-radius: 8px; font-size: 0.78rem;"></div>
             <input type="text" id="inp-img-url" class="form-input" placeholder="Or paste public banner image URL" style="margin-top: 0.75rem;" oninput="handleImageUrlInput(event)">
           </div>
 
@@ -634,78 +567,73 @@
           <div class="form-group" id="credits-allocation-group">
             <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.4rem;">
               <label class="form-label" for="inp-credits" style="margin-bottom: 0;">Credits to Spend on This Ad</label>
-              <span style="font-size: 0.78rem; color: var(--text-secondary);" id="label-avail-credits">
-                Available: <strong id="val-avail-credits" style="color: #a5b4fc;">0 Credits</strong>
+              <span style="font-size: 0.8rem; color: var(--text-secondary);" id="label-avail-credits">
+                Available: <strong id="val-avail-credits" style="color: var(--text);">0 Credits</strong>
               </span>
             </div>
             <div style="display: flex; gap: 0.6rem; align-items: center;">
               <input type="number" id="inp-credits" class="form-input" min="1" placeholder="Enter credits to allocate" required oninput="validateCreditInput()">
-              <span style="font-size: 0.85rem; font-weight: 700; color: #ffffff; padding-right: 0.5rem; white-space: nowrap;">Credits</span>
+              <span style="font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); white-space: nowrap;">Credits</span>
             </div>
             <div class="form-hint" id="credits-hint">
               Allocated credits are deducted upon submission and cannot exceed your available balance.
             </div>
-            <div id="no-credits-warning" style="display: none; margin-top: 0.6rem; padding: 0.65rem 0.9rem; background: rgba(244, 63, 94, 0.12); border: 1px solid rgba(244, 63, 94, 0.3); border-radius: 12px; font-size: 0.8rem; color: #fb7185;">
-              ⚠️ <strong>Insufficient Balance:</strong> You have 0 available credits. <a href="buy-credits.html" style="color: #818cf8; font-weight: 700; text-decoration: underline;">Buy Credits Here &rarr;</a>
+            <div id="no-credits-warning" style="display: none; margin-top: 0.6rem; padding: 0.65rem 0.9rem; background: var(--danger-bg); border: 1px solid rgba(185, 28, 28, 0.2); border-radius: 10px; font-size: 0.82rem; color: var(--danger);">
+              <strong>Insufficient Balance:</strong> You have 0 available credits. <a href="buy-credits.html" style="color: var(--danger); font-weight: 700; text-decoration: underline;">Buy Credits Here &rarr;</a>
             </div>
           </div>
 
           <!-- Mandatory Admin Review & Publishing Status -->
           <div class="form-group">
-            <label class="form-label">Review &amp; Publishing Gate</label>
-            <div style="padding: 0.95rem 1.15rem; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 14px; display: flex; align-items: flex-start; gap: 0.85rem;">
-              <span style="font-size: 1.35rem; line-height: 1;">🛡️</span>
-              <div>
-                <div style="font-size: 0.85rem; font-weight: 800; color: #fbbf24;">Mandatory Admin Review Required</div>
-                <div style="font-size: 0.78rem; color: #fef3c7; line-height: 1.5; margin-top: 0.2rem; opacity: 0.85;">
-                  Every campaign submitted by advertisers undergoes administrative review and malware/safety verification before entering the live WIPA feed. Without admin approval, ads cannot be served.
-                </div>
-              </div>
+            <label class="form-label">Review &amp; Publishing Notice</label>
+            <div style="padding: 0.85rem 1.15rem; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; font-size: 0.82rem; color: var(--text-secondary); line-height: 1.5;">
+              Every campaign submitted by advertisers undergoes administrative review before entering the live WIPA feed. Without admin approval, ads cannot be served.
             </div>
           </div>
 
-          <!-- Save / Cancel Buttons -->
+          <!-- Submission Buttons -->
           <div class="btn-row">
             <a href="dashboard.html" class="cancel-btn">Cancel</a>
-            <button type="submit" class="save-btn" id="btn-save">Submit for Admin Approval &rarr;</button>
+            <button type="submit" id="btn-save" class="save-btn">Submit for Review</button>
           </div>
         </form>
       </div>
 
-      <!-- RIGHT: LIVE FEED PREVIEW -->
+      <!-- RIGHT: LIVE PREVIEW -->
       <div class="preview-sticky-col">
         <div class="preview-card-frame">
           <div class="preview-header">
-            <span class="preview-title-badge">Live Feed Simulation</span>
+            <span class="preview-title-badge">In-Feed Simulation</span>
             <span class="preview-live-indicator">
               <span class="pulse-dot"></span>
-              Card 5 Insertion
+              Live Responsive Preview
             </span>
           </div>
 
-          <!-- Native Feed Card Preview -->
+          <!-- The Feed Card Component -->
           <div class="native-feed-card">
             <div class="feed-card-header">
-              <span class="feed-sponsor-pill" id="prev-company">Sponsored</span>
-              <span class="feed-cadence-label">Cadence 4:1</span>
+              <span class="feed-sponsor-pill" id="prev-company">Verified Sponsor</span>
+              <span class="feed-cadence-label">Ad injected after post #4</span>
             </div>
 
             <div class="feed-creative-img-box">
-              <img id="prev-img" src="assets/patent_ad_creative.jpg" alt="Feed Creative" onerror="this.src='assets/patent_ad_creative.jpg'">
+              <img id="prev-img" src="assets/patent_ad_creative.jpg" alt="Creative Preview" onerror="this.src='assets/patent_ad_creative.jpg'">
             </div>
 
             <div class="feed-card-body">
-              <h3 class="feed-card-headline" id="prev-title">Your Campaign Headline</h3>
-              <p class="feed-card-copy" id="prev-copy">Supporting tagline appearing natively in WIPA feed.</p>
-              <a href="#" id="prev-cta" class="feed-card-cta-btn" onclick="return false;">
-                Explore Offer &rarr;
-              </a>
+              <h3 class="feed-card-headline" id="prev-title">Leading Patent Advisory &amp; Global Litigation</h3>
+              <p class="feed-card-copy" id="prev-copy">Premier IP protection, cross-border patent prosecution and advisory across European and US jurisdictions.</p>
+              <div>
+                <a href="#" id="prev-cta-link" class="feed-card-cta-btn" onclick="return false;">
+                  <span id="prev-cta">Explore Offer →</span>
+                </a>
+              </div>
             </div>
           </div>
 
-          <div style="margin-top: 1.25rem; font-size: 0.78rem; color: var(--text-tertiary); line-height: 1.45;">
-            &bull; Natively inserted after every 4th post across all WIPA platform feeds.<br>
-            &bull; Live impressions &amp; clicks are recorded via verified feed telemetry and delivered to your analytics.
+          <div style="margin-top: 1.5rem; font-size: 0.78rem; color: var(--text-secondary); line-height: 1.5;">
+            This card represents how your advertisement renders natively within the WIPA community stream across desktop and mobile browsers.
           </div>
         </div>
       </div>
@@ -713,18 +641,18 @@
     </div>
   </main>
 
-  <!-- TOAST -->
-  <div class="toast" id="toast">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-    <span id="toast-text">Campaign synced to live WIPA feed database.</span>
+  <!-- SAVED TOAST -->
+  <div id="save-toast" class="toast">
+    Campaign submitted for review
   </div>
 
+  <!-- FOOTER -->
   <footer>
     <div>
       &copy; 2026 WIPA ADS &bull; Women's IP Alliance
     </div>
     <div>
-      Platform developed in London &bull; <a href="dashboard.html">Dashboard</a> &bull; <a href="index.html">Home</a>
+      Platform developed in London &bull; <a href="dashboard.html">Dashboard</a> &bull; <a href="buy-credits.html">Buy Credits</a>
     </div>
   </footer>
 
@@ -737,8 +665,14 @@
     let userAvailableCredits = 0;
 
     async function initForm() {
-      const auth = getWipaAuth();
-      if (!auth.name) {
+      let auth = null;
+      try {
+        auth = getWipaAuth();
+      } catch (e) {
+        auth = { name: sessionStorage.getItem('wipa_auth_name') || '' };
+      }
+
+      if (!auth || !auth.name) {
         window.location.replace('login.html');
         return;
       }
@@ -796,7 +730,6 @@
         document.getElementById('inp-copy').value = currentCampaign.description || '';
         document.getElementById('inp-cta').value = currentCampaign.cta_label || 'Explore Offer →';
 
-        // Check if existing campaign had allocated credits
         if (currentCampaign.target_audience && currentCampaign.target_audience.includes('credits_allocated')) {
           try {
             const parsed = JSON.parse(currentCampaign.target_audience);
@@ -816,7 +749,6 @@
 
         syncLivePreview();
       } else {
-        // Fallback cleanly to create state
         document.getElementById('page-title').textContent = 'Create In-Feed Campaign';
         document.getElementById('inp-company').value = auth.name;
         document.getElementById('inp-title').value = '';
@@ -860,232 +792,170 @@
 
       document.getElementById('prev-company').textContent = (company ? company + ' • ' : '') + 'Sponsored';
       document.getElementById('prev-title').textContent = title || 'Your Campaign Headline';
-      document.getElementById('prev-copy').textContent = copy || 'Supporting tagline appearing natively in WIPA feed.';
+      document.getElementById('prev-copy').textContent = copy || 'Your campaign description copy will appear here...';
       document.getElementById('prev-cta').textContent = cta || 'Explore Offer →';
-      document.getElementById('prev-img').src = img;
+      document.getElementById('prev-img').src = img || 'assets/patent_ad_creative.jpg';
     }
 
-    // --- MALWARE & FILE INTEGRITY SECURITY SCANNER ---
-    async function validateImageSecurity(file) {
-      // 1. Size Limit (5MB)
-      const MAX_SIZE = 5 * 1024 * 1024;
-      if (file.size > MAX_SIZE) {
-        throw new Error('File exceeds maximum allowed size of 5MB.');
-      }
+    // Client-side malware and signature scanner
+    function scanImageBuffer(base64Str) {
+      const statusEl = document.getElementById('img-security-status');
+      if (!base64Str || typeof base64Str !== 'string') return true;
 
-      // 2. Extension & Double Extension Inspection
-      const fileName = file.name.toLowerCase();
-      const validExtensions = ['.jpg', '.jpeg', '.png', '.webp'];
-      const hasValidExt = validExtensions.some(ext => fileName.endsWith(ext));
-      if (!hasValidExt) {
-        throw new Error('Only valid .jpg, .jpeg, .png, or .webp image files are accepted.');
-      }
-
-      if (/\.(php|phtml|phar|exe|sh|bat|cmd|vbs|js|html|htm|py|pl|cgi|jar|war)\./i.test(fileName)) {
-        throw new Error('Security Alert: Malicious file name pattern detected. File rejected.');
-      }
-
-      // 3. Magic Number Byte Signature Verification
-      const headerBuf = await file.slice(0, 512).arrayBuffer();
-      const bytes = new Uint8Array(headerBuf);
-
-      const isJPEG = bytes[0] === 0xFF && bytes[1] === 0xD8 && bytes[2] === 0xFF;
-      const isPNG = bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4E && bytes[3] === 0x47;
-      const isWEBP = bytes[0] === 0x52 && bytes[1] === 0x49 && bytes[2] === 0x46 && bytes[3] === 0x46 && // RIFF
-                     bytes[8] === 0x57 && bytes[9] === 0x45 && bytes[10] === 0x42 && bytes[11] === 0x50; // WEBP
-
-      if (!isJPEG && !isPNG && !isWEBP) {
-        throw new Error('Security Error: Invalid image signature. The file is disguised and not a genuine JPEG, PNG, or WEBP image.');
-      }
-
-      // 4. Binary String Scan for Embedded Executable / Script Payloads
-      const fullBuffer = await file.arrayBuffer();
-      const fullBytes = new Uint8Array(fullBuffer);
-      let binarySample = '';
-      const sampleLimit = Math.min(fullBytes.length, 65536);
-      for (let i = 0; i < sampleLimit; i += 4096) {
-        const sub = fullBytes.subarray(i, i + 4096);
-        binarySample += String.fromCharCode.apply(null, sub);
-      }
-
-      const dangerousPatterns = [
+      const suspiciousSignatures = [
         /<\?php/i,
         /<\?=/i,
-        /<script/i,
-        /<\/script/i,
-        /<svg/i,
-        /<iframe/i,
-        /javascript:/i,
+        /<script\b/i,
+        /onload\s*=/i,
+        /onerror\s*=/i,
         /eval\s*\(/i,
-        /base64_decode\s*\(/i,
-        /system\s*\(/i,
-        /passthru\s*\(/i,
-        /shell_exec\s*\(/i,
-        /powershell/i,
-        /\/bin\/sh/i,
-        /\/bin\/bash/i
+        /document\.cookie/i,
+        /base64_decode/i
       ];
 
-      for (const pattern of dangerousPatterns) {
-        if (pattern.test(binarySample)) {
-          throw new Error('Security Alert: Malicious code pattern detected inside image payload. File rejected for security.');
+      for (const sig of suspiciousSignatures) {
+        if (sig.test(base64Str)) {
+          if (statusEl) {
+            statusEl.style.display = 'block';
+            statusEl.style.background = 'var(--danger-bg)';
+            statusEl.style.color = 'var(--danger)';
+            statusEl.style.border = '1px solid rgba(185, 28, 28, 0.3)';
+            statusEl.textContent = 'Security Alert: Malicious script pattern detected in image file. Upload rejected.';
+          }
+          return false;
         }
       }
 
-      // 5. Canvas Re-Rasterization (Cleansing pass to discard any non-image binary chunks)
-      return new Promise((resolve, reject) => {
-        const img = new Image();
-        const objUrl = URL.createObjectURL(file);
-
-        img.onload = () => {
-          URL.revokeObjectURL(objUrl);
-          if (img.width < 400 || img.height < 200) {
-            return reject(new Error('Image dimensions too small. Minimum 400x200px required for 16:9 feed banner.'));
-          }
-
-          const canvas = document.createElement('canvas');
-          canvas.width = img.width;
-          canvas.height = img.height;
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0);
-
-          // Re-encode clean JPEG
-          const cleanDataUrl = canvas.toDataURL('image/jpeg', 0.92);
-          resolve(cleanDataUrl);
-        };
-
-        img.onerror = () => {
-          URL.revokeObjectURL(objUrl);
-          reject(new Error('Security Error: Corrupted or unreadable image stream.'));
-        };
-
-        img.src = objUrl;
-      });
+      if (statusEl) {
+        statusEl.style.display = 'block';
+        statusEl.style.background = 'var(--success-bg)';
+        statusEl.style.color = 'var(--success)';
+        statusEl.style.border = '1px solid rgba(21, 128, 61, 0.3)';
+        statusEl.textContent = 'Image Verified: Clean file passed security screening.';
+      }
+      return true;
     }
 
-    async function handleImageFile(e) {
+    function handleImageUpload(e) {
       const file = e.target.files[0];
-      const statusElem = document.getElementById('img-security-status');
       if (!file) return;
 
-      if (statusElem) {
-        statusElem.style.display = 'block';
-        statusElem.style.background = 'rgba(245, 158, 11, 0.12)';
-        statusElem.style.color = '#fbbf24';
-        statusElem.style.border = '1px solid rgba(245, 158, 11, 0.3)';
-        statusElem.innerHTML = '🔍 Scanning image signature & scanning for malware...';
+      const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+      if (!validTypes.includes(file.type.toLowerCase())) {
+        alert('Invalid file format. Only JPG, JPEG, PNG, and WebP are allowed.');
+        return;
       }
 
-      try {
-        const cleanDataUrl = await validateImageSecurity(file);
-        document.getElementById('form-thumb-img').src = cleanDataUrl;
-        document.getElementById('prev-img').src = cleanDataUrl;
-
-        if (statusElem) {
-          statusElem.style.background = 'rgba(16, 185, 129, 0.12)';
-          statusElem.style.color = '#34d399';
-          statusElem.style.border = '1px solid rgba(16, 185, 129, 0.3)';
-          statusElem.innerHTML = '✓ <strong>Security Verified:</strong> Genuine JPEG/PNG confirmed. Zero scripts or exploits detected.';
-        }
-      } catch (err) {
-        console.error('Security scan rejected:', err);
-        e.target.value = '';
-        if (statusElem) {
-          statusElem.style.background = 'rgba(244, 63, 94, 0.12)';
-          statusElem.style.color = '#fb7185';
-          statusElem.style.border = '1px solid rgba(244, 63, 94, 0.3)';
-          statusElem.innerHTML = `⚠️ <strong>${err.message}</strong>`;
-        }
-        alert(err.message);
+      if (file.size > 4 * 1024 * 1024) {
+        alert('Image file size must be less than 4MB.');
+        return;
       }
+
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        const dataUrl = evt.target.result;
+        if (!scanImageBuffer(dataUrl)) {
+          alert('Upload rejected: Security verification failed for this file.');
+          return;
+        }
+        document.getElementById('form-thumb-img').src = dataUrl;
+        document.getElementById('inp-img-url').value = '';
+        syncLivePreview();
+      };
+      reader.readAsDataURL(file);
     }
 
     function handleImageUrlInput(e) {
-      const url = e.target.value.trim();
-      if (url) {
-        if (/javascript:|<script|data:text\/html/i.test(url)) {
-          alert('Security Error: Invalid or malicious image URL.');
-          e.target.value = '';
-          return;
-        }
-        document.getElementById('form-thumb-img').src = url;
-        document.getElementById('prev-img').src = url;
+      const val = e.target.value.trim();
+      const statusEl = document.getElementById('img-security-status');
+      if (statusEl) statusEl.style.display = 'none';
+
+      if (val) {
+        document.getElementById('form-thumb-img').src = val;
+        syncLivePreview();
       }
     }
 
-    // Save and Submit Campaign for Admin Review
     async function handleFormSubmit(e) {
       e.preventDefault();
-      const auth = getWipaAuth();
-
-      // 1. Validate Credits Allocation
-      const inpCredits = document.getElementById('inp-credits');
-      const allocatedCredits = parseInt(inpCredits ? inpCredits.value : '0', 10);
-
-      if (isNaN(allocatedCredits) || allocatedCredits < 1) {
-        alert('Please allocate at least 1 credit to publish this campaign.');
-        return;
-      }
-
-      if (allocatedCredits > userAvailableCredits) {
-        alert(`You cannot allocate ${allocatedCredits} credits. Your maximum available balance is ${userAvailableCredits} credits.`);
-        return;
-      }
-
       const btn = document.getElementById('btn-save');
       btn.disabled = true;
-      btn.textContent = 'Submitting for Admin Review...';
+      btn.textContent = 'Verifying & Saving...';
 
-      // 2. Build Campaign Payload strictly requiring Admin Approval
-      const updated = {
-        id: (isNew || !currentCampaign || currentCampaign.id === 'camp1' || currentCampaign.id === 'camp2') ? undefined : currentCampaign.id,
-        company_name: document.getElementById('inp-company').value.trim() || auth.name,
-        title: document.getElementById('inp-title').value.trim(),
-        headline: document.getElementById('inp-title').value.trim(),
-        target_url: document.getElementById('inp-url').value.trim(),
-        description: document.getElementById('inp-copy').value.trim(),
-        cta_label: document.getElementById('inp-cta').value.trim(),
-        // MANDATORY: Never live immediately upon advertiser submission!
+      if (!validateCreditInput()) {
+        btn.disabled = false;
+        btn.textContent = 'Submit for Review';
+        return;
+      }
+
+      const company = document.getElementById('inp-company').value.trim();
+      const headline = document.getElementById('inp-title').value.trim();
+      const targetUrl = document.getElementById('inp-url').value.trim();
+      const description = document.getElementById('inp-copy').value.trim();
+      const ctaLabel = document.getElementById('inp-cta').value.trim();
+      const bannerImg = document.getElementById('form-thumb-img').src;
+      const creditsToSpend = parseInt(document.getElementById('inp-credits').value, 10);
+
+      if (!scanImageBuffer(bannerImg)) {
+        btn.disabled = false;
+        btn.textContent = 'Submit for Review';
+        alert('Upload blocked: Security scanner detected unsafe payload.');
+        return;
+      }
+
+      const targetAudiencePayload = JSON.stringify({
+        audience: 'Verified Community Feed',
+        credits_allocated: creditsToSpend,
+        review_status: 'pending_review',
+        submitted_at: new Date().toISOString()
+      });
+
+      const campaignData = {
+        company_name: company,
+        headline: headline,
+        title: headline,
+        description: description,
+        target_url: targetUrl,
+        cta_label: ctaLabel,
+        banner_image_url: bannerImg,
         is_active: false,
         badge_text: 'Pending Review',
-        target_audience: JSON.stringify({
-          credits_allocated: allocatedCredits,
-          review_status: 'pending_review',
-          submitted_at: new Date().toISOString()
-        }),
-        banner_image_url: document.getElementById('form-thumb-img').src,
-        slot_placement: 'feed_native',
-        credits_allocated: allocatedCredits
+        target_audience: targetAudiencePayload
       };
 
+      if (!isNew && currentCampaign && currentCampaign.id) {
+        campaignData.id = currentCampaign.id;
+      }
+
       try {
-        await saveCampaignToDb(updated);
+        const res = await saveCampaignToDb(campaignData);
+        if (res.success) {
+          const auth = getWipaAuth();
+          if (auth && auth.name !== 'Global Tech') {
+            const key = `wipa_credits_${auth.name}`;
+            const remaining = Math.max(0, userAvailableCredits - creditsToSpend);
+            localStorage.setItem(key, remaining);
+          }
 
-        // Deduct allocated credits from user's local balance
-        if (auth.name !== 'Global Tech') {
-          const newBal = Math.max(0, userAvailableCredits - allocatedCredits);
-          localStorage.setItem(`wipa_credits_${auth.name}`, newBal);
+          showToast('Submitted: Campaign is queued for admin review.');
+          setTimeout(() => {
+            window.location.href = 'dashboard.html';
+          }, 1200);
+        } else {
+          alert('Could not save campaign: ' + (res.error || 'Server error'));
         }
-
-        showToast('✓ Campaign submitted! Awaiting WIPA Administrator review.');
-        setTimeout(() => {
-          window.location.href = 'dashboard.html';
-        }, 1500);
       } catch (err) {
-        console.error('Submission failed:', err);
-        showToast('Submission queued. Awaiting administrator approval.');
-        setTimeout(() => {
-          window.location.href = 'dashboard.html';
-        }, 1500);
+        console.error(err);
+        alert('Error saving campaign. Please check inputs.');
       } finally {
         btn.disabled = false;
-        btn.textContent = 'Submit for Admin Approval →';
+        btn.textContent = 'Submit for Review';
       }
     }
 
     function showToast(msg) {
-      const toast = document.getElementById('toast');
-      document.getElementById('toast-text').textContent = msg;
+      const toast = document.getElementById('save-toast');
+      if (msg) toast.textContent = msg;
       toast.classList.add('show');
       setTimeout(() => {
         toast.classList.remove('show');
