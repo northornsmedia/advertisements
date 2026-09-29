@@ -4,28 +4,35 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Advertiser Dashboard | WIPA ADS</title>
-  <meta name="description" content="Manage live in-feed campaigns and ad credits on WIPA ADS.">
+  <meta name="description" content="Manage live in-feed campaigns and ad credits on WIPA ADS. Real-time telemetry and feed distribution.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="assets/supabase-config.js?v=20260929_clean_v4"></script>
+  <script src="assets/supabase-config.js?v=20260929_clean_v5"></script>
   <style>
     :root {
-      --bg: #ffffff;
-      --surface: #f5f5f7;
-      --surface-hover: #ebebee;
-      --card-bg: #ffffff;
-      --border: #e5e5ea;
-      --border-subtle: rgba(0, 0, 0, 0.08);
-      --text: #1d1d1f;
-      --text-secondary: #86868b;
-      --text-tertiary: #6e6e73;
-      --accent: #0071e3;
-      --accent-hover: #0077ed;
-      --success: #15803d;
-      --success-bg: #dcfce7;
-      --warning: #b45309;
-      --warning-bg: #fef3c7;
-      --font-apple: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
-      --font-mono: "SF Mono", Menlo, Monaco, Consolas, monospace;
+      --bg: #07070a;
+      --surface: rgba(18, 18, 26, 0.7);
+      --surface-hover: rgba(28, 28, 40, 0.85);
+      --card-bg: rgba(15, 15, 23, 0.72);
+      --border: rgba(255, 255, 255, 0.08);
+      --border-focus: rgba(99, 102, 241, 0.45);
+      --border-subtle: rgba(255, 255, 255, 0.05);
+      --text: #ffffff;
+      --text-secondary: #94949e;
+      --text-tertiary: #6b6b76;
+      --accent: #6366f1;
+      --accent-hover: #4f46e5;
+      --accent-glow: rgba(99, 102, 241, 0.35);
+      --accent-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #d946ef 100%);
+      --emerald: #10b981;
+      --emerald-glow: rgba(16, 185, 129, 0.35);
+      --amber: #f59e0b;
+      --amber-glow: rgba(245, 158, 11, 0.25);
+      --rose: #f43f5e;
+      --font-main: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: "IBM Plex Mono", Menlo, Consolas, monospace;
     }
 
     *, *::before, *::after {
@@ -36,25 +43,28 @@
 
     body {
       background-color: var(--bg);
+      background-image: 
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(99, 102, 241, 0.2) 0%, rgba(147, 51, 234, 0.07) 50%, transparent 80%),
+        radial-gradient(circle at 100% 40%, rgba(6, 182, 212, 0.04) 0%, transparent 40%);
       color: var(--text);
-      font-family: var(--font-apple);
+      font-family: var(--font-main);
       -webkit-font-smoothing: antialiased;
-      line-height: 1.47059;
-      letter-spacing: -0.022em;
+      line-height: 1.5;
+      letter-spacing: -0.015em;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
     }
 
-    /* TOP APPLE NAV */
+    /* TOP FROSTED NAV */
     .top-nav {
       position: sticky;
       top: 0;
-      background: rgba(255, 255, 255, 0.85);
-      backdrop-filter: saturate(180%) blur(20px);
-      -webkit-backdrop-filter: saturate(180%) blur(20px);
-      border-bottom: 1px solid var(--border-subtle);
-      padding: 1rem 2.5rem;
+      background: rgba(7, 7, 10, 0.75);
+      backdrop-filter: blur(24px) saturate(190%);
+      -webkit-backdrop-filter: blur(24px) saturate(190%);
+      border-bottom: 1px solid var(--border);
+      padding: 1.1rem 2.5rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -64,171 +74,251 @@
     .back-btn {
       display: inline-flex;
       align-items: center;
-      gap: 0.4rem;
-      font-size: 0.85rem;
-      font-weight: 500;
-      color: var(--accent);
+      gap: 0.5rem;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-secondary);
       text-decoration: none;
-      transition: opacity 0.2s ease;
+      transition: all 0.2s ease;
+      padding: 0.4rem 0.8rem;
+      border-radius: 12px;
+      border: 1px solid transparent;
     }
 
     .back-btn:hover {
-      opacity: 0.8;
-      text-decoration: underline;
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.05);
+      border-color: var(--border);
     }
 
     .brand-stamp {
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: var(--text);
-      letter-spacing: -0.01em;
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: #ffffff;
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.6rem;
+      background: rgba(255, 255, 255, 0.04);
+      padding: 0.4rem 1rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+    }
+
+    .brand-stamp .brand-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #818cf8;
+      box-shadow: 0 0 10px #818cf8;
     }
 
     .nav-link {
-      font-size: 0.85rem;
-      font-weight: 500;
+      font-size: 0.82rem;
+      font-weight: 600;
       color: var(--text-secondary);
       text-decoration: none;
       transition: color 0.2s ease;
+      padding: 0.4rem 0.8rem;
+      border-radius: 12px;
     }
 
     .nav-link:hover {
-      color: var(--text);
+      color: #ffffff;
     }
 
     .pulse-dot {
-      width: 7px;
-      height: 7px;
+      width: 8px;
+      height: 8px;
       border-radius: 50%;
-      background: #10b981;
-      box-shadow: 0 0 6px #10b981;
+      background: var(--emerald);
+      box-shadow: 0 0 10px var(--emerald);
       display: inline-block;
       animation: pulse 2s infinite;
     }
 
     @keyframes pulse {
-      0% { opacity: 0.6; transform: scale(0.95); }
-      50% { opacity: 1; transform: scale(1.15); }
-      100% { opacity: 0.6; transform: scale(0.95); }
+      0% { opacity: 0.6; transform: scale(0.9); }
+      50% { opacity: 1; transform: scale(1.15); box-shadow: 0 0 14px var(--emerald); }
+      100% { opacity: 0.6; transform: scale(0.9); }
     }
 
     /* MAIN CONTAINER */
     .dashboard-wrapper {
       flex: 1;
-      max-width: 1040px;
+      max-width: 1120px;
       width: 100%;
       margin: 0 auto;
-      padding: 3rem 1.5rem 5rem 1.5rem;
+      padding: 3.5rem 1.75rem 6rem 1.75rem;
     }
 
     .dash-header {
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      margin-bottom: 2.25rem;
+      margin-bottom: 2.75rem;
+      gap: 1.5rem;
+      flex-wrap: wrap;
     }
 
     .dash-greeting {
-      font-size: 2.1rem;
-      font-weight: 700;
-      letter-spacing: -0.03em;
-      margin-bottom: 0.35rem;
+      font-size: 2.4rem;
+      font-weight: 800;
+      letter-spacing: -0.035em;
+      color: #ffffff;
+      margin-bottom: 0.45rem;
+      background: linear-gradient(135deg, #ffffff 60%, #cbd5e1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
     .dash-meta {
-      font-size: 0.95rem;
+      font-size: 0.85rem;
       color: var(--text-secondary);
       display: flex;
       align-items: center;
-      gap: 0.75rem;
+      gap: 0.65rem;
       flex-wrap: wrap;
     }
 
     .meta-tag {
       display: inline-flex;
       align-items: center;
-      gap: 0.3rem;
-      background: var(--surface);
-      padding: 0.2rem 0.65rem;
-      border-radius: 980px;
+      gap: 0.45rem;
+      background: rgba(255, 255, 255, 0.04);
+      padding: 0.35rem 0.85rem;
+      border-radius: 999px;
       font-size: 0.76rem;
-      color: var(--text);
+      color: #e4e4e7;
       font-weight: 600;
+      border: 1px solid var(--border);
+    }
+
+    .meta-tag.highlight {
+      background: rgba(99, 102, 241, 0.1);
+      color: #c7d2fe;
+      border-color: rgba(99, 102, 241, 0.3);
     }
 
     .header-actions {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
+      gap: 0.85rem;
     }
 
     .logout-btn {
-      background: var(--surface);
-      color: var(--text);
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text-secondary);
       border: 1px solid var(--border);
-      border-radius: 980px;
-      padding: 0.5rem 1.25rem;
-      font-size: 0.85rem;
+      border-radius: 999px;
+      padding: 0.6rem 1.35rem;
+      font-size: 0.82rem;
       font-weight: 600;
       cursor: pointer;
       text-decoration: none;
-      transition: background 0.15s ease;
+      transition: all 0.2s ease;
     }
 
     .logout-btn:hover {
-      background: var(--surface-hover);
+      background: rgba(255, 255, 255, 0.08);
+      color: #ffffff;
+      border-color: rgba(255, 255, 255, 0.2);
     }
 
-    /* STATS GRID */
+    /* STATS OVERVIEW CARDS */
     .stats-cards-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 1.5rem;
-      margin-bottom: 3.25rem;
+      margin-bottom: 3.5rem;
     }
 
     .stat-card {
-      background: var(--surface);
-      border: 1px solid var(--border-subtle);
-      border-radius: 18px;
-      padding: 1.75rem;
-      transition: transform 0.2s ease;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 2rem 1.85rem;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 8px 30px -4px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.4), transparent);
+      opacity: 0;
+      transition: opacity 0.3s ease;
     }
 
     .stat-card:hover {
-      transform: translateY(-2px);
+      transform: translateY(-3px);
+      border-color: var(--border-focus);
+      box-shadow: 0 14px 40px -4px rgba(99, 102, 241, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    }
+
+    .stat-card:hover::before {
+      opacity: 1;
     }
 
     .stat-card-title {
-      font-size: 0.82rem;
+      font-size: 0.8rem;
       color: var(--text-secondary);
       font-weight: 600;
-      margin-bottom: 0.4rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.65rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
 
-    .stat-card-num {
-      font-size: 2.25rem;
+    .stat-badge {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
       font-weight: 700;
-      letter-spacing: -0.035em;
-      color: var(--text);
-      font-family: var(--font-apple);
-      transition: color 0.3s ease;
+      padding: 0.2rem 0.55rem;
+      border-radius: 6px;
+      letter-spacing: 0.02em;
     }
 
-    .stat-card-num.updated {
-      color: #16a34a;
+    .stat-badge.emerald {
+      background: rgba(16, 185, 129, 0.12);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.25);
+    }
+
+    .stat-badge.violet {
+      background: rgba(99, 102, 241, 0.12);
+      color: #a5b4fc;
+      border: 1px solid rgba(99, 102, 241, 0.25);
+    }
+
+    .stat-card-num {
+      font-size: 2.75rem;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      color: #ffffff;
+      font-family: var(--font-mono);
+      line-height: 1.1;
+      margin-bottom: 0.45rem;
+      transition: all 0.3s ease;
     }
 
     .stat-card-sub {
-      font-size: 0.8rem;
+      font-size: 0.82rem;
       color: var(--text-tertiary);
-      margin-top: 0.35rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
     }
 
     /* CAMPAIGNS SECTION */
@@ -236,51 +326,59 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 1.25rem;
+      margin-bottom: 1.5rem;
     }
 
     .dash-section-title {
-      font-size: 1.35rem;
-      font-weight: 700;
+      font-size: 1.4rem;
+      font-weight: 800;
       letter-spacing: -0.025em;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
     }
 
     .section-actions {
       display: flex;
-      gap: 0.75rem;
+      gap: 0.85rem;
     }
 
     .camp-btn {
       display: inline-flex;
       align-items: center;
-      gap: 0.4rem;
-      padding: 0.5rem 1rem;
-      border-radius: 980px;
+      gap: 0.5rem;
+      padding: 0.65rem 1.25rem;
+      border-radius: 999px;
       font-size: 0.82rem;
-      font-weight: 600;
+      font-weight: 700;
       cursor: pointer;
       text-decoration: none;
-      transition: all 0.15s ease;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .camp-btn.primary {
-      background: var(--text);
+      background: var(--accent-gradient);
       color: #ffffff;
-      border: none;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 4px 20px var(--accent-glow);
     }
 
     .camp-btn.primary:hover {
-      background: #333336;
+      transform: scale(1.03);
+      box-shadow: 0 6px 26px rgba(99, 102, 241, 0.5);
     }
 
     .camp-btn.secondary {
-      background: var(--surface);
-      color: var(--text);
+      background: rgba(255, 255, 255, 0.05);
+      color: #f4f4f5;
       border: 1px solid var(--border);
     }
 
     .camp-btn.secondary:hover {
-      background: var(--surface-hover);
+      background: rgba(255, 255, 255, 0.09);
+      color: #ffffff;
+      border-color: rgba(255, 255, 255, 0.2);
     }
 
     /* CAMPAIGN CARD ITEM */
@@ -291,44 +389,47 @@
     }
 
     .campaign-item {
-      background: #ffffff;
+      background: var(--card-bg);
       border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 1.5rem;
+      border-radius: 24px;
+      padding: 1.65rem 1.85rem;
       display: flex;
       align-items: center;
-      gap: 1.75rem;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.02);
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      gap: 2rem;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .campaign-item:hover {
-      border-color: #c7c7cc;
-      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.04);
+      border-color: rgba(99, 102, 241, 0.35);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
     }
 
     .camp-creative-thumb {
       width: 170px;
-      height: 100px;
-      border-radius: 12px;
-      overflow: hidden;
+      height: 96px;
       flex-shrink: 0;
-      background: #000;
+      border-radius: 16px;
+      overflow: hidden;
+      background: #181822;
+      border: 1px solid rgba(255, 255, 255, 0.1);
       position: relative;
-      cursor: pointer;
       display: block;
-      border: 1px solid var(--border-subtle);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
     }
 
     .camp-creative-thumb img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      transition: transform 0.3s ease;
+      transition: transform 0.35s ease;
     }
 
     .camp-creative-thumb:hover img {
-      transform: scale(1.05);
+      transform: scale(1.08);
     }
 
     .thumb-zoom-badge {
@@ -336,12 +437,13 @@
       bottom: 6px;
       right: 6px;
       background: rgba(0, 0, 0, 0.75);
-      backdrop-filter: blur(4px);
+      backdrop-filter: blur(8px);
       color: #ffffff;
-      font-size: 0.65rem;
-      font-weight: 600;
-      padding: 2px 6px;
+      font-size: 0.62rem;
+      font-weight: 700;
+      padding: 0.15rem 0.45rem;
       border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     .camp-info {
@@ -353,100 +455,129 @@
       display: flex;
       align-items: center;
       gap: 0.65rem;
-      margin-bottom: 0.35rem;
+      margin-bottom: 0.45rem;
       flex-wrap: wrap;
     }
 
     .camp-title-row h4 {
       font-size: 1.05rem;
-      font-weight: 700;
+      font-weight: 800;
       letter-spacing: -0.02em;
-      color: var(--text);
+      color: #ffffff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .camp-badge {
+      font-family: var(--font-mono);
       font-size: 0.72rem;
-      font-weight: 600;
-      padding: 0.18rem 0.6rem;
-      border-radius: 9999px;
+      font-weight: 700;
+      padding: 0.2rem 0.65rem;
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      letter-spacing: 0.01em;
     }
 
     .camp-badge.active {
-      background: var(--success-bg);
-      color: var(--success);
+      background: rgba(16, 185, 129, 0.12);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      box-shadow: 0 0 12px rgba(16, 185, 129, 0.15);
     }
 
     .camp-badge.paused {
-      background: var(--warning-bg);
-      color: var(--warning);
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
     }
 
     .camp-meta-text {
       font-size: 0.85rem;
       color: var(--text-secondary);
-      margin-bottom: 0.4rem;
+      line-height: 1.5;
+      margin-bottom: 0.65rem;
+    }
+
+    .camp-meta-text strong {
+      color: #ffffff;
+      font-family: var(--font-mono);
     }
 
     .camp-dest-link {
       display: inline-flex;
       align-items: center;
-      gap: 0.35rem;
-      font-size: 0.8rem;
-      color: var(--accent);
+      gap: 0.4rem;
+      font-size: 0.78rem;
+      color: #818cf8;
       text-decoration: none;
-      word-break: break-all;
+      font-family: var(--font-mono);
+      transition: color 0.15s ease;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     .camp-dest-link:hover {
+      color: #a5b4fc;
       text-decoration: underline;
     }
 
     .camp-actions {
       display: flex;
-      gap: 0.6rem;
+      align-items: center;
+      gap: 0.65rem;
       flex-shrink: 0;
     }
 
     /* FOOTER */
     footer {
-      border-top: 1px solid var(--border-subtle);
-      padding: 2rem 2.5rem;
+      border-top: 1px solid var(--border);
+      padding: 2.25rem 2.5rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 0.82rem;
-      color: var(--text-secondary);
-      background: var(--bg);
+      font-size: 0.8rem;
+      color: var(--text-tertiary);
+      background: rgba(7, 7, 10, 0.5);
     }
 
     footer a {
-      color: var(--text);
+      color: var(--text-secondary);
       text-decoration: none;
-      font-weight: 500;
+      transition: color 0.15s ease;
     }
 
     footer a:hover {
-      text-decoration: underline;
+      color: #ffffff;
     }
 
-    @media (max-width: 768px) {
+    @media (max-width: 860px) {
       .top-nav {
-        padding: 1rem 1.5rem;
+        padding: 1rem 1.25rem;
+      }
+      .dashboard-wrapper {
+        padding: 2rem 1.25rem 4rem 1.25rem;
       }
       .stats-cards-grid {
         grid-template-columns: 1fr;
+        gap: 1rem;
       }
       .campaign-item {
         flex-direction: column;
         align-items: flex-start;
-        gap: 1rem;
+        gap: 1.25rem;
       }
       .camp-creative-thumb {
         width: 100%;
-        height: 160px;
+        height: 180px;
       }
       .camp-actions {
         width: 100%;
+        justify-content: stretch;
       }
       .camp-btn {
         flex: 1;
@@ -457,23 +588,30 @@
 </head>
 <body>
 
-  <!-- Top Apple Nav -->
+  <!-- Top Obsidian Nav -->
   <header class="top-nav">
     <a href="index.html" class="back-btn">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
         <line x1="19" y1="12" x2="5" y2="12"></line>
         <polyline points="12 19 5 12 12 5"></polyline>
       </svg>
-      <span>Back to WIPA ADS</span>
+      <span>Back to Home</span>
     </a>
 
     <div class="brand-stamp">
-      <span>WIPA ADS // PORTAL</span>
+      <span class="brand-dot"></span>
+      <span>WIPA ADS // CAMPAIGN STUDIO</span>
     </div>
 
-    <a href="how-it-works.html" class="nav-link">
-      How It Works
-    </a>
+    <div style="display: flex; align-items: center; gap: 1rem;">
+      <a href="buy-credits.html" class="nav-link" style="color: #a5b4fc; font-weight: 700; display: inline-flex; align-items: center; gap: 0.35rem;">
+        <span style="font-size: 0.85rem;">⚡</span>
+        <span>Buy Credits</span>
+      </a>
+      <a href="how-it-works.html" class="nav-link">
+        Pricing &amp; Specs
+      </a>
+    </div>
   </header>
 
   <main class="dashboard-wrapper">
@@ -485,12 +623,16 @@
             <span class="pulse-dot"></span>
             Guaranteed Cadence 4:1 Feed Injection
           </span>
-          <span class="meta-tag" id="dash-tier-tag">
+          <span class="meta-tag highlight" id="dash-tier-tag">
             Verified Advertiser Placement
           </span>
         </div>
       </div>
       <div class="header-actions">
+        <a href="buy-credits.html" class="camp-btn secondary" style="background: rgba(99, 102, 241, 0.12); border-color: rgba(99, 102, 241, 0.35); color: #c7d2fe;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v8"></path><path d="M8 12h8"></path></svg>
+          <span>Buy Credits</span>
+        </a>
         <a href="edit-ad.html?new=1" class="camp-btn primary">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
           <span>Create New Ad</span>
@@ -499,16 +641,22 @@
       </div>
     </div>
 
-    <!-- Stats Overview -->
+    <!-- Stats Overview (3 Cyber Cards) -->
     <div class="stats-cards-grid">
-      <div class="stat-card">
+      <div class="stat-card" style="position: relative;">
         <div class="stat-card-title">
           <span>Available Credits</span>
-          <span id="stat-credits-status">⚡ Active</span>
+          <span class="stat-badge violet" id="stat-credits-status">⚡ Active</span>
         </div>
         <div class="stat-card-num" id="stat-credits">0</div>
-        <div class="stat-card-sub" id="stat-credits-sub">&pound;0 Balance Value</div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.35rem;">
+          <div class="stat-card-sub" id="stat-credits-sub" style="margin: 0;">0 Credits Available</div>
+          <a href="buy-credits.html" style="display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.3rem 0.75rem; background: rgba(99, 102, 241, 0.2); border: 1px solid rgba(99, 102, 241, 0.45); border-radius: 999px; font-size: 0.76rem; font-weight: 700; color: #e0e7ff; text-decoration: none; transition: all 0.2s ease;">
+            <span>Buy Credits +</span>
+          </a>
+        </div>
       </div>
+
       <div class="stat-card">
         <div class="stat-card-title">
           <span>Total In-Feed Impressions</span>
@@ -517,10 +665,11 @@
         <div class="stat-card-num" id="stat-total-impressions">0</div>
         <div class="stat-card-sub" id="stat-imp-sub">No feed delivery yet</div>
       </div>
+
       <div class="stat-card">
         <div class="stat-card-title">
           <span>Average Click-Through Rate</span>
-          <span>🎯 Verified</span>
+          <span class="stat-badge emerald">🎯 High Intent</span>
         </div>
         <div class="stat-card-num" id="stat-avg-ctr">0.00%</div>
         <div class="stat-card-sub" id="stat-clicks-sub">0 clicks captured</div>
@@ -529,10 +678,13 @@
 
     <!-- Active Campaigns Header -->
     <div class="dash-section-header">
-      <h2 class="dash-section-title">Your In-Feed Campaigns</h2>
+      <h2 class="dash-section-title">
+        <span>Your In-Feed Campaigns</span>
+      </h2>
       <div class="section-actions">
-        <a href="how-it-works.html#calculator" class="camp-btn secondary">
-          <span>Buy Credits</span>
+        <a href="buy-credits.html" class="camp-btn secondary">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v8"></path><path d="M8 12h8"></path></svg>
+          <span>Buy Ad Credits</span>
         </a>
       </div>
     </div>
@@ -540,7 +692,7 @@
     <!-- CAMPAIGNS CONTAINER -->
     <div class="campaign-list" id="campaigns-container">
       <!-- Dynamically generated campaign items will be inserted here -->
-      <div style="text-align: center; padding: 2rem; color: var(--text-secondary);">
+      <div style="text-align: center; padding: 3rem; color: var(--text-secondary);">
         Connecting to live database and fetching campaigns...
       </div>
     </div>
@@ -552,7 +704,7 @@
       &copy; 2026 WIPA ADS &bull; Women's IP Alliance
     </div>
     <div>
-      Platform developed in London &bull; <a href="index.html">Home</a>
+      Platform developed in London &bull; <a href="index.html">Home</a> &bull; <a href="how-it-works.html">How It Works</a>
     </div>
   </footer>
 
@@ -599,13 +751,13 @@
       const container = document.getElementById('campaigns-container');
       if (!campaigns || campaigns.length === 0) {
         container.innerHTML = `
-          <div style="text-align: center; padding: 3.5rem 2rem; background: var(--surface); border: 1px dashed var(--border); border-radius: 20px;">
-            <div style="font-size: 2.25rem; margin-bottom: 0.75rem;">📢</div>
-            <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem; letter-spacing: -0.02em;">No In-Feed Campaigns Yet</h3>
-            <p style="color: var(--text-secondary); font-size: 0.92rem; max-width: 480px; margin: 0 auto 1.5rem auto; line-height: 1.5;">
-              Welcome, <strong>${auth.name}</strong>. You have not launched any in-feed campaigns yet. Create your first campaign to start delivering natively to verified IP counsel.
+          <div style="text-align: center; padding: 4.5rem 2rem; background: var(--card-bg); border: 1px dashed var(--border); border-radius: 24px;">
+            <div style="font-size: 2.5rem; margin-bottom: 0.85rem;">📢</div>
+            <h3 style="font-size: 1.35rem; font-weight: 800; margin-bottom: 0.5rem; color: #ffffff; letter-spacing: -0.02em;">No In-Feed Campaigns Yet</h3>
+            <p style="color: var(--text-secondary); font-size: 0.92rem; max-width: 480px; margin: 0 auto 1.75rem auto; line-height: 1.6;">
+              Welcome, <strong style="color: #ffffff;">${auth.name}</strong>. You have not launched any in-feed campaigns yet. Create your first campaign to start delivering natively to verified IP counsel.
             </p>
-            <a href="edit-ad.html?new=1" class="camp-btn primary" style="font-size: 0.92rem; padding: 0.75rem 1.6rem;">+ Create First In-Feed Campaign</a>
+            <a href="edit-ad.html?new=1" class="camp-btn primary" style="font-size: 0.92rem; padding: 0.8rem 1.85rem;">+ Create First In-Feed Campaign</a>
           </div>
         `;
         return;
@@ -621,13 +773,13 @@
         const isPending = camp.badge_text === 'Pending Review' || (camp.target_audience && camp.target_audience.includes('pending_review'));
         const isRejected = camp.badge_text === 'Rejected';
         
-        let statusBadge = `<span class="camp-badge active">⚡ Active</span>`;
+        let statusBadge = `<span class="camp-badge active">⚡ Serving Live</span>`;
         if (isPending) {
-          statusBadge = `<span class="camp-badge" style="background: #fef3c7; color: #92400e; border: 1px solid #fde68a;">⏳ Pending Admin Review</span>`;
+          statusBadge = `<span class="camp-badge" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.35); box-shadow: 0 0 10px rgba(245, 158, 11, 0.1);">⏳ Pending Admin Review</span>`;
         } else if (isRejected) {
-          statusBadge = `<span class="camp-badge" style="background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5;">❌ Rejected / Needs Edit</span>`;
+          statusBadge = `<span class="camp-badge" style="background: rgba(244, 63, 94, 0.15); color: #fb7185; border: 1px solid rgba(244, 63, 94, 0.35);">❌ Rejected / Needs Edit</span>`;
         } else if (!camp.is_active) {
-          statusBadge = `<span class="camp-badge paused">Paused</span>`;
+          statusBadge = `<span class="camp-badge paused">○ Paused</span>`;
         }
 
         let creditsAllocatedText = '';
@@ -635,7 +787,7 @@
           try {
             const parsed = JSON.parse(camp.target_audience);
             if (parsed.credits_allocated) {
-              creditsAllocatedText = ` &bull; <strong style="color: #4f46e5;">${parsed.credits_allocated} Credits Allocated</strong>`;
+              creditsAllocatedText = ` &bull; <strong style="color: #a5b4fc;">🪙 ${parsed.credits_allocated} Credits Allocated</strong>`;
             }
           } catch (e) {}
         }
@@ -649,14 +801,14 @@
         item.id = `camp-card-${id}`;
         item.innerHTML = `
           <a href="analytics.html?id=${id}" class="camp-creative-thumb" title="Open full-page analytics">
-            <img id="img-${id}" src="${image}" alt="${title}">
+            <img id="img-${id}" src="${image}" alt="${title}" onerror="this.src='assets/patent_ad_creative.jpg'">
             <span class="thumb-zoom-badge">16:9 Banner</span>
           </a>
 
           <div class="camp-info">
             <div class="camp-title-row">
               ${statusBadge}
-              <span style="font-size: 0.72rem; color: var(--text-secondary); font-weight: 600;">Feed Native</span>
+              <span style="font-size: 0.72rem; color: var(--text-tertiary); font-family: var(--font-mono); font-weight: 600;">Feed Native</span>
               <h4>${title}</h4>
             </div>
             <p class="camp-meta-text" id="meta-${id}">
@@ -676,11 +828,11 @@
 
           <div class="camp-actions">
             <a href="analytics.html?id=${id}" class="camp-btn secondary">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V10"></path><path d="M12 20V4"></path><path d="M6 20v-6"></path></svg>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V10"></path><path d="M12 20V4"></path><path d="M6 20v-6"></path></svg>
               <span>Analytics</span>
             </a>
             <a href="edit-ad.html?id=${id}" class="camp-btn secondary">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
               <span>Edit Ad</span>
             </a>
           </div>
@@ -720,7 +872,7 @@
       const credStatus = document.getElementById('stat-credits-status');
       
       if (credElem) credElem.textContent = credits;
-      if (credSub) credSub.textContent = credits > 0 ? `£${credits * 2} Balance Value` : '£0 Balance Value';
+      if (credSub) credSub.textContent = credits > 0 ? `${credits} Credits Available` : '0 Credits Available';
       if (credStatus) credStatus.textContent = isPartner ? '⚡ Partner Active' : (credits > 0 ? '⚡ Active' : '⚪ 0 Balance');
     }
 
@@ -728,46 +880,35 @@
     loadCampaigns().then(() => {
       // Subscribe to updates for this user's active campaigns
       if (Array.isArray(currentCampaigns) && currentCampaigns.length > 0) {
-        currentCampaigns.forEach(c => {
-          if (c && c.id) {
-            subscribeToCampaignMetrics(c.id, (updated) => {
-              handleLiveMetricsUpdate(updated);
-            });
-          }
+        currentCampaigns.forEach(camp => {
+          subscribeToCampaignMetrics(camp.id, (fresh) => {
+            const impSpan = document.getElementById(`imp-${camp.id}`);
+            const clkSpan = document.getElementById(`clk-${camp.id}`);
+            const ctrSpan = document.getElementById(`ctr-${camp.id}`);
+            const imgEl = document.getElementById(`img-${camp.id}`);
+
+            if (impSpan && fresh.impressions_count !== undefined) {
+              impSpan.textContent = Number(fresh.impressions_count).toLocaleString();
+            }
+            if (clkSpan && fresh.clicks_count !== undefined) {
+              clkSpan.textContent = Number(fresh.clicks_count).toLocaleString();
+            }
+            if (ctrSpan && fresh.impressions_count > 0) {
+              ctrSpan.textContent = ((fresh.clicks_count / fresh.impressions_count) * 100).toFixed(2) + '%';
+            }
+            if (imgEl && fresh.banner_image_url) {
+              imgEl.src = fresh.banner_image_url;
+            }
+
+            const idx = currentCampaigns.findIndex(c => c.id === camp.id);
+            if (idx >= 0) {
+              currentCampaigns[idx] = Object.assign(currentCampaigns[idx], fresh);
+              updateAggregateKPIs(currentCampaigns);
+            }
+          });
         });
       }
     });
-
-    function handleLiveMetricsUpdate(updated) {
-      if (!updated) return;
-      const id = updated.id;
-      const impSpan = document.getElementById(`imp-${id}`);
-      const clkSpan = document.getElementById(`clk-${id}`);
-      const ctrSpan = document.getElementById(`ctr-${id}`);
-
-      if (impSpan && updated.impressions_count !== undefined) {
-        impSpan.textContent = Number(updated.impressions_count).toLocaleString();
-        impSpan.style.color = '#16a34a';
-        setTimeout(() => { impSpan.style.color = ''; }, 1500);
-      }
-      if (clkSpan && updated.clicks_count !== undefined) {
-        clkSpan.textContent = Number(updated.clicks_count).toLocaleString();
-        clkSpan.style.color = '#16a34a';
-        setTimeout(() => { clkSpan.style.color = ''; }, 1500);
-      }
-      if (ctrSpan && updated.impressions_count && updated.clicks_count) {
-        const ctr = ((updated.clicks_count / updated.impressions_count) * 100).toFixed(2) + '%';
-        ctrSpan.textContent = ctr;
-      }
-
-      // Update aggregate KPIs
-      const match = currentCampaigns.find(c => c.id === id);
-      if (match) {
-        match.impressions_count = updated.impressions_count;
-        match.clicks_count = updated.clicks_count;
-        updateAggregateKPIs(currentCampaigns);
-      }
-    }
   </script>
 </body>
 </html>

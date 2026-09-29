@@ -3,27 +3,36 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Edit In-Feed Campaign | WIPA ADS</title>
-  <meta name="description" content="Configure and publish in-feed campaign creatives directly to WIPA platform feed.">
+  <title>Campaign Studio | WIPA ADS</title>
+  <meta name="description" content="Configure in-feed creative banner, destination URL, and delivery status synced to WIPA production database.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="assets/supabase-config.js?v=20260929_clean_v4"></script>
+  <script src="assets/supabase-config.js?v=20260929_clean_v5"></script>
   <style>
     :root {
-      --bg: #ffffff;
-      --surface: #f5f5f7;
-      --surface-hover: #ebebee;
-      --card-bg: #ffffff;
-      --border: #e5e5ea;
-      --border-subtle: rgba(0, 0, 0, 0.08);
-      --text: #1d1d1f;
-      --text-secondary: #86868b;
-      --text-tertiary: #6e6e73;
-      --accent: #0071e3;
-      --accent-hover: #0077ed;
-      --success: #15803d;
-      --success-bg: #dcfce7;
-      --font-apple: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
-      --font-mono: "SF Mono", Menlo, Monaco, Consolas, monospace;
+      --bg: #07070a;
+      --surface: rgba(18, 18, 26, 0.7);
+      --surface-hover: rgba(28, 28, 40, 0.85);
+      --card-bg: rgba(15, 15, 23, 0.75);
+      --border: rgba(255, 255, 255, 0.08);
+      --border-focus: rgba(99, 102, 241, 0.5);
+      --border-subtle: rgba(255, 255, 255, 0.05);
+      --text: #ffffff;
+      --text-secondary: #94949e;
+      --text-tertiary: #6b6b76;
+      --accent: #6366f1;
+      --accent-hover: #4f46e5;
+      --accent-glow: rgba(99, 102, 241, 0.35);
+      --accent-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #d946ef 100%);
+      --emerald: #10b981;
+      --emerald-glow: rgba(16, 185, 129, 0.35);
+      --amber: #f59e0b;
+      --amber-glow: rgba(245, 158, 11, 0.25);
+      --rose: #f43f5e;
+      --font-main: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: "IBM Plex Mono", Menlo, Consolas, monospace;
     }
 
     *, *::before, *::after {
@@ -34,25 +43,28 @@
 
     body {
       background-color: var(--bg);
+      background-image: 
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(99, 102, 241, 0.2) 0%, rgba(147, 51, 234, 0.07) 50%, transparent 80%),
+        radial-gradient(circle at 100% 40%, rgba(6, 182, 212, 0.04) 0%, transparent 40%);
       color: var(--text);
-      font-family: var(--font-apple);
+      font-family: var(--font-main);
       -webkit-font-smoothing: antialiased;
-      line-height: 1.47059;
-      letter-spacing: -0.022em;
+      line-height: 1.5;
+      letter-spacing: -0.015em;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
     }
 
-    /* TOP APPLE NAV */
+    /* TOP FROSTED NAV */
     .top-nav {
       position: sticky;
       top: 0;
-      background: rgba(255, 255, 255, 0.85);
-      backdrop-filter: saturate(180%) blur(20px);
-      -webkit-backdrop-filter: saturate(180%) blur(20px);
-      border-bottom: 1px solid var(--border-subtle);
-      padding: 1rem 2.5rem;
+      background: rgba(7, 7, 10, 0.75);
+      backdrop-filter: blur(24px) saturate(190%);
+      -webkit-backdrop-filter: blur(24px) saturate(190%);
+      border-bottom: 1px solid var(--border);
+      padding: 1.1rem 2.5rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -62,24 +74,44 @@
     .back-btn {
       display: inline-flex;
       align-items: center;
-      gap: 0.4rem;
-      font-size: 0.85rem;
-      font-weight: 500;
-      color: var(--accent);
+      gap: 0.5rem;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-secondary);
       text-decoration: none;
-      transition: opacity 0.2s ease;
+      transition: all 0.2s ease;
+      padding: 0.4rem 0.8rem;
+      border-radius: 12px;
+      border: 1px solid transparent;
     }
 
     .back-btn:hover {
-      opacity: 0.8;
-      text-decoration: underline;
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.05);
+      border-color: var(--border);
     }
 
     .brand-stamp {
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: var(--text);
-      letter-spacing: -0.01em;
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: rgba(255, 255, 255, 0.04);
+      padding: 0.4rem 1rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+    }
+
+    .brand-stamp .brand-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #818cf8;
+      box-shadow: 0 0 10px #818cf8;
     }
 
     .nav-actions {
@@ -89,45 +121,52 @@
     }
 
     .nav-btn {
-      padding: 0.45rem 1.15rem;
-      border-radius: 980px;
+      padding: 0.5rem 1.15rem;
+      border-radius: 999px;
       font-size: 0.82rem;
-      font-weight: 600;
-      text-decoration: none;
-      transition: all 0.15s ease;
+      font-weight: 700;
       cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
     }
 
     .nav-btn.secondary {
-      background: var(--surface);
-      color: var(--text);
+      background: rgba(255, 255, 255, 0.05);
+      color: #ffffff;
       border: 1px solid var(--border);
     }
 
     .nav-btn.secondary:hover {
-      background: var(--surface-hover);
+      background: rgba(255, 255, 255, 0.09);
+      border-color: rgba(255, 255, 255, 0.2);
     }
 
     /* MAIN CONTAINER */
     .edit-container {
       flex: 1;
-      max-width: 1100px;
+      max-width: 1140px;
       width: 100%;
       margin: 0 auto;
-      padding: 3rem 1.5rem 5rem 1.5rem;
+      padding: 3.5rem 1.75rem 6rem 1.75rem;
     }
 
     .page-title {
-      font-size: 2.1rem;
-      font-weight: 700;
+      font-size: 2.3rem;
+      font-weight: 800;
       letter-spacing: -0.035em;
       margin-bottom: 0.4rem;
+      background: linear-gradient(135deg, #ffffff 60%, #cbd5e1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
     .page-subtitle {
       font-size: 0.95rem;
       color: var(--text-secondary);
-      margin-bottom: 2.25rem;
+      margin-bottom: 2.5rem;
     }
 
     /* 2-COLUMN LAYOUT */
@@ -140,17 +179,20 @@
 
     /* FORM CARD */
     .form-card {
-      background: #ffffff;
+      background: var(--card-bg);
       border: 1px solid var(--border);
-      border-radius: 22px;
+      border-radius: 24px;
       padding: 2.25rem;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08);
     }
 
     .form-section-title {
-      font-size: 1.15rem;
-      font-weight: 700;
+      font-size: 1.1rem;
+      font-weight: 800;
       letter-spacing: -0.02em;
+      color: #ffffff;
       margin-bottom: 1.5rem;
       padding-bottom: 0.75rem;
       border-bottom: 1px solid var(--border-subtle);
@@ -160,144 +202,158 @@
     }
 
     .db-badge {
-      font-size: 0.72rem;
-      background: #ecfdf5;
-      color: #065f46;
-      border: 1px solid #a7f3d0;
-      padding: 0.2rem 0.55rem;
-      border-radius: 980px;
-      font-weight: 600;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: #34d399;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
     }
 
     .form-group {
-      margin-bottom: 1.5rem;
+      margin-bottom: 1.35rem;
     }
 
     .form-label {
       display: block;
       font-size: 0.82rem;
-      font-weight: 600;
-      color: var(--text);
+      font-weight: 700;
+      color: #e4e4e7;
       margin-bottom: 0.45rem;
     }
 
     .form-input {
       width: 100%;
-      background: #ffffff;
+      background: rgba(0, 0, 0, 0.35);
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 0.8rem 1rem;
-      font-family: var(--font-apple);
-      font-size: 0.92rem;
-      color: var(--text);
+      border-radius: 14px;
+      padding: 0.75rem 1rem;
+      font-size: 0.88rem;
+      color: #ffffff;
+      font-family: var(--font-main);
       outline: none;
-      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      transition: all 0.2s ease;
     }
 
     .form-input:focus {
       border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.15);
+      background: rgba(0, 0, 0, 0.5);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+    }
+
+    .form-input::placeholder {
+      color: #52525b;
     }
 
     .form-hint {
       font-size: 0.76rem;
       color: var(--text-tertiary);
-      margin-top: 0.4rem;
-      line-height: 1.4;
+      margin-top: 0.35rem;
     }
 
-    /* IMAGE UPLOADER */
+    /* UPLOADER ZONE */
     .uploader-zone {
       display: flex;
-      gap: 1.25rem;
       align-items: center;
-      padding: 1.25rem;
-      background: var(--surface);
-      border-radius: 16px;
+      gap: 1.25rem;
+      padding: 1rem;
       border: 1px dashed var(--border);
+      border-radius: 16px;
+      background: rgba(0, 0, 0, 0.25);
     }
 
     .uploader-thumb-img {
-      width: 130px;
-      height: 75px;
-      border-radius: 8px;
+      width: 120px;
+      height: 68px;
+      border-radius: 10px;
       object-fit: cover;
-      background: #000;
-      border: 1px solid var(--border-subtle);
+      background: #181822;
+      border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     .upload-trigger-btn {
-      display: inline-block;
-      background: #ffffff;
+      background: rgba(255, 255, 255, 0.08);
+      color: #ffffff;
       border: 1px solid var(--border);
       padding: 0.45rem 1rem;
-      border-radius: 980px;
+      border-radius: 10px;
       font-size: 0.8rem;
       font-weight: 600;
       cursor: pointer;
-      color: var(--text);
-      transition: background 0.15s ease;
+      display: inline-block;
+      transition: all 0.2s ease;
     }
 
     .upload-trigger-btn:hover {
-      background: var(--surface-hover);
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.2);
     }
 
     /* BUTTONS */
     .btn-row {
       display: flex;
       justify-content: flex-end;
-      gap: 1rem;
+      gap: 0.85rem;
       margin-top: 2rem;
-      padding-top: 1.5rem;
+      padding-top: 1.25rem;
       border-top: 1px solid var(--border-subtle);
     }
 
     .save-btn {
-      background: var(--text);
+      background: var(--accent-gradient);
       color: #ffffff;
-      border: none;
-      padding: 0.8rem 1.6rem;
-      border-radius: 980px;
-      font-size: 0.9rem;
-      font-weight: 600;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 0.75rem 1.6rem;
+      border-radius: 999px;
+      font-size: 0.86rem;
+      font-weight: 700;
       cursor: pointer;
-      transition: all 0.2s ease;
+      box-shadow: 0 4px 20px var(--accent-glow);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .save-btn:hover {
-      background: #333336;
-      transform: translateY(-1px);
+      transform: scale(1.03);
+      box-shadow: 0 6px 26px rgba(99, 102, 241, 0.5);
     }
 
     .cancel-btn {
-      background: transparent;
+      background: rgba(255, 255, 255, 0.04);
       color: var(--text-secondary);
       border: 1px solid var(--border);
-      padding: 0.8rem 1.4rem;
-      border-radius: 980px;
-      font-size: 0.9rem;
-      font-weight: 500;
+      padding: 0.75rem 1.4rem;
+      border-radius: 999px;
+      font-size: 0.86rem;
+      font-weight: 600;
       text-decoration: none;
-      transition: background 0.15s ease;
+      transition: all 0.2s ease;
     }
 
     .cancel-btn:hover {
-      background: var(--surface);
-      color: var(--text);
+      background: rgba(255, 255, 255, 0.08);
+      color: #ffffff;
+      border-color: rgba(255, 255, 255, 0.2);
     }
 
-    /* RIGHT COLUMN: LIVE SIMULATION */
+    /* RIGHT STICKY PREVIEW */
     .preview-sticky-col {
       position: sticky;
-      top: 5rem;
+      top: 6.5rem;
     }
 
     .preview-card-frame {
-      background: var(--surface);
+      background: var(--card-bg);
       border: 1px solid var(--border);
       border-radius: 24px;
       padding: 1.75rem;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08);
     }
 
     .preview-header {
@@ -308,11 +364,12 @@
     }
 
     .preview-title-badge {
-      font-size: 0.78rem;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
       font-weight: 700;
-      color: var(--text);
+      color: #ffffff;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.06em;
     }
 
     .preview-live-indicator {
@@ -320,65 +377,55 @@
       align-items: center;
       gap: 0.35rem;
       font-size: 0.72rem;
-      color: #15803d;
-      font-weight: 600;
+      font-family: var(--font-mono);
+      color: #34d399;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
     }
 
-    .pulse-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: #22c55e;
-      box-shadow: 0 0 6px #22c55e;
-      animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-      0% { opacity: 0.6; transform: scale(0.95); }
-      50% { opacity: 1; transform: scale(1.15); }
-      100% { opacity: 0.6; transform: scale(0.95); }
-    }
-
-    /* NATIVE FEED CARD PREVIEW (Matches AdSlot.tsx in WIPA feed) */
+    /* NATIVE FEED CARD PREVIEW (Obsidian Style) */
     .native-feed-card {
-      background: #ffffff;
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 1.25rem;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+      background: #0f0f16;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
+      transition: all 0.3s ease;
     }
 
     .feed-card-header {
+      padding: 0.85rem 1.15rem;
       display: flex;
-      align-items: center;
       justify-content: space-between;
-      margin-bottom: 0.75rem;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.02);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
     }
 
     .feed-sponsor-pill {
-      font-size: 0.7rem;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
       font-weight: 700;
-      color: #b45309;
-      background: #fef3c7;
-      padding: 0.2rem 0.6rem;
-      border-radius: 9999px;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
+      color: #a5b4fc;
+      background: rgba(99, 102, 241, 0.15);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      padding: 0.15rem 0.55rem;
+      border-radius: 6px;
     }
 
     .feed-cadence-label {
-      font-size: 0.7rem;
+      font-size: 0.68rem;
+      font-family: var(--font-mono);
       color: var(--text-tertiary);
     }
 
     .feed-creative-img-box {
       width: 100%;
-      height: 180px;
-      border-radius: 12px;
+      aspect-ratio: 16 / 9;
+      background: #181822;
       overflow: hidden;
-      background: #000;
-      margin-bottom: 0.85rem;
-      border: 1px solid var(--border-subtle);
     }
 
     .feed-creative-img-box img {
@@ -388,37 +435,37 @@
     }
 
     .feed-card-body {
-      text-align: left;
+      padding: 1.25rem 1.15rem;
     }
 
     .feed-card-headline {
-      font-size: 0.98rem;
-      font-weight: 700;
-      letter-spacing: -0.015em;
-      color: var(--text);
+      font-size: 1.05rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: #ffffff;
       line-height: 1.35;
-      margin-bottom: 0.35rem;
+      margin-bottom: 0.45rem;
     }
 
     .feed-card-copy {
-      font-size: 0.82rem;
+      font-size: 0.84rem;
       color: var(--text-secondary);
       line-height: 1.45;
       margin-bottom: 1rem;
     }
 
     .feed-card-cta-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      background: var(--text);
+      display: block;
+      width: 100%;
+      text-align: center;
+      background: var(--accent-gradient);
       color: #ffffff;
-      padding: 0.55rem 1.15rem;
-      border-radius: 980px;
+      padding: 0.65rem 1rem;
+      border-radius: 12px;
       font-size: 0.82rem;
-      font-weight: 600;
+      font-weight: 700;
       text-decoration: none;
-      transition: background 0.15s ease;
+      box-shadow: 0 4px 16px var(--accent-glow);
     }
 
     /* TOAST */
@@ -426,20 +473,22 @@
       position: fixed;
       bottom: 2rem;
       right: 2rem;
-      background: #1d1d1f;
-      color: #ffffff;
-      padding: 0.85rem 1.4rem;
-      border-radius: 980px;
-      font-size: 0.85rem;
-      font-weight: 500;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      background: rgba(18, 18, 26, 0.95);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      backdrop-filter: blur(20px);
+      padding: 0.9rem 1.4rem;
+      border-radius: 16px;
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-      z-index: 2000;
+      gap: 0.65rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #ffffff;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
       transform: translateY(100px);
       opacity: 0;
       transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 1000;
     }
 
     .toast.show {
@@ -449,28 +498,36 @@
 
     /* FOOTER */
     footer {
-      border-top: 1px solid var(--border-subtle);
-      padding: 2rem 2.5rem;
+      border-top: 1px solid var(--border);
+      padding: 2.25rem 2.5rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 0.82rem;
-      color: var(--text-secondary);
-      background: var(--bg);
+      font-size: 0.8rem;
+      color: var(--text-tertiary);
+      background: rgba(7, 7, 10, 0.5);
     }
 
     footer a {
-      color: var(--text);
+      color: var(--text-secondary);
       text-decoration: none;
-      font-weight: 500;
+      transition: color 0.15s ease;
     }
 
-    @media (max-width: 860px) {
+    footer a:hover {
+      color: #ffffff;
+    }
+
+    @media (max-width: 900px) {
       .top-nav {
-        padding: 1rem 1.5rem;
+        padding: 1rem 1.25rem;
+      }
+      .edit-container {
+        padding: 2rem 1.25rem 4rem 1.25rem;
       }
       .edit-layout-grid {
         grid-template-columns: 1fr;
+        gap: 2.5rem;
       }
       .preview-sticky-col {
         position: static;
@@ -480,10 +537,10 @@
 </head>
 <body>
 
-  <!-- Top Apple Nav -->
+  <!-- Top Frosted Nav -->
   <header class="top-nav">
     <a href="dashboard.html" class="back-btn">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
         <line x1="19" y1="12" x2="5" y2="12"></line>
         <polyline points="12 19 5 12 12 5"></polyline>
       </svg>
@@ -491,11 +548,15 @@
     </a>
 
     <div class="brand-stamp">
-      WIPA ADS // CAMPAIGN STUDIO
+      <span class="brand-dot"></span>
+      <span>WIPA ADS // CAMPAIGN STUDIO</span>
     </div>
 
     <div class="nav-actions">
-      <a id="nav-analytics-link" href="analytics.html?id=camp1" class="nav-btn secondary">
+      <a href="buy-credits.html" class="nav-btn secondary" style="background: rgba(99, 102, 241, 0.15); border-color: rgba(99, 102, 241, 0.4); color: #c7d2fe; display: inline-flex; align-items: center; gap: 0.35rem;">
+        <span>⚡ Buy Credits</span>
+      </a>
+      <a id="nav-analytics-link" href="analytics.html" class="nav-btn secondary">
         View Analytics
       </a>
     </div>
@@ -524,21 +585,21 @@
           <!-- Headline -->
           <div class="form-group">
             <label class="form-label" for="inp-title">Campaign Headline</label>
-            <input type="text" id="inp-title" class="form-input" required oninput="syncLivePreview()">
+            <input type="text" id="inp-title" class="form-input" placeholder="e.g. Next-Gen Patent Prosecution & Valuation" required oninput="syncLivePreview()">
             <div class="form-hint">Displayed as the primary bold heading across feed insertions.</div>
           </div>
 
           <!-- Destination URL -->
           <div class="form-group">
             <label class="form-label" for="inp-url">Destination URL (Landing Page)</label>
-            <input type="url" id="inp-url" class="form-input" required oninput="syncLivePreview()">
+            <input type="url" id="inp-url" class="form-input" placeholder="https://yourfirm.com/offer" required oninput="syncLivePreview()">
             <div class="form-hint">Verified IP attorneys clicking your card in the feed will navigate here.</div>
           </div>
 
           <!-- In-Feed Copy / Tagline -->
           <div class="form-group">
             <label class="form-label" for="inp-copy">In-Feed Description / Supporting Tagline</label>
-            <textarea id="inp-copy" class="form-input" rows="3" oninput="syncLivePreview()"></textarea>
+            <textarea id="inp-copy" class="form-input" rows="3" placeholder="Supporting copy appearing under headline..." oninput="syncLivePreview()"></textarea>
             <div class="form-hint">Appears below the headline in the live stream. Max 140 chars recommended.</div>
           </div>
 
@@ -552,7 +613,7 @@
           <div class="form-group">
             <label class="form-label">Creative Banner Asset (16:9 Aspect Ratio)</label>
             <div class="uploader-zone">
-              <img id="form-thumb-img" class="uploader-thumb-img" src="assets/patent_ad_creative.jpg" alt="Current Banner">
+              <img id="form-thumb-img" class="uploader-thumb-img" src="assets/patent_ad_creative.jpg" alt="Current Banner" onerror="this.src='assets/patent_ad_creative.jpg'">
               <div>
                 <label class="upload-trigger-btn">
                   Upload Image
@@ -564,7 +625,7 @@
               </div>
             </div>
             <!-- Security Malware Scan Status -->
-            <div id="img-security-status" style="display: none; margin-top: 0.6rem; padding: 0.5rem 0.75rem; border-radius: 8px; font-size: 0.78rem;"></div>
+            <div id="img-security-status" style="display: none; margin-top: 0.6rem; padding: 0.65rem 0.85rem; border-radius: 10px; font-size: 0.78rem;"></div>
             <!-- Direct URL input for custom web assets -->
             <input type="text" id="inp-img-url" class="form-input" placeholder="Or paste public banner image URL" style="margin-top: 0.75rem;" oninput="handleImageUrlInput(event)">
           </div>
@@ -574,29 +635,29 @@
             <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.4rem;">
               <label class="form-label" for="inp-credits" style="margin-bottom: 0;">Credits to Spend on This Ad</label>
               <span style="font-size: 0.78rem; color: var(--text-secondary);" id="label-avail-credits">
-                Available: <strong id="val-avail-credits">0 Credits</strong> (<span id="val-avail-money">&pound;0</span>)
+                Available: <strong id="val-avail-credits" style="color: #a5b4fc;">0 Credits</strong>
               </span>
             </div>
             <div style="display: flex; gap: 0.6rem; align-items: center;">
               <input type="number" id="inp-credits" class="form-input" min="1" placeholder="Enter credits to allocate" required oninput="validateCreditInput()">
-              <span style="font-size: 0.85rem; font-weight: 700; color: var(--text); padding-right: 0.5rem; white-space: nowrap;">Credits</span>
+              <span style="font-size: 0.85rem; font-weight: 700; color: #ffffff; padding-right: 0.5rem; white-space: nowrap;">Credits</span>
             </div>
             <div class="form-hint" id="credits-hint">
-              1 Credit = &pound;2 delivery value. Allocated credits are deducted upon submission and cannot exceed your available balance.
+              Allocated credits are deducted upon submission and cannot exceed your available balance.
             </div>
-            <div id="no-credits-warning" style="display: none; margin-top: 0.6rem; padding: 0.65rem 0.9rem; background: #fef2f2; border: 1px solid #fecaca; border-radius: 10px; font-size: 0.8rem; color: #b91c1c;">
-              ⚠️ <strong>Insufficient Balance:</strong> You have 0 available credits. <a href="how-it-works.html#calculator" style="color: var(--accent); font-weight: 700; text-decoration: underline;">Buy Credits Here &rarr;</a>
+            <div id="no-credits-warning" style="display: none; margin-top: 0.6rem; padding: 0.65rem 0.9rem; background: rgba(244, 63, 94, 0.12); border: 1px solid rgba(244, 63, 94, 0.3); border-radius: 12px; font-size: 0.8rem; color: #fb7185;">
+              ⚠️ <strong>Insufficient Balance:</strong> You have 0 available credits. <a href="buy-credits.html" style="color: #818cf8; font-weight: 700; text-decoration: underline;">Buy Credits Here &rarr;</a>
             </div>
           </div>
 
           <!-- Mandatory Admin Review & Publishing Status -->
           <div class="form-group">
-            <label class="form-label">Review & Publishing Gate</label>
-            <div style="padding: 0.85rem 1rem; background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.25); border-radius: 12px; display: flex; align-items: flex-start; gap: 0.75rem;">
-              <span style="font-size: 1.25rem; line-height: 1;">🛡️</span>
+            <label class="form-label">Review &amp; Publishing Gate</label>
+            <div style="padding: 0.95rem 1.15rem; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 14px; display: flex; align-items: flex-start; gap: 0.85rem;">
+              <span style="font-size: 1.35rem; line-height: 1;">🛡️</span>
               <div>
-                <div style="font-size: 0.85rem; font-weight: 700; color: #92400e;">Mandatory Admin Review Required</div>
-                <div style="font-size: 0.78rem; color: #78350f; line-height: 1.45; margin-top: 0.2rem;">
+                <div style="font-size: 0.85rem; font-weight: 800; color: #fbbf24;">Mandatory Admin Review Required</div>
+                <div style="font-size: 0.78rem; color: #fef3c7; line-height: 1.5; margin-top: 0.2rem; opacity: 0.85;">
                   Every campaign submitted by advertisers undergoes administrative review and malware/safety verification before entering the live WIPA feed. Without admin approval, ads cannot be served.
                 </div>
               </div>
@@ -630,7 +691,7 @@
             </div>
 
             <div class="feed-creative-img-box">
-              <img id="prev-img" src="assets/patent_ad_creative.jpg" alt="Feed Creative">
+              <img id="prev-img" src="assets/patent_ad_creative.jpg" alt="Feed Creative" onerror="this.src='assets/patent_ad_creative.jpg'">
             </div>
 
             <div class="feed-card-body">
@@ -642,9 +703,9 @@
             </div>
           </div>
 
-          <div style="margin-top: 1.25rem; font-size: 0.78rem; color: var(--text-secondary); line-height: 1.4;">
+          <div style="margin-top: 1.25rem; font-size: 0.78rem; color: var(--text-tertiary); line-height: 1.45;">
             &bull; Natively inserted after every 4th post across all WIPA platform feeds.<br>
-            &bull; Live impressions & clicks are recorded via verified feed telemetry and delivered to your analytics.
+            &bull; Live impressions &amp; clicks are recorded via verified feed telemetry and delivered to your analytics.
           </div>
         </div>
       </div>
@@ -654,7 +715,7 @@
 
   <!-- TOAST -->
   <div class="toast" id="toast">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
     <span id="toast-text">Campaign synced to live WIPA feed database.</span>
   </div>
 
@@ -672,8 +733,6 @@
     let adId = urlParams.get('id');
     const isNew = urlParams.get('new') === '1' || !adId;
 
-    if (!adId && !isNew) adId = 'camp1';
-
     let currentCampaign = null;
     let userAvailableCredits = 0;
 
@@ -689,13 +748,11 @@
       userAvailableCredits = isPartner ? 50 : Number(localStorage.getItem(`wipa_credits_${auth.name}`) || 0);
 
       const valCreditsElem = document.getElementById('val-avail-credits');
-      const valMoneyElem = document.getElementById('val-avail-money');
       const inpCredits = document.getElementById('inp-credits');
       const warningElem = document.getElementById('no-credits-warning');
       const btnSave = document.getElementById('btn-save');
 
       if (valCreditsElem) valCreditsElem.textContent = `${userAvailableCredits} Credits`;
-      if (valMoneyElem) valMoneyElem.textContent = `£${userAvailableCredits * 2}`;
 
       if (userAvailableCredits <= 0) {
         if (inpCredits) {
@@ -790,7 +847,7 @@
       }
 
       hint.style.color = 'var(--text-secondary)';
-      hint.textContent = `Allocating ${val} credits (£${val * 2} balance value). Deducted upon submission.`;
+      hint.textContent = `Allocating ${val} credits. Deducted upon submission.`;
       return true;
     }
 
@@ -913,9 +970,9 @@
 
       if (statusElem) {
         statusElem.style.display = 'block';
-        statusElem.style.background = '#fefce8';
-        statusElem.style.color = '#854d0e';
-        statusElem.style.border = '1px solid #fef08a';
+        statusElem.style.background = 'rgba(245, 158, 11, 0.12)';
+        statusElem.style.color = '#fbbf24';
+        statusElem.style.border = '1px solid rgba(245, 158, 11, 0.3)';
         statusElem.innerHTML = '🔍 Scanning image signature & scanning for malware...';
       }
 
@@ -925,18 +982,18 @@
         document.getElementById('prev-img').src = cleanDataUrl;
 
         if (statusElem) {
-          statusElem.style.background = '#f0fdf4';
-          statusElem.style.color = '#15803d';
-          statusElem.style.border = '1px solid #bbf7d0';
-          statusElem.innerHTML = '✓ <strong>Security Verified:</strong> Genuine JPEG/PNG confirmed. No malware or scripts detected.';
+          statusElem.style.background = 'rgba(16, 185, 129, 0.12)';
+          statusElem.style.color = '#34d399';
+          statusElem.style.border = '1px solid rgba(16, 185, 129, 0.3)';
+          statusElem.innerHTML = '✓ <strong>Security Verified:</strong> Genuine JPEG/PNG confirmed. Zero scripts or exploits detected.';
         }
       } catch (err) {
         console.error('Security scan rejected:', err);
         e.target.value = '';
         if (statusElem) {
-          statusElem.style.background = '#fef2f2';
-          statusElem.style.color = '#b91c1c';
-          statusElem.style.border = '1px solid #fecaca';
+          statusElem.style.background = 'rgba(244, 63, 94, 0.12)';
+          statusElem.style.color = '#fb7185';
+          statusElem.style.border = '1px solid rgba(244, 63, 94, 0.3)';
           statusElem.innerHTML = `⚠️ <strong>${err.message}</strong>`;
         }
         alert(err.message);

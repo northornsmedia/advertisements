@@ -669,8 +669,8 @@
 
     <div style="display: flex; align-items: center; gap: 1.25rem;">
       <a href="login.html" style="font-size: 0.85rem; font-weight: 500; color: var(--text-secondary); text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text-secondary)'">Sign In</a>
-      <a href="#calculator" class="nav-cta">
-        <span>Get Credits</span>
+      <a href="buy-credits.html" class="nav-cta">
+        <span>Buy Credits</span>
       </a>
     </div>
   </header>
@@ -800,7 +800,7 @@
               <li>Live click & impression tracking</li>
             </ul>
           </div>
-          <a href="#calculator" class="action-btn secondary" onclick="selectPackage(10); return false;">Select 10 Credits</a>
+          <a href="buy-credits.html?credits=10" class="action-btn secondary">Buy 10 Credits</a>
         </div>
 
         <!-- Tier 2 (Featured) -->
@@ -816,7 +816,7 @@
               <li>Weekly performance analytics summary</li>
             </ul>
           </div>
-          <a href="#calculator" class="action-btn primary" onclick="selectPackage(25); return false;">Select 25 Credits</a>
+          <a href="buy-credits.html?credits=25" class="action-btn primary">Buy 25 Credits</a>
         </div>
 
         <!-- Tier 3 -->
@@ -831,7 +831,7 @@
               <li>Dedicated account support</li>
             </ul>
           </div>
-          <a href="#calculator" class="action-btn secondary" onclick="selectPackage(50); return false;">Select 50 Credits</a>
+          <a href="buy-credits.html?credits=50" class="action-btn secondary">Buy 50 Credits</a>
         </div>
       </div>
     </section>
@@ -919,24 +919,7 @@
 
     function handleProceedToCheckout() {
       const creditsToAdd = parseInt(slider.value, 10);
-      const auth = typeof getWipaAuth === 'function' ? getWipaAuth() : null;
-      let companyName = (auth && auth.name) || sessionStorage.getItem('wipa_auth_name');
-      
-      if (!companyName) {
-        if (confirm(`You selected ${creditsToAdd} Credits (£${creditsToAdd * 2}). Please sign in or register your advertiser account to complete checkout. Proceed to Sign In?`)) {
-          sessionStorage.setItem('wipa_pending_credits', creditsToAdd);
-          window.location.href = 'login.html';
-        }
-        return;
-      }
-
-      const key = `wipa_credits_${companyName}`;
-      const current = Number(localStorage.getItem(key) || 0);
-      const newBal = current + creditsToAdd;
-      localStorage.setItem(key, newBal);
-
-      alert(`✓ Payment Confirmed: ${creditsToAdd} Credits (£${creditsToAdd * 2}) added to your account! Total available: ${newBal} Credits.`);
-      window.location.href = 'dashboard.html';
+      window.location.href = `buy-credits.html?credits=${creditsToAdd}`;
     }
   </script>
 </body>

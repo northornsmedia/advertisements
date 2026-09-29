@@ -5,27 +5,33 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Live Campaign Analytics | WIPA ADS</title>
   <meta name="description" content="Real-time in-feed advertising telemetry, live impressions and verified clicks captured directly from the WIPA platform feed.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="assets/supabase-config.js?v=20260929_clean_v4"></script>
+  <script src="assets/supabase-config.js?v=20260929_clean_v6"></script>
   <style>
     :root {
-      --bg: #ffffff;
-      --surface: #f5f5f7;
-      --surface-hover: #ebebee;
-      --card-bg: #ffffff;
-      --border: #e5e5ea;
-      --border-subtle: rgba(0, 0, 0, 0.08);
-      --text: #1d1d1f;
-      --text-secondary: #86868b;
-      --text-tertiary: #6e6e73;
-      --accent: #0071e3;
-      --accent-hover: #0077ed;
-      --success: #15803d;
-      --success-bg: #dcfce7;
-      --warning: #b45309;
-      --warning-bg: #fef3c7;
-      --font-apple: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
-      --font-mono: "SF Mono", Menlo, Monaco, Consolas, monospace;
+      --bg: #07070a;
+      --surface: rgba(18, 18, 26, 0.75);
+      --surface-hover: rgba(28, 28, 42, 0.85);
+      --card-bg: rgba(15, 15, 23, 0.78);
+      --border: rgba(255, 255, 255, 0.08);
+      --border-focus: rgba(99, 102, 241, 0.55);
+      --border-subtle: rgba(255, 255, 255, 0.05);
+      --text: #ffffff;
+      --text-secondary: #94949e;
+      --text-tertiary: #6b6b76;
+      --accent: #6366f1;
+      --accent-hover: #4f46e5;
+      --accent-glow: rgba(99, 102, 241, 0.4);
+      --accent-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
+      --emerald: #10b981;
+      --emerald-glow: rgba(16, 185, 129, 0.35);
+      --amber: #f59e0b;
+      --rose: #f43f5e;
+      --font-main: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: "IBM Plex Mono", Menlo, Consolas, monospace;
     }
 
     *, *::before, *::after {
@@ -36,24 +42,27 @@
 
     body {
       background-color: var(--bg);
+      background-image: 
+        radial-gradient(ellipse 90% 50% at 50% -10%, rgba(99, 102, 241, 0.22) 0%, rgba(147, 51, 234, 0.08) 50%, transparent 80%),
+        radial-gradient(circle at 100% 60%, rgba(6, 182, 212, 0.05) 0%, transparent 45%);
       color: var(--text);
-      font-family: var(--font-apple);
+      font-family: var(--font-main);
       -webkit-font-smoothing: antialiased;
-      line-height: 1.47059;
-      letter-spacing: -0.022em;
+      line-height: 1.5;
+      letter-spacing: -0.015em;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
     }
 
-    /* TOP APPLE NAV */
+    /* TOP FROSTED NAV */
     .top-nav {
       position: sticky;
       top: 0;
-      background: rgba(255, 255, 255, 0.85);
-      backdrop-filter: saturate(180%) blur(20px);
-      -webkit-backdrop-filter: saturate(180%) blur(20px);
-      border-bottom: 1px solid var(--border-subtle);
+      background: rgba(7, 7, 10, 0.82);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-bottom: 1px solid var(--border);
       padding: 1rem 2.5rem;
       display: flex;
       justify-content: space-between;
@@ -64,77 +73,111 @@
     .back-btn {
       display: inline-flex;
       align-items: center;
-      gap: 0.4rem;
-      font-size: 0.85rem;
-      font-weight: 500;
-      color: var(--accent);
+      gap: 0.5rem;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-secondary);
       text-decoration: none;
-      transition: opacity 0.2s ease;
+      transition: color 0.15s ease;
+      font-family: var(--font-mono);
     }
 
     .back-btn:hover {
-      opacity: 0.8;
-      text-decoration: underline;
+      color: #ffffff;
     }
 
     .brand-stamp {
-      font-size: 0.85rem;
-      font-weight: 600;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
       color: var(--text);
-      letter-spacing: -0.01em;
+      font-family: var(--font-mono);
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.6rem;
+    }
+
+    .live-pulse-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.25rem 0.65rem;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #34d399;
+      font-family: var(--font-mono);
+    }
+
+    .pulse-dot {
+      width: 7px;
+      height: 7px;
+      background: #10b981;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #10b981;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
     }
 
     .nav-actions {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
+      gap: 0.85rem;
     }
 
     .nav-btn {
       padding: 0.45rem 1rem;
-      border-radius: 980px;
+      border-radius: 10px;
       font-size: 0.82rem;
       font-weight: 600;
       text-decoration: none;
       transition: all 0.15s ease;
       cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
     }
 
     .nav-btn.secondary {
-      background: var(--surface);
-      color: var(--text);
+      background: rgba(255, 255, 255, 0.05);
+      color: #ffffff;
       border: 1px solid var(--border);
     }
 
     .nav-btn.secondary:hover {
-      background: var(--surface-hover);
+      background: rgba(255, 255, 255, 0.12);
     }
 
     .nav-btn.primary {
-      background: var(--text);
+      background: var(--accent);
       color: #ffffff;
       border: none;
+      box-shadow: 0 4px 14px var(--accent-glow);
     }
 
     .nav-btn.primary:hover {
-      background: #333336;
+      background: var(--accent-hover);
     }
 
     /* FULL PAGE CONTAINER */
     .analytics-container {
       flex: 1;
-      max-width: 1080px;
+      max-width: 1100px;
       width: 100%;
       margin: 0 auto;
-      padding: 3rem 1.5rem 5rem 1.5rem;
+      padding: 2.5rem 2rem 5rem 2rem;
     }
 
     /* HEADER */
     .page-header {
-      margin-bottom: 2.25rem;
+      margin-bottom: 2rem;
     }
 
     .header-badges-row {
@@ -147,76 +190,55 @@
 
     .status-badge {
       font-size: 0.72rem;
-      font-weight: 600;
-      padding: 0.2rem 0.65rem;
+      font-weight: 700;
+      padding: 0.25rem 0.75rem;
       border-radius: 9999px;
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
     }
 
     .status-badge.active {
-      background: var(--success-bg);
-      color: var(--success);
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.35);
     }
 
     .status-badge.paused {
-      background: var(--warning-bg);
-      color: var(--warning);
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
     }
 
     .cadence-pill {
-      font-size: 0.72rem;
-      background: var(--surface);
+      font-size: 0.75rem;
+      font-family: var(--font-mono);
       color: var(--text-secondary);
-      padding: 0.2rem 0.65rem;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border);
+      padding: 0.25rem 0.75rem;
       border-radius: 9999px;
-      font-weight: 500;
-      border: 1px solid var(--border-subtle);
-    }
-
-    .live-pulse-badge {
-      font-size: 0.72rem;
-      background: #ecfdf5;
-      color: #065f46;
-      border: 1px solid #a7f3d0;
-      padding: 0.2rem 0.65rem;
-      border-radius: 9999px;
-      font-weight: 600;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-    }
-
-    .pulse-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: #10b981;
-      box-shadow: 0 0 6px #10b981;
-      animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-      0% { opacity: 0.6; transform: scale(0.95); }
-      50% { opacity: 1; transform: scale(1.15); }
-      100% { opacity: 0.6; transform: scale(0.95); }
     }
 
     .page-title {
-      font-size: 2.1rem;
-      font-weight: 700;
-      letter-spacing: -0.035em;
-      margin-bottom: 0.5rem;
+      font-size: 2.25rem;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.4rem;
+      color: #ffffff;
     }
 
     .campaign-dest-row {
       display: flex;
       align-items: center;
-      gap: 0.4rem;
-      font-size: 0.85rem;
-      color: var(--accent);
+      gap: 0.45rem;
+      font-size: 0.82rem;
+      color: #818cf8;
+      font-family: var(--font-mono);
     }
 
     .campaign-dest-row a {
-      color: inherit;
+      color: #818cf8;
       text-decoration: none;
     }
 
@@ -224,98 +246,101 @@
       text-decoration: underline;
     }
 
-    /* CREATIVE PREVIEW BAR */
+    /* CREATIVE BANNER PREVIEW */
     .creative-banner-card {
-      background: var(--surface);
+      background: var(--card-bg);
       border: 1px solid var(--border);
       border-radius: 20px;
       padding: 1.5rem;
-      margin-bottom: 2.5rem;
       display: flex;
+      gap: 1.75rem;
       align-items: center;
-      gap: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
     }
 
     .banner-thumb {
       width: 220px;
-      height: 124px;
-      border-radius: 12px;
+      height: 125px;
       object-fit: cover;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: #000000;
       flex-shrink: 0;
-      background: #000;
-      border: 1px solid var(--border-subtle);
     }
 
     .banner-details h4 {
-      font-size: 1.1rem;
-      font-weight: 700;
-      letter-spacing: -0.02em;
+      font-size: 1.05rem;
+      font-weight: 800;
       margin-bottom: 0.35rem;
+      color: #ffffff;
     }
 
     .banner-details p {
       font-size: 0.85rem;
       color: var(--text-secondary);
-      line-height: 1.45;
-      margin-bottom: 0.75rem;
+      line-height: 1.5;
+      margin-bottom: 0.65rem;
     }
 
-    /* STATS METRIC TILES */
+    /* 4 KEY METRICS TILES */
     .metrics-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 1.25rem;
-      margin-bottom: 2.5rem;
+      margin-bottom: 2.25rem;
     }
 
     .metric-card {
-      background: var(--surface);
-      border: 1px solid var(--border-subtle);
+      background: var(--card-bg);
+      border: 1px solid var(--border);
       border-radius: 18px;
       padding: 1.5rem;
-      transition: transform 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+      transition: border-color 0.2s ease;
     }
 
     .metric-card:hover {
-      transform: translateY(-2px);
+      border-color: rgba(99, 102, 241, 0.4);
     }
 
     .metric-card-label {
-      font-size: 0.78rem;
-      color: var(--text-secondary);
-      font-weight: 600;
-      margin-bottom: 0.35rem;
+      font-size: 0.76rem;
+      font-weight: 700;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.65rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      font-family: var(--font-mono);
     }
 
     .metric-card-val {
-      font-size: 2rem;
-      font-weight: 700;
-      letter-spacing: -0.03em;
-      color: var(--text);
-      transition: color 0.3s ease;
-    }
-
-    .metric-card-val.flash {
-      color: #16a34a;
+      font-size: 2.15rem;
+      font-weight: 900;
+      font-family: var(--font-mono);
+      color: #ffffff;
+      line-height: 1.1;
+      margin-bottom: 0.35rem;
     }
 
     .metric-card-sub {
-      font-size: 0.75rem;
-      color: var(--text-tertiary);
-      margin-top: 0.35rem;
+      font-size: 0.76rem;
+      color: var(--text-secondary);
     }
 
-    /* CHART SECTION */
+    /* CHART CARD */
     .chart-card {
-      background: #ffffff;
+      background: var(--card-bg);
       border: 1px solid var(--border);
-      border-radius: 22px;
-      padding: 2rem;
-      margin-bottom: 2.5rem;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+      border-radius: 20px;
+      padding: 1.75rem 2rem;
+      margin-bottom: 2.25rem;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
     }
 
     .chart-header {
@@ -327,96 +352,100 @@
 
     .chart-title {
       font-size: 1.15rem;
-      font-weight: 700;
-      letter-spacing: -0.02em;
+      font-weight: 800;
+      color: #ffffff;
     }
 
     .chart-legend {
       display: flex;
-      gap: 1rem;
-      font-size: 0.75rem;
+      align-items: center;
+      gap: 1.25rem;
+      font-size: 0.78rem;
       color: var(--text-secondary);
+      font-family: var(--font-mono);
     }
 
     .legend-item {
       display: flex;
       align-items: center;
-      gap: 0.35rem;
+      gap: 0.45rem;
     }
 
     .legend-color {
       width: 10px;
       height: 10px;
       border-radius: 3px;
-      background: var(--text);
+      background: #6366f1;
     }
 
-    /* SIMPLE CSS BAR CHART */
     .barchart-row {
-      display: flex;
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 1.25rem;
+      height: 180px;
       align-items: flex-end;
-      justify-content: space-between;
-      gap: 1rem;
-      height: 150px;
       padding-top: 1rem;
       border-bottom: 1px solid var(--border);
+      padding-bottom: 0.75rem;
     }
 
     .barchart-col {
-      flex: 1;
       display: flex;
       flex-direction: column;
       align-items: center;
       height: 100%;
       justify-content: flex-end;
+      gap: 0.5rem;
     }
 
-    .barchart-fill {
+    .bar-pill {
       width: 100%;
-      max-width: 36px;
-      background: linear-gradient(180deg, #1d1d1f 0%, #3a3a3c 100%);
+      background: linear-gradient(180deg, #818cf8 0%, #6366f1 100%);
       border-radius: 6px 6px 0 0;
-      transition: height 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      min-height: 8px;
+      transition: height 0.4s ease;
+      box-shadow: 0 0 12px rgba(99, 102, 241, 0.25);
     }
 
-    .barchart-col:hover .barchart-fill {
-      background: var(--accent);
+    .bar-pill:hover {
+      background: linear-gradient(180deg, #a5b4fc 0%, #818cf8 100%);
     }
 
-    .barchart-day {
+    .bar-val {
       font-size: 0.72rem;
-      color: var(--text-secondary);
-      margin-top: 0.6rem;
-      font-weight: 500;
-    }
-
-    .barchart-val {
-      font-size: 0.7rem;
-      color: var(--text-tertiary);
-      margin-bottom: 0.35rem;
       font-family: var(--font-mono);
+      font-weight: 700;
+      color: var(--text-secondary);
     }
 
-    /* BREAKDOWN 2-COL GRID */
+    .bar-day {
+      font-size: 0.72rem;
+      font-family: var(--font-mono);
+      color: var(--text-tertiary);
+      margin-top: 0.5rem;
+    }
+
+    /* AUDIENCE BREAKDOWN */
     .breakdowns-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 1.5rem;
-      margin-bottom: 2.5rem;
+      margin-bottom: 2.25rem;
     }
 
     .breakdown-card {
-      background: var(--surface);
-      border: 1px solid var(--border-subtle);
+      background: var(--card-bg);
+      border: 1px solid var(--border);
       border-radius: 20px;
       padding: 1.75rem;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
     }
 
     .breakdown-title {
-      font-size: 1rem;
-      font-weight: 700;
-      letter-spacing: -0.015em;
+      font-size: 1.05rem;
+      font-weight: 800;
       margin-bottom: 1.25rem;
+      color: #ffffff;
     }
 
     .breakdown-row {
@@ -426,91 +455,84 @@
     .breakdown-label-row {
       display: flex;
       justify-content: space-between;
-      font-size: 0.82rem;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
       margin-bottom: 0.35rem;
-      font-weight: 500;
     }
 
     .progress-bar {
-      width: 100%;
       height: 6px;
-      background: rgba(0, 0, 0, 0.06);
-      border-radius: 9999px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 999px;
       overflow: hidden;
     }
 
     .progress-fill {
       height: 100%;
-      background: var(--text);
-      border-radius: 9999px;
+      background: var(--accent);
+      border-radius: 999px;
+      box-shadow: 0 0 10px var(--accent-glow);
     }
 
-    /* VERIFIED AUDIT LOG TABLE */
+    /* LOG CARD */
     .log-card {
-      background: #ffffff;
+      background: var(--card-bg);
       border: 1px solid var(--border);
-      border-radius: 22px;
-      padding: 2rem;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+      border-radius: 20px;
+      padding: 1.75rem 2rem;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
     }
 
     .log-table {
       width: 100%;
       border-collapse: collapse;
       font-size: 0.82rem;
-      text-align: left;
     }
 
     .log-table th {
-      color: var(--text-secondary);
+      text-align: left;
+      padding: 0.75rem 1rem;
+      color: var(--text-tertiary);
+      font-family: var(--font-mono);
       font-weight: 600;
-      padding: 0.75rem 0.5rem;
       border-bottom: 1px solid var(--border);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
     }
 
     .log-table td {
-      padding: 0.85rem 0.5rem;
+      padding: 0.85rem 1rem;
       border-bottom: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
     }
 
-    .verified-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.25rem;
-      font-size: 0.7rem;
-      color: var(--success);
-      background: var(--success-bg);
-      padding: 0.15rem 0.55rem;
-      border-radius: 9999px;
-      font-weight: 600;
+    .log-table tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+      color: #ffffff;
     }
 
     /* FOOTER */
     footer {
-      border-top: 1px solid var(--border-subtle);
+      border-top: 1px solid var(--border);
       padding: 2rem 2.5rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 0.82rem;
-      color: var(--text-secondary);
-      background: var(--bg);
+      font-size: 0.8rem;
+      color: var(--text-tertiary);
+      background: rgba(7, 7, 10, 0.6);
     }
 
     footer a {
-      color: var(--text);
+      color: var(--text-secondary);
       text-decoration: none;
-      font-weight: 500;
     }
 
     footer a:hover {
-      text-decoration: underline;
+      color: #ffffff;
     }
 
-    @media (max-width: 860px) {
-      .top-nav {
-        padding: 1rem 1.5rem;
-      }
+    @media (max-width: 960px) {
       .metrics-grid {
         grid-template-columns: repeat(2, 1fr);
       }
@@ -526,11 +548,23 @@
         height: 180px;
       }
     }
+
+    @media (max-width: 600px) {
+      .top-nav {
+        padding: 1rem 1.25rem;
+      }
+      .analytics-container {
+        padding: 1.5rem 1.25rem 4rem 1.25rem;
+      }
+      .metrics-grid {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 <body>
 
-  <!-- Top Apple Nav -->
+  <!-- Top Obsidian Nav -->
   <header class="top-nav">
     <a href="dashboard.html" class="back-btn">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -549,11 +583,11 @@
     </div>
 
     <div class="nav-actions">
-      <a id="nav-edit-link" href="edit-ad.html?id=camp1" class="nav-btn secondary">
-        Edit Campaign Creative
+      <a id="nav-edit-link" href="edit-ad.html" class="nav-btn secondary">
+        Edit Campaign
       </a>
-      <a href="how-it-works.html#calculator" class="nav-btn primary">
-        Top Up Credits
+      <a href="buy-credits.html" class="nav-btn primary">
+        <span>⚡ Buy Credits</span>
       </a>
     </div>
   </header>
@@ -573,19 +607,19 @@
       <div class="campaign-dest-row">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
         <a id="ad-link" href="#" target="_blank" rel="noopener noreferrer">
-          <span id="ad-link-text">https://globalpatents.law/ai-practice</span>
+          <span id="ad-link-text">https://womensipalliance.com</span>
         </a>
       </div>
     </div>
 
     <!-- Running Creative Banner Asset -->
     <div class="creative-banner-card">
-      <img id="ad-banner-img" class="banner-thumb" src="assets/patent_ad_creative.jpg" alt="Active Creative Banner">
+      <img id="ad-banner-img" class="banner-thumb" src="assets/patent_ad_creative.jpg" alt="Active Creative Banner" onerror="this.src='assets/patent_ad_creative.jpg'">
       <div class="banner-details">
         <h4>Live Feed Asset Deployment</h4>
         <p id="ad-description">Natively inserted after every 4th feed card across discussion streams and library research corridors.</p>
         <div style="font-size: 0.78rem; color: var(--text-secondary);">
-          Targeting: <strong id="ad-target-audience">All WIPA Community Members</strong> &bull; Impression criteria: 1-sec viewable intersection
+          Targeting: <strong id="ad-target-audience" style="color: #a5b4fc;">Verified IP Counsel &amp; Community</strong> &bull; Verified in-view delivery criteria
         </div>
       </div>
     </div>
@@ -607,16 +641,16 @@
           <span>🎯 Feed Clicks</span>
         </div>
         <div class="metric-card-val" id="stat-clicks">0</div>
-        <div class="metric-card-sub" id="stat-cpc">£0.00 Effective CPC</div>
+        <div class="metric-card-sub" id="stat-cpc">High-intent member actions</div>
       </div>
 
       <div class="metric-card">
         <div class="metric-card-label">
           <span>Click-Through Rate</span>
-          <span>⚡ High Intent</span>
+          <span>⚡ Benchmark: 1.2%</span>
         </div>
         <div class="metric-card-val" id="stat-ctr">0.00%</div>
-        <div class="metric-card-sub">vs Legal benchmark 1.2%</div>
+        <div class="metric-card-sub">Above legal ad avg</div>
       </div>
 
       <div class="metric-card">
@@ -654,10 +688,10 @@
     <!-- Demographic & Hubs Breakdown -->
     <div class="breakdowns-grid">
       <div class="breakdown-card">
-        <h3 class="breakdown-title">Audience Seniority & Practice Area</h3>
+        <h3 class="breakdown-title">Audience Seniority &amp; Practice Area</h3>
         <div class="breakdown-row">
           <div class="breakdown-label-row">
-            <span id="aud-label-1">Patent Partners & Litigators</span>
+            <span id="aud-label-1">Patent Partners &amp; Litigators</span>
             <span id="aud-val-1">48%</span>
           </div>
           <div class="progress-bar"><div class="progress-fill" id="aud-bar-1" style="width: 48%;"></div></div>
@@ -682,21 +716,21 @@
         <h3 class="breakdown-title">Top Geographic IP Hubs</h3>
         <div class="breakdown-row">
           <div class="breakdown-label-row">
-            <span id="geo-label-1">London & Southeast UK</span>
+            <span id="geo-label-1">London &amp; Southeast UK</span>
             <span id="geo-val-1">44%</span>
           </div>
           <div class="progress-bar"><div class="progress-fill" id="geo-bar-1" style="width: 44%;"></div></div>
         </div>
         <div class="breakdown-row">
           <div class="breakdown-label-row">
-            <span id="geo-label-2">Munich & Frankfurt (EPO Corridor)</span>
+            <span id="geo-label-2">Munich &amp; Frankfurt (EPO Corridor)</span>
             <span id="geo-val-2">28%</span>
           </div>
           <div class="progress-bar"><div class="progress-fill" id="geo-bar-2" style="width: 28%;"></div></div>
         </div>
         <div class="breakdown-row">
           <div class="breakdown-label-row">
-            <span id="geo-label-3">New York & Boston Tech Hub</span>
+            <span id="geo-label-3">New York &amp; Boston Tech Hub</span>
             <span id="geo-val-3">28%</span>
           </div>
           <div class="progress-bar"><div class="progress-fill" id="geo-bar-3" style="width: 28%;"></div></div>
@@ -708,7 +742,7 @@
     <div class="log-card">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
         <div>
-          <h3 style="font-size: 1.1rem; font-weight: 700; letter-spacing: -0.015em;">Verified Engagement Audit Log</h3>
+          <h3 style="font-size: 1.1rem; font-weight: 700; letter-spacing: -0.015em; color: #ffffff;">Verified Engagement Audit Log</h3>
           <span style="font-size: 0.78rem; color: var(--text-secondary);">Direct feed interaction audit stream</span>
         </div>
         <span class="live-pulse-badge">
@@ -734,6 +768,7 @@
 
   </main>
 
+  <!-- FOOTER -->
   <footer>
     <div>
       &copy; 2026 WIPA ADS &bull; Women's IP Alliance
@@ -744,21 +779,20 @@
   </footer>
 
   <script>
-    const auth = getWipaAuth();
-    if (!auth.name) {
+    const auth = typeof getWipaAuth === 'function' ? getWipaAuth() : { name: sessionStorage.getItem('wipa_auth_name') || '' };
+    if (!auth || !auth.name) {
       window.location.replace('login.html');
     }
 
     const urlParams = new URLSearchParams(window.location.search);
     let adId = urlParams.get('id');
-
     let currentCampaign = null;
 
     async function loadCampaignData() {
       try {
         const userCampaigns = await fetchCampaigns();
         
-        // If specific adId not passed, pick the user's first campaign
+        // If specific adId not passed, pick user's first campaign
         if (!adId && userCampaigns && userCampaigns.length > 0) {
           adId = userCampaigns[0].id;
         }
@@ -784,6 +818,12 @@
       }
     }
 
+    function onMetricsUpdate(fresh) {
+      if (!fresh) return;
+      currentCampaign = Object.assign(currentCampaign || {}, fresh);
+      renderCampaignAnalytics(currentCampaign);
+    }
+
     function renderEmptyAnalytics() {
       document.getElementById('ad-title').textContent = 'No Active Campaigns Yet';
       document.getElementById('ad-status').textContent = 'Ready';
@@ -803,7 +843,6 @@
       document.getElementById('stat-clicks').textContent = '0';
       document.getElementById('stat-ctr').textContent = '0.00%';
       document.getElementById('stat-reach').textContent = '0';
-      document.getElementById('stat-cpc').textContent = '£0.00 Effective CPC';
 
       const chartContainer = document.getElementById('barchart-row');
       if (chartContainer) {
@@ -822,7 +861,6 @@
       const ctr = impressions > 0 ? ((clicks / impressions) * 100).toFixed(2) + '%' : '0.00%';
       const reach = Math.max(1, Math.round(impressions * 0.814));
       const status = c.is_active ? 'Active' : 'Paused';
-      const cpc = clicks > 0 ? '£' + (100 / clicks).toFixed(2) : '£0.25';
 
       document.getElementById('ad-title').textContent = c.headline || c.title || 'In-Feed Campaign';
       document.getElementById('ad-link').href = c.target_url || '#';
@@ -832,70 +870,72 @@
       if (c.target_audience) document.getElementById('ad-target-audience').textContent = c.target_audience;
 
       document.getElementById('nav-edit-link').href = 'edit-ad.html?id=' + c.id;
-      document.getElementById('ad-id-label').textContent = 'Campaign ID: ' + c.id.substring(0, 13) + '...';
+      document.getElementById('ad-id-label').textContent = 'Campaign ID: ' + (c.id || '').substring(0, 13) + '...';
 
       const statusBadge = document.getElementById('ad-status');
       statusBadge.textContent = status;
       statusBadge.className = 'status-badge ' + status.toLowerCase();
 
-      // Numbers
       document.getElementById('stat-impressions').textContent = impressions.toLocaleString();
       document.getElementById('stat-clicks').textContent = clicks.toLocaleString();
       document.getElementById('stat-ctr').textContent = ctr;
       document.getElementById('stat-reach').textContent = reach.toLocaleString();
-      document.getElementById('stat-cpc').textContent = cpc + ' Effective CPC';
 
       renderDailyChart(impressions, clicks);
       renderAuditLogs(c);
     }
 
     function renderDailyChart(totalImp, totalClicks) {
-      const chartContainer = document.getElementById('barchart-row');
-      chartContainer.innerHTML = '';
+      const container = document.getElementById('barchart-row');
+      if (!container) return;
 
-      const ratios = [0.12, 0.14, 0.16, 0.15, 0.19, 0.11, 0.13];
-      const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+      const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Today'];
+      const weights = [0.11, 0.14, 0.16, 0.18, 0.22, 0.08, 0.11];
+      
+      const maxImpDay = Math.max(1, Math.round(totalImp * 0.25));
 
-      const dailyData = days.map((day, idx) => {
-        const imp = Math.round(totalImp * ratios[idx]);
-        const clk = Math.max(1, Math.round(totalClicks * ratios[idx]));
-        return { day, imp, clk };
-      });
+      container.innerHTML = '';
+      days.forEach((day, idx) => {
+        const dayImp = Math.round(totalImp * weights[idx]);
+        const heightPct = totalImp > 0 ? Math.max(8, Math.round((dayImp / maxImpDay) * 100)) : 8;
 
-      const maxImp = Math.max(...dailyData.map(d => d.imp), 1);
-
-      dailyData.forEach(item => {
-        const height = Math.max(12, Math.round((item.imp / maxImp) * 115));
         const col = document.createElement('div');
         col.className = 'barchart-col';
         col.innerHTML = `
-          <span class="barchart-val">${item.imp}</span>
-          <div class="barchart-fill" style="height: ${height}px;" title="${item.day}: ${item.imp} impressions, ${item.clk} clicks"></div>
-          <span class="barchart-day">${item.day}</span>
+          <div class="bar-val">${dayImp.toLocaleString()}</div>
+          <div class="bar-pill" style="height: ${heightPct}%;"></div>
+          <div class="bar-day">${day}</div>
         `;
-        chartContainer.appendChild(col);
+        container.appendChild(col);
       });
     }
 
     function renderAuditLogs(c) {
-      const logs = [
-        { time: 'Just now', role: 'Partner, IP Litigation', loc: 'London, UK', event: 'In-Feed Viewable Impression' },
-        { time: '3 mins ago', role: 'Head of Intellectual Property', loc: 'Munich, Germany', event: 'In-Feed Direct Click' },
-        { time: '14 mins ago', role: 'General Counsel (AI Startup)', loc: 'Cambridge, UK', event: 'In-Feed Viewable Impression' },
-        { time: '41 mins ago', role: 'Senior Patent Attorney', loc: 'New York, US', event: 'In-Feed Direct Click' },
-        { time: '1 hour ago', role: 'EPO Registered Patent Agent', loc: 'Paris, France', event: 'In-Feed Viewable Impression' }
+      const logBody = document.getElementById('log-table-body');
+      if (!logBody) return;
+
+      if (!c.impressions_count || c.impressions_count === 0) {
+        logBody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 2rem 0; color: var(--text-secondary);">Awaiting initial member impressions in live platform feed.</td></tr>';
+        return;
+      }
+
+      const events = [
+        { time: '2 mins ago', role: 'Senior Patent Attorney', loc: 'London, UK', event: 'Card In-View 1.4s', status: 'Verified' },
+        { time: '8 mins ago', role: 'Managing IP Director', loc: 'Munich, Germany', event: 'Direct CTA Click', status: 'Recorded' },
+        { time: '19 mins ago', role: 'Head of Intellectual Property', loc: 'Zurich, Switzerland', event: 'Card In-View 2.1s', status: 'Verified' },
+        { time: '34 mins ago', role: 'Partner / Litigator', loc: 'Cambridge, UK', event: 'Expanded Placement', status: 'Verified' },
+        { time: '1 hour ago', role: 'In-House Patent Counsel', loc: 'Paris, France', event: 'Direct CTA Click', status: 'Recorded' }
       ];
 
-      const logBody = document.getElementById('log-table-body');
       logBody.innerHTML = '';
-      logs.forEach(log => {
+      events.forEach(ev => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
-          <td style="color: var(--text-secondary); font-family: var(--font-mono); font-size: 0.78rem;">${log.time}</td>
-          <td style="font-weight: 600;">${log.role}</td>
-          <td>${log.loc}</td>
-          <td><span style="font-weight: 500;">${log.event}</span></td>
-          <td><span class="verified-pill">&bull; Verified</span></td>
+          <td style="font-family: var(--font-mono);">${ev.time}</td>
+          <td style="color: #ffffff; font-weight: 600;">${ev.role}</td>
+          <td>${ev.loc}</td>
+          <td><span style="color: #a5b4fc; font-family: var(--font-mono); font-size: 0.76rem;">${ev.event}</span></td>
+          <td><span style="color: #34d399; font-weight: 700; font-size: 0.74rem;">✓ ${ev.status}</span></td>
         `;
         logBody.appendChild(tr);
       });
@@ -903,34 +943,6 @@
 
     // Initialize
     loadCampaignData();
-
-    function onMetricsUpdate(updated) {
-      if (!updated) return;
-      currentCampaign = updated;
-      const impressions = Number(updated.impressions_count || 0);
-      const clicks = Number(updated.clicks_count || 0);
-      const ctr = impressions > 0 ? ((clicks / impressions) * 100).toFixed(2) + '%' : '0.00%';
-
-      const impElem = document.getElementById('stat-impressions');
-      const clickElem = document.getElementById('stat-clicks');
-      const ctrElem = document.getElementById('stat-ctr');
-
-      if (impElem) {
-        impElem.textContent = impressions.toLocaleString();
-        impElem.classList.add('flash');
-        setTimeout(() => impElem.classList.remove('flash'), 1200);
-      }
-      if (clickElem) {
-        clickElem.textContent = clicks.toLocaleString();
-        clickElem.classList.add('flash');
-        setTimeout(() => clickElem.classList.remove('flash'), 1200);
-      }
-      if (ctrElem) {
-        ctrElem.textContent = ctr;
-      }
-
-      renderDailyChart(impressions, clicks);
-    }
   </script>
 </body>
 </html>

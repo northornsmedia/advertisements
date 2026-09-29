@@ -1,0 +1,1420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Buy Campaign Credits | WIPA ADS</title>
+  <meta name="description" content="Purchase in-feed campaign credits for WIPA ADS. Transparent rates, verified reach across international IP attorneys and patent counsel.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/supabase-config.js?v=20260929_clean_v6"></script>
+  <style>
+    :root {
+      --bg: #07070a;
+      --surface: rgba(18, 18, 26, 0.75);
+      --surface-hover: rgba(28, 28, 42, 0.85);
+      --card-bg: rgba(15, 15, 23, 0.78);
+      --border: rgba(255, 255, 255, 0.08);
+      --border-focus: rgba(99, 102, 241, 0.55);
+      --border-subtle: rgba(255, 255, 255, 0.05);
+      --text: #ffffff;
+      --text-secondary: #94949e;
+      --text-tertiary: #6b6b76;
+      --accent: #6366f1;
+      --accent-hover: #4f46e5;
+      --accent-glow: rgba(99, 102, 241, 0.4);
+      --accent-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
+      --emerald: #10b981;
+      --emerald-glow: rgba(16, 185, 129, 0.35);
+      --amber: #f59e0b;
+      --rose: #f43f5e;
+      --font-main: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: "IBM Plex Mono", Menlo, Consolas, monospace;
+    }
+
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: var(--bg);
+      background-image: 
+        radial-gradient(ellipse 90% 50% at 50% -10%, rgba(99, 102, 241, 0.22) 0%, rgba(147, 51, 234, 0.08) 50%, transparent 80%),
+        radial-gradient(circle at 100% 60%, rgba(6, 182, 212, 0.05) 0%, transparent 45%);
+      color: var(--text);
+      font-family: var(--font-main);
+      -webkit-font-smoothing: antialiased;
+      line-height: 1.5;
+      letter-spacing: -0.015em;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* TOP FROSTED NAV */
+    .top-nav {
+      position: sticky;
+      top: 0;
+      background: rgba(7, 7, 10, 0.82);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 2.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: color 0.15s ease;
+      font-family: var(--font-mono);
+    }
+
+    .back-btn:hover {
+      color: #ffffff;
+    }
+
+    .brand-stamp {
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text);
+      font-family: var(--font-mono);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .brand-dot {
+      width: 7px;
+      height: 7px;
+      background: #6366f1;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #6366f1;
+    }
+
+    .nav-user-balance {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.4rem 0.95rem;
+      background: rgba(99, 102, 241, 0.12);
+      border: 1px solid rgba(99, 102, 241, 0.35);
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #c7d2fe;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+    }
+
+    .nav-link {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: color 0.15s ease;
+      font-family: var(--font-mono);
+    }
+
+    .nav-link:hover {
+      color: #ffffff;
+    }
+
+    /* MAIN CONTAINER */
+    .store-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 3rem 2rem 5rem 2rem;
+      width: 100%;
+      flex: 1;
+    }
+
+    /* HERO INTRO */
+    .store-hero {
+      text-align: center;
+      max-width: 780px;
+      margin: 0 auto 3rem auto;
+    }
+
+    .store-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.35rem 0.85rem;
+      background: rgba(99, 102, 241, 0.12);
+      border: 1px solid rgba(99, 102, 241, 0.35);
+      border-radius: 999px;
+      font-size: 0.76rem;
+      font-weight: 700;
+      color: #a5b4fc;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 1.25rem;
+    }
+
+    .store-title {
+      font-size: 2.75rem;
+      font-weight: 900;
+      letter-spacing: -0.035em;
+      line-height: 1.15;
+      margin-bottom: 0.85rem;
+      background: linear-gradient(180deg, #ffffff 40%, #a5b4fc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .store-subtitle {
+      font-size: 1.05rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    /* ACCOUNT BALANCE BANNER */
+    .account-banner {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 1.25rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2.75rem;
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(16px);
+    }
+
+    .acc-meta-label {
+      font-size: 0.75rem;
+      color: var(--text-tertiary);
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.2rem;
+    }
+
+    .acc-meta-val {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .balance-highlight {
+      font-size: 1.75rem;
+      font-weight: 900;
+      font-family: var(--font-mono);
+      color: #a5b4fc;
+      text-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
+    }
+
+    /* TIERS GRID */
+    .tiers-section-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .tiers-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.25rem;
+      margin-bottom: 3rem;
+    }
+
+    .tier-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 1.75rem 1.4rem;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    }
+
+    .tier-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(99, 102, 241, 0.4);
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.5), 0 0 24px rgba(99, 102, 241, 0.15);
+    }
+
+    .tier-card.selected {
+      border-color: var(--accent);
+      background: rgba(24, 24, 38, 0.95);
+      box-shadow: 0 0 0 2px var(--accent), 0 16px 36px rgba(99, 102, 241, 0.25);
+    }
+
+    .tier-tag {
+      position: absolute;
+      top: -11px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--accent-gradient);
+      color: #ffffff;
+      font-size: 0.68rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 0.25rem 0.75rem;
+      border-radius: 999px;
+      white-space: nowrap;
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+    }
+
+    .tier-header {
+      margin-bottom: 1.25rem;
+      text-align: center;
+    }
+
+    .tier-name {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: #ffffff;
+      margin-bottom: 0.35rem;
+    }
+
+    .tier-credits {
+      font-size: 2.25rem;
+      font-weight: 900;
+      font-family: var(--font-mono);
+      color: #ffffff;
+      line-height: 1;
+      margin: 0.75rem 0 0.35rem 0;
+    }
+
+    .tier-credits span {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      font-weight: 600;
+    }
+
+    .tier-bonus {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #34d399;
+      margin-top: 0.35rem;
+    }
+
+    .tier-features {
+      list-style: none;
+      margin: 1.25rem 0 1.75rem 0;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      line-height: 1.45;
+    }
+
+    .tier-features li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+
+    .tier-features li svg {
+      width: 14px;
+      height: 14px;
+      stroke: #6366f1;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .tier-btn {
+      width: 100%;
+      padding: 0.75rem;
+      border-radius: 12px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.05);
+      color: #ffffff;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      font-family: var(--font-main);
+    }
+
+    .tier-card.selected .tier-btn {
+      background: var(--accent);
+      border-color: var(--accent);
+      box-shadow: 0 4px 16px var(--accent-glow);
+    }
+
+    .tier-btn:hover {
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    /* CUSTOM SLIDER ROW */
+    .custom-slider-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 1.75rem 2.25rem;
+      margin-bottom: 3rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .slider-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .slider-title {
+      font-size: 1.05rem;
+      font-weight: 800;
+    }
+
+    .slider-display {
+      font-size: 1.5rem;
+      font-weight: 900;
+      font-family: var(--font-mono);
+      color: #a5b4fc;
+    }
+
+    .credit-slider {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.1);
+      outline: none;
+      cursor: pointer;
+    }
+
+    .credit-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #818cf8;
+      box-shadow: 0 0 12px #6366f1;
+      cursor: pointer;
+      border: 2px solid #ffffff;
+      transition: transform 0.1s ease;
+    }
+
+    .credit-slider::-webkit-slider-thumb:hover {
+      transform: scale(1.15);
+    }
+
+    .slider-ticks {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.74rem;
+      color: var(--text-tertiary);
+      font-family: var(--font-mono);
+    }
+
+    /* CHECKOUT 2-COL GRID */
+    .checkout-grid {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 2rem;
+      align-items: start;
+      margin-bottom: 3.5rem;
+    }
+
+    .checkout-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 2rem;
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.35);
+    }
+
+    .checkout-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* PAYMENT METHOD TABS */
+    .pay-tabs {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .pay-tab {
+      padding: 0.65rem 0.5rem;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--text-secondary);
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.15s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .pay-tab.active {
+      border-color: var(--accent);
+      background: rgba(99, 102, 241, 0.12);
+      color: #ffffff;
+    }
+
+    /* FORM FIELDS */
+    .form-group {
+      margin-bottom: 1.15rem;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 0.35rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .form-input {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.75rem 1rem;
+      color: #ffffff;
+      font-size: 0.88rem;
+      font-family: var(--font-main);
+      transition: border-color 0.15s ease;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px var(--accent-glow);
+    }
+
+    .form-row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    /* ORDER SUMMARY */
+    .summary-card {
+      background: rgba(18, 18, 28, 0.9);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      border-radius: 20px;
+      padding: 2rem;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+      position: sticky;
+      top: 5rem;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.65rem 0;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .summary-row.total {
+      border-bottom: none;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      margin-top: 0.75rem;
+      padding-top: 1rem;
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #ffffff;
+    }
+
+    .summary-total-credits {
+      font-size: 1.65rem;
+      font-weight: 900;
+      font-family: var(--font-mono);
+      color: #a5b4fc;
+      text-shadow: 0 0 16px rgba(99, 102, 241, 0.4);
+    }
+
+    .purchase-btn {
+      width: 100%;
+      margin-top: 1.5rem;
+      padding: 1rem 1.5rem;
+      border-radius: 12px;
+      border: none;
+      background: var(--accent-gradient);
+      color: #ffffff;
+      font-size: 0.95rem;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s ease;
+      box-shadow: 0 8px 24px var(--accent-glow);
+    }
+
+    .purchase-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px var(--accent-glow);
+      filter: brightness(1.08);
+    }
+
+    .purchase-btn:active {
+      transform: translateY(0);
+    }
+
+    .purchase-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .security-badge {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.45rem;
+      font-size: 0.74rem;
+      color: var(--text-tertiary);
+      margin-top: 1rem;
+      font-family: var(--font-mono);
+    }
+
+    /* TRANSACTION HISTORY TABLE */
+    .history-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 2rem;
+      margin-top: 1.5rem;
+    }
+
+    .history-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+      margin-top: 1rem;
+    }
+
+    .history-table th {
+      text-align: left;
+      padding: 0.75rem 1rem;
+      color: var(--text-tertiary);
+      font-family: var(--font-mono);
+      font-weight: 600;
+      border-bottom: 1px solid var(--border);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .history-table td {
+      padding: 0.9rem 1rem;
+      border-bottom: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+    }
+
+    .history-table tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+      color: #ffffff;
+    }
+
+    /* SUCCESS MODAL */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(12px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      padding: 1.5rem;
+    }
+
+    .modal-content {
+      background: #111118;
+      border: 1px solid rgba(99, 102, 241, 0.4);
+      border-radius: 24px;
+      max-width: 520px;
+      width: 100%;
+      padding: 2.5rem;
+      text-align: center;
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6), 0 0 40px rgba(99, 102, 241, 0.25);
+      animation: modalPop 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes modalPop {
+      0% { transform: scale(0.92); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .success-icon-wrap {
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      background: rgba(16, 185, 129, 0.15);
+      border: 2px solid #10b981;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem auto;
+      box-shadow: 0 0 24px rgba(16, 185, 129, 0.4);
+    }
+
+    .modal-btn-row {
+      display: flex;
+      gap: 0.85rem;
+      margin-top: 2rem;
+    }
+
+    .modal-btn {
+      flex: 1;
+      padding: 0.85rem;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-decoration: none;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .modal-btn.primary {
+      background: var(--accent);
+      color: #ffffff;
+      border: none;
+      box-shadow: 0 4px 16px var(--accent-glow);
+    }
+
+    .modal-btn.secondary {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      color: #ffffff;
+    }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2rem 2.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8rem;
+      color: var(--text-tertiary);
+      background: rgba(7, 7, 10, 0.6);
+    }
+
+    footer a {
+      color: var(--text-secondary);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      color: #ffffff;
+    }
+
+    @media (max-width: 960px) {
+      .tiers-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .checkout-grid {
+        grid-template-columns: 1fr;
+      }
+      .summary-card {
+        position: static;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .top-nav {
+        padding: 1rem 1.25rem;
+      }
+      .store-container {
+        padding: 2rem 1.25rem 4rem 1.25rem;
+      }
+      .tiers-grid {
+        grid-template-columns: 1fr;
+      }
+      .account-banner {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+      .modal-btn-row {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Obsidian Nav -->
+  <header class="top-nav">
+    <a href="dashboard.html" class="back-btn">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+      </svg>
+      <span>Back to Dashboard</span>
+    </a>
+
+    <div class="brand-stamp">
+      <span class="brand-dot"></span>
+      <span>WIPA ADS // CREDIT STORE</span>
+    </div>
+
+    <div class="nav-actions">
+      <div class="nav-user-balance" id="nav-balance-pill">
+        <span>⚡</span>
+        <span id="nav-credit-count">0</span>
+        <span>Credits</span>
+      </div>
+      <a href="edit-ad.html?new=1" class="nav-link">Create Ad</a>
+      <a href="login.html" class="nav-link" onclick="clearWipaAuth();">Sign Out</a>
+    </div>
+  </header>
+
+  <main class="store-container">
+    
+    <!-- Hero Intro -->
+    <div class="store-hero">
+      <div class="store-badge">
+        <span>✦</span>
+        <span>Instant Balance Top-Up</span>
+      </div>
+      <h1 class="store-title">Purchase Campaign Credits</h1>
+      <p class="store-subtitle">
+        Deploy native in-feed advertisements across verified patent attorneys, trademark litigators, and IP decision-makers. Credits burn strictly upon verified feed delivery.
+      </p>
+    </div>
+
+    <!-- Active Advertiser Balance Banner -->
+    <div class="account-banner">
+      <div>
+        <div class="acc-meta-label">Logged In Advertiser Account</div>
+        <div class="acc-meta-val" id="acc-name">Loading account...</div>
+      </div>
+      <div style="text-align: right;">
+        <div class="acc-meta-label">Current Available Balance</div>
+        <div class="balance-highlight" id="banner-credit-count">0 Credits</div>
+      </div>
+    </div>
+
+    <!-- 4 Tier Packages -->
+    <div class="tiers-section-title">
+      <span>1. Select a Credit Allocation Package</span>
+      <span style="font-size: 0.8rem; color: var(--text-tertiary); font-weight: 500; font-family: var(--font-mono);">
+        Instant delivery &bull; No expiration date
+      </span>
+    </div>
+
+    <div class="tiers-grid">
+      <!-- Starter -->
+      <div class="tier-card" id="tier-25" onclick="selectTier(25, 0, 'Starter Package')">
+        <div class="tier-header">
+          <div class="tier-name">Starter Pack</div>
+          <div class="tier-credits">25 <span>Credits</span></div>
+          <div style="font-size: 0.78rem; color: var(--text-tertiary);">Single Campaign Launch</div>
+        </div>
+        <ul class="tier-features">
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <span>~2,500 - 3,500 In-Feed Impressions</span>
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <span>Standard 4:1 Feed Injection</span>
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <span>Real-time Live Telemetry</span>
+          </li>
+        </ul>
+        <button class="tier-btn" type="button">Select 25 Credits</button>
+      </div>
+
+      <!-- Growth (Most Popular) -->
+      <div class="tier-card selected" id="tier-50" onclick="selectTier(50, 0, 'Growth Pack')">
+        <div class="tier-tag">Most Popular</div>
+        <div class="tier-header">
+          <div class="tier-name">Growth Pack</div>
+          <div class="tier-credits">50 <span>Credits</span></div>
+          <div style="font-size: 0.78rem; color: #a5b4fc; font-weight: 600;">Multi-Campaign Reach</div>
+        </div>
+        <ul class="tier-features">
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <span>~5,000 - 7,000 In-Feed Impressions</span>
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <span>Priority In-Feed Cadence</span>
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <span>High-Intent IP Community Targeting</span>
+          </li>
+        </ul>
+        <button class="tier-btn" type="button">Select 50 Credits</button>
+      </div>
+
+      <!-- Scale -->
+      <div class="tier-card" id="tier-100" onclick="selectTier(100, 10, 'Scale Pack')">
+        <div class="tier-tag" style="background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);">+10 Bonus Free</div>
+        <div class="tier-header">
+          <div class="tier-name">Scale Pack</div>
+          <div class="tier-credits">100 <span>Credits</span></div>
+          <div class="tier-bonus">🎁 +10 Bonus Credits Added (110 Total)</div>
+        </div>
+        <ul class="tier-features">
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <span>~11,000 - 15,400 In-Feed Impressions</span>
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <span>Top-Tier Placement Boost</span>
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <span>Campaign Performance Telemetry</span>
+          </li>
+        </ul>
+        <button class="tier-btn" type="button">Select 100 Credits</button>
+      </div>
+
+      <!-- Enterprise -->
+      <div class="tier-card" id="tier-250" onclick="selectTier(250, 35, 'Enterprise Pack')">
+        <div class="tier-tag" style="background: linear-gradient(135deg, #f59e0b 0%, #ec4899 100%);">+35 Bonus Free</div>
+        <div class="tier-header">
+          <div class="tier-name">Enterprise Pack</div>
+          <div class="tier-credits">250 <span>Credits</span></div>
+          <div class="tier-bonus">🎁 +35 Bonus Credits Added (285 Total)</div>
+        </div>
+        <ul class="tier-features">
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <span>~28,500 - 39,900 In-Feed Impressions</span>
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <span>VIP Rapid Review & Approval Queue</span>
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <span>Dedicated Campaign Specialist</span>
+          </li>
+        </ul>
+        <button class="tier-btn" type="button">Select 250 Credits</button>
+      </div>
+    </div>
+
+    <!-- Custom Slider Card -->
+    <div class="custom-slider-card">
+      <div class="slider-header">
+        <div>
+          <div class="slider-title">Or Choose a Custom Credit Amount</div>
+          <div style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.2rem;">
+            Minimum 10 credits. Real-time estimate of verified feed reach.
+          </div>
+        </div>
+        <div class="slider-display" id="custom-display">50 Credits</div>
+      </div>
+
+      <input type="range" min="10" max="500" step="5" value="50" class="credit-slider" id="credit-slider" oninput="handleSliderChange(this.value)">
+
+      <div class="slider-ticks">
+        <span>10 Credits</span>
+        <span>100 Credits</span>
+        <span>250 Credits</span>
+        <span>500 Credits</span>
+      </div>
+    </div>
+
+    <!-- 2-Column Checkout -->
+    <div class="tiers-section-title">
+      <span>2. Checkout & Account Credit Delivery</span>
+    </div>
+
+    <div class="checkout-grid">
+      <!-- Left: Payment Form -->
+      <div class="checkout-card">
+        <div class="checkout-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+          <span>Select Payment Method</span>
+        </div>
+
+        <div class="pay-tabs">
+          <div class="pay-tab active" id="tab-card" onclick="setPaymentMethod('card')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+            <span>Debit / Credit Card</span>
+          </div>
+          <div class="pay-tab" id="tab-apple" onclick="setPaymentMethod('apple')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"></path></svg>
+            <span>Express 1-Click</span>
+          </div>
+          <div class="pay-tab" id="tab-invoice" onclick="setPaymentMethod('invoice')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            <span>Corporate Invoice</span>
+          </div>
+        </div>
+
+        <!-- Form: Card Payment -->
+        <div id="view-card">
+          <div class="form-group">
+            <label class="form-label" for="inp-card-num">Card Number</label>
+            <input type="text" id="inp-card-num" class="form-input" placeholder="4242 &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; 4242" maxlength="19" value="4242 8192 3014 9102">
+          </div>
+
+          <div class="form-row-2">
+            <div class="form-group">
+              <label class="form-label" for="inp-card-exp">Expiry (MM/YY)</label>
+              <input type="text" id="inp-card-exp" class="form-input" placeholder="12/28" maxlength="5" value="08/28">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="inp-card-cvc">CVC / CVV</label>
+              <input type="password" id="inp-card-cvc" class="form-input" placeholder="888" maxlength="4" value="888">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="inp-card-holder">Cardholder Name</label>
+            <input type="text" id="inp-card-holder" class="form-input" placeholder="Cardholder or Law Firm Name" value="Senior Partner">
+          </div>
+
+          <div class="form-row-2">
+            <div class="form-group">
+              <label class="form-label" for="inp-country">Billing Country</label>
+              <select id="inp-country" class="form-input" style="background: #14141d;">
+                <option value="GB">United Kingdom (UK)</option>
+                <option value="US">United States</option>
+                <option value="DE">Germany</option>
+                <option value="FR">France</option>
+                <option value="CH">Switzerland</option>
+                <option value="JP">Japan</option>
+                <option value="OTHER">International</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="inp-postal">Postal / ZIP Code</label>
+              <input type="text" id="inp-postal" class="form-input" placeholder="EC2A 4NE" value="EC2A 4NE">
+            </div>
+          </div>
+        </div>
+
+        <!-- Form: Express Pay -->
+        <div id="view-apple" style="display: none; text-align: center; padding: 2rem 1rem;">
+          <div style="font-size: 2.5rem; margin-bottom: 0.75rem;">Pay / GPay</div>
+          <p style="font-size: 0.85rem; color: var(--text-secondary); max-width: 320px; margin: 0 auto 1.5rem auto;">
+            Authenticate instantly with biometrics. Credits will be loaded to your advertiser balance immediately upon confirmation.
+          </p>
+          <div style="display: inline-block; padding: 0.85rem 2.5rem; background: #ffffff; color: #000000; border-radius: 999px; font-weight: 800; font-size: 0.95rem; cursor: pointer;" onclick="executePurchase()">
+            Pay with Biometrics
+          </div>
+        </div>
+
+        <!-- Form: Corporate Invoice -->
+        <div id="view-invoice" style="display: none;">
+          <div class="form-group">
+            <label class="form-label" for="inp-inv-company">Entity / Law Firm Legal Name</label>
+            <input type="text" id="inp-inv-company" class="form-input" placeholder="e.g. Clifford & Associates LLP" value="">
+          </div>
+          <div class="form-row-2">
+            <div class="form-group">
+              <label class="form-label" for="inp-vat">VAT / Company Tax ID</label>
+              <input type="text" id="inp-vat" class="form-input" placeholder="GB 123 4567 89" value="GB 992 4811 02">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="inp-po">PO Number (Optional)</label>
+              <input type="text" id="inp-po" class="form-input" placeholder="PO-2026-WIPA" value="PO-WIPA-ADV">
+            </div>
+          </div>
+          <div style="font-size: 0.78rem; color: var(--text-tertiary); line-height: 1.5; margin-top: 0.5rem;">
+            Net-30 payment invoice will be dispatched to your billing email. Credits are immediately activated in your account.
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Summary & Action -->
+      <div class="summary-card">
+        <div class="checkout-title" style="margin-bottom: 1rem;">
+          <span>Order Summary</span>
+        </div>
+
+        <div class="summary-row">
+          <span>Selected Package</span>
+          <strong id="sum-package-name" style="color: #ffffff;">Growth Pack</strong>
+        </div>
+
+        <div class="summary-row">
+          <span>Base Credits</span>
+          <span id="sum-base-credits">50 Credits</span>
+        </div>
+
+        <div class="summary-row">
+          <span>Bonus Credits</span>
+          <span id="sum-bonus-credits" style="color: #34d399; font-weight: 700;">0 Credits</span>
+        </div>
+
+        <div class="summary-row">
+          <span>Cadence Injection</span>
+          <span style="color: #a5b4fc; font-weight: 600;">1 Ad : 4 Feed Cards</span>
+        </div>
+
+        <div class="summary-row">
+          <span>Delivery Timeline</span>
+          <span style="color: #34d399; font-weight: 600;">⚡ Instant (0 sec)</span>
+        </div>
+
+        <div class="summary-row total">
+          <span>Total Account Credits:</span>
+          <span class="summary-total-credits" id="sum-total-credits">50 Credits</span>
+        </div>
+
+        <button class="purchase-btn" id="btn-complete-purchase" onclick="executePurchase()">
+          <span id="btn-spinner" style="display: none;">⏳</span>
+          <span id="btn-text">Confirm &amp; Add 50 Credits</span>
+        </button>
+
+        <div class="security-badge">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          <span>256-Bit SSL Encrypted &bull; Direct Account Sync</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Transaction History Table -->
+    <div class="history-card">
+      <div class="checkout-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+        <span>Credit Purchase &amp; Allocation History</span>
+      </div>
+      <div style="overflow-x: auto;">
+        <table class="history-table">
+          <thead>
+            <tr>
+              <th>Date &amp; Time</th>
+              <th>Transaction ID</th>
+              <th>Package</th>
+              <th>Payment Method</th>
+              <th>Credits Added</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="history-tbody">
+            <!-- Dynamically populated or empty state -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- SUCCESS CONFIRMATION MODAL -->
+  <div class="modal-overlay" id="success-modal">
+    <div class="modal-content">
+      <div class="success-icon-wrap">
+        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+      </div>
+      <h2 style="font-size: 1.65rem; font-weight: 900; margin-bottom: 0.5rem; letter-spacing: -0.02em;">Payment Confirmed!</h2>
+      <p style="color: var(--text-secondary); font-size: 0.92rem; line-height: 1.5; margin-bottom: 1.5rem;">
+        Your transaction was verified and completed successfully. Your ad credits have been credited to your advertiser account balance.
+      </p>
+
+      <div style="background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border); border-radius: 16px; padding: 1.25rem; text-align: left; font-size: 0.84rem; display: flex; flex-direction: column; gap: 0.65rem;">
+        <div style="display: flex; justify-content: space-between;">
+          <span style="color: var(--text-tertiary);">Transaction Ref:</span>
+          <strong id="modal-ref" style="font-family: var(--font-mono); color: #ffffff;">WIPA-TX-84920</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between;">
+          <span style="color: var(--text-tertiary);">Credits Added:</span>
+          <strong id="modal-added" style="color: #34d399; font-family: var(--font-mono);">+50 Credits</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; border-top: 1px solid rgba(255, 255, 255, 0.06); padding-top: 0.65rem;">
+          <span style="color: var(--text-tertiary);">New Available Balance:</span>
+          <strong id="modal-balance" style="color: #a5b4fc; font-family: var(--font-mono); font-size: 1.05rem;">50 Credits</strong>
+        </div>
+      </div>
+
+      <div class="modal-btn-row">
+        <a href="edit-ad.html?new=1" class="modal-btn primary">
+          + Launch New Ad Now
+        </a>
+        <a href="dashboard.html" class="modal-btn secondary">
+          Go to Dashboard
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div>
+      &copy; 2026 WIPA ADS &bull; Women's IP Alliance Ad Network
+    </div>
+    <div>
+      Platform developed in London &bull; <a href="dashboard.html">Dashboard</a> &bull; <a href="how-it-works.html">Specs &amp; Cadence</a>
+    </div>
+  </footer>
+
+  <script>
+    let selectedCredits = 50;
+    let bonusCredits = 0;
+    let packageName = 'Growth Pack';
+    let currentAuth = null;
+    let activePaymentMethod = 'card';
+
+    // 1. Initialize Page & Authenticate
+    document.addEventListener('DOMContentLoaded', () => {
+      currentAuth = typeof getWipaAuth === 'function' ? getWipaAuth() : null;
+      if (!currentAuth || !currentAuth.name) {
+        // Fallback to registered advertiser name if stored in session
+        const sessName = sessionStorage.getItem('wipa_auth_name') || 'Registered Advertiser';
+        currentAuth = { name: sessName, mode: 'advertiser' };
+      }
+
+      const accNameElem = document.getElementById('acc-name');
+      const invCompanyInput = document.getElementById('inp-inv-company');
+      const cardHolderInput = document.getElementById('inp-card-holder');
+
+      if (accNameElem) accNameElem.textContent = currentAuth.name;
+      if (invCompanyInput && !invCompanyInput.value) invCompanyInput.value = currentAuth.name;
+      if (cardHolderInput && currentAuth.name !== 'Global Tech') cardHolderInput.value = currentAuth.name;
+
+      refreshBalanceDisplay();
+      renderHistoryTable();
+
+      // Check query params if pre-selected package was specified
+      const urlParams = new URLSearchParams(window.location.search);
+      const reqCredits = parseInt(urlParams.get('credits'), 10);
+      if (reqCredits && reqCredits >= 10) {
+        if (reqCredits === 25) selectTier(25, 0, 'Starter Package');
+        else if (reqCredits === 50) selectTier(50, 0, 'Growth Pack');
+        else if (reqCredits === 100) selectTier(100, 10, 'Scale Pack');
+        else if (reqCredits === 250) selectTier(250, 35, 'Enterprise Pack');
+        else {
+          handleSliderChange(reqCredits);
+          const sliderEl = document.getElementById('credit-slider');
+          if (sliderEl) sliderEl.value = reqCredits;
+        }
+      }
+    });
+
+    // 2. Refresh Balance Display
+    function refreshBalanceDisplay() {
+      const isPartner = (currentAuth.name === 'Global Tech' && currentAuth.mode === 'partner');
+      const credits = isPartner ? 50 : Number(localStorage.getItem(`wipa_credits_${currentAuth.name}`) || 0);
+
+      const navCount = document.getElementById('nav-credit-count');
+      const bannerCount = document.getElementById('banner-credit-count');
+
+      if (navCount) navCount.textContent = credits;
+      if (bannerCount) bannerCount.textContent = `${credits} Credits`;
+    }
+
+    // 3. Tier Selection
+    function selectTier(credits, bonus, name) {
+      selectedCredits = credits;
+      bonusCredits = bonus;
+      packageName = name;
+
+      // Update active cards
+      document.querySelectorAll('.tier-card').forEach(c => c.classList.remove('selected'));
+      const activeCard = document.getElementById(`tier-${credits}`);
+      if (activeCard) activeCard.classList.add('selected');
+
+      // Update Slider Display
+      const sliderEl = document.getElementById('credit-slider');
+      const customDisp = document.getElementById('custom-display');
+      if (sliderEl && credits <= 500) sliderEl.value = credits;
+      if (customDisp) customDisp.textContent = `${credits} Credits`;
+
+      updateOrderSummary();
+    }
+
+    // 4. Slider Change Handler
+    function handleSliderChange(val) {
+      const num = parseInt(val, 10);
+      selectedCredits = num;
+      packageName = `Custom (${num} Credits)`;
+
+      // Bonus rules for custom amounts
+      if (num >= 250) bonusCredits = 35;
+      else if (num >= 100) bonusCredits = 10;
+      else bonusCredits = 0;
+
+      // Deselect predefined tiers if custom value doesn't match
+      document.querySelectorAll('.tier-card').forEach(c => c.classList.remove('selected'));
+      const match = document.getElementById(`tier-${num}`);
+      if (match) match.classList.add('selected');
+
+      const customDisp = document.getElementById('custom-display');
+      if (customDisp) customDisp.textContent = `${num} Credits`;
+
+      updateOrderSummary();
+    }
+
+    // 5. Update Order Summary
+    function updateOrderSummary() {
+      const totalCreds = selectedCredits + bonusCredits;
+
+      const sumPkg = document.getElementById('sum-package-name');
+      const sumBase = document.getElementById('sum-base-credits');
+      const sumBonus = document.getElementById('sum-bonus-credits');
+      const sumTotal = document.getElementById('sum-total-credits');
+      const btnText = document.getElementById('btn-text');
+
+      if (sumPkg) sumPkg.textContent = packageName;
+      if (sumBase) sumBase.textContent = `${selectedCredits} Credits`;
+      if (sumBonus) sumBonus.textContent = bonusCredits > 0 ? `+${bonusCredits} Bonus Credits` : '0 Credits';
+      if (sumTotal) sumTotal.textContent = `${totalCreds} Credits`;
+      if (btnText) btnText.textContent = `Confirm & Add ${totalCreds} Credits`;
+    }
+
+    // 6. Payment Method Tabs
+    function setPaymentMethod(method) {
+      activePaymentMethod = method;
+      document.querySelectorAll('.pay-tab').forEach(t => t.classList.remove('active'));
+      const activeTab = document.getElementById(`tab-${method}`);
+      if (activeTab) activeTab.classList.add('active');
+
+      document.getElementById('view-card').style.display = method === 'card' ? 'block' : 'none';
+      document.getElementById('view-apple').style.display = method === 'apple' ? 'block' : 'none';
+      document.getElementById('view-invoice').style.display = method === 'invoice' ? 'block' : 'none';
+    }
+
+    // 7. Execute Purchase Flow
+    async function executePurchase() {
+      const btn = document.getElementById('btn-complete-purchase');
+      const btnText = document.getElementById('btn-text');
+      const btnSpinner = document.getElementById('btn-spinner');
+
+      const totalCreditsToAdd = selectedCredits + bonusCredits;
+
+      if (btn) btn.disabled = true;
+      if (btnSpinner) btnSpinner.style.display = 'inline-block';
+      if (btnText) btnText.textContent = 'Verifying with payment gateway...';
+
+      // Simulate realistic payment gateway authorization
+      await new Promise(r => setTimeout(r, 700));
+      if (btnText) btnText.textContent = 'Crediting advertiser account...';
+      await new Promise(r => setTimeout(r, 600));
+
+      // Update advertiser credits in LocalStorage
+      const key = `wipa_credits_${currentAuth.name}`;
+      const existing = Number(localStorage.getItem(key) || 0);
+      const newTotal = existing + totalCreditsToAdd;
+      localStorage.setItem(key, newTotal);
+
+      // Save Transaction to History
+      const txRef = 'WIPA-TX-' + Math.floor(100000 + Math.random() * 900000);
+      const txItem = {
+        id: txRef,
+        date: new Date().toLocaleString(),
+        package: packageName,
+        method: activePaymentMethod === 'card' ? 'Credit Card' : (activePaymentMethod === 'apple' ? 'Apple/Google Pay' : 'Corporate Invoice'),
+        credits: totalCreditsToAdd,
+        status: 'Completed'
+      };
+
+      const historyKey = `wipa_tx_${currentAuth.name}`;
+      const history = JSON.parse(localStorage.getItem(historyKey) || '[]');
+      history.unshift(txItem);
+      localStorage.setItem(historyKey, JSON.stringify(history));
+
+      // Reset button
+      if (btn) btn.disabled = false;
+      if (btnSpinner) btnSpinner.style.display = 'none';
+      if (btnText) btnText.textContent = `Confirm & Add ${totalCreditsToAdd} Credits`;
+
+      // Refresh Display
+      refreshBalanceDisplay();
+      renderHistoryTable();
+
+      // Show Success Modal
+      const modal = document.getElementById('success-modal');
+      const modalRef = document.getElementById('modal-ref');
+      const modalAdded = document.getElementById('modal-added');
+      const modalBalance = document.getElementById('modal-balance');
+
+      if (modalRef) modalRef.textContent = txRef;
+      if (modalAdded) modalAdded.textContent = `+${totalCreditsToAdd} Credits`;
+      if (modalBalance) modalBalance.textContent = `${newTotal} Credits`;
+      if (modal) modal.style.display = 'flex';
+    }
+
+    // 8. Render Transaction History Table
+    function renderHistoryTable() {
+      const tbody = document.getElementById('history-tbody');
+      if (!tbody) return;
+
+      const historyKey = `wipa_tx_${currentAuth.name}`;
+      const history = JSON.parse(localStorage.getItem(historyKey) || '[]');
+
+      if (history.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" style="text-align: center; padding: 2rem; color: var(--text-tertiary);">
+              No previous credit transactions. Selected credits will appear here upon purchase.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = '';
+      history.forEach(tx => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td style="font-family: var(--font-mono);">${tx.date}</td>
+          <td style="font-family: var(--font-mono); font-weight: 700; color: #ffffff;">${tx.id}</td>
+          <td>${tx.package}</td>
+          <td>${tx.method}</td>
+          <td style="font-family: var(--font-mono); font-weight: 700; color: #34d399;">+${tx.credits} Credits</td>
+          <td><span style="display: inline-block; padding: 0.2rem 0.6rem; border-radius: 999px; background: rgba(16, 185, 129, 0.15); color: #34d399; font-size: 0.72rem; font-weight: 700;">✓ ${tx.status}</span></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+  </script>
+</body>
+</html>
