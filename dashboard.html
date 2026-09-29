@@ -617,7 +617,29 @@
         const impressions = Number(camp.impressions_count || 0);
         const clicks = Number(camp.clicks_count || 0);
         const ctr = impressions > 0 ? ((clicks / impressions) * 100).toFixed(2) + '%' : '0.00%';
-        const status = camp.is_active ? 'Active' : 'Paused';
+        
+        const isPending = camp.badge_text === 'Pending Review' || (camp.target_audience && camp.target_audience.includes('pending_review'));
+        const isRejected = camp.badge_text === 'Rejected';
+        
+        let statusBadge = `<span class="camp-badge active">⚡ Active</span>`;
+        if (isPending) {
+          statusBadge = `<span class="camp-badge" style="background: #fef3c7; color: #92400e; border: 1px solid #fde68a;">⏳ Pending Admin Review</span>`;
+        } else if (isRejected) {
+          statusBadge = `<span class="camp-badge" style="background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5;">❌ Rejected / Needs Edit</span>`;
+        } else if (!camp.is_active) {
+          statusBadge = `<span class="camp-badge paused">Paused</span>`;
+        }
+
+        let creditsAllocatedText = '';
+        if (camp.target_audience && camp.target_audience.includes('credits_allocated')) {
+          try {
+            const parsed = JSON.parse(camp.target_audience);
+            if (parsed.credits_allocated) {
+              creditsAllocatedText = ` &bull; <strong style="color: #4f46e5;">${parsed.credits_allocated} Credits Allocated</strong>`;
+            }
+          } catch (e) {}
+        }
+
         const image = camp.banner_image_url || 'assets/patent_ad_creative.jpg';
         const title = camp.headline || camp.title || 'In-Feed Ad Placement';
         const targetUrl = camp.target_url || 'https://womensipalliance.com';
@@ -633,15 +655,15 @@
 
           <div class="camp-info">
             <div class="camp-title-row">
-              <span class="camp-badge ${status.toLowerCase()}">${status}</span>
+              ${statusBadge}
               <span style="font-size: 0.72rem; color: var(--text-secondary); font-weight: 600;">Feed Native</span>
               <h4>${title}</h4>
             </div>
             <p class="camp-meta-text" id="meta-${id}">
-              Injected after every 4th feed card &bull; 
-              <strong id="imp-${id}">${impressions.toLocaleString()}</strong> impressions &bull; 
-              <strong id="clk-${id}">${clicks.toLocaleString()}</strong> clicks 
-              (<span id="ctr-${id}">${ctr}</span> CTR)
+              ${isPending 
+                ? `Under review by WIPA administration &bull; Awaiting approval to launch live into feed${creditsAllocatedText}`
+                : `Injected after every 4th feed card &bull; <strong id="imp-${id}">${impressions.toLocaleString()}</strong> impressions &bull; <strong id="clk-${id}">${clicks.toLocaleString()}</strong> clicks (<span id="ctr-${id}">${ctr}</span> CTR)${creditsAllocatedText}`
+              }
             </p>
             <div>
               <a href="${targetUrl}" target="_blank" rel="noopener noreferrer" class="camp-dest-link">

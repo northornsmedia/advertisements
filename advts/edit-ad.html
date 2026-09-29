@@ -556,30 +556,57 @@
               <div>
                 <label class="upload-trigger-btn">
                   Upload Image
-                  <input type="file" id="inp-file" accept="image/*" style="display: none;" onchange="handleImageFile(event)">
+                  <input type="file" id="inp-file" accept="image/jpeg,image/png,image/webp" style="display: none;" onchange="handleImageFile(event)">
                 </label>
                 <div class="form-hint" style="margin-top: 0.4rem;">
-                  Supports JPG, PNG, WEBP. Minimum 1200x675px.
+                  JPEG, PNG, WEBP. Minimum 1200x675px. Max 5MB.
                 </div>
               </div>
             </div>
+            <!-- Security Malware Scan Status -->
+            <div id="img-security-status" style="display: none; margin-top: 0.6rem; padding: 0.5rem 0.75rem; border-radius: 8px; font-size: 0.78rem;"></div>
             <!-- Direct URL input for custom web assets -->
             <input type="text" id="inp-img-url" class="form-input" placeholder="Or paste public banner image URL" style="margin-top: 0.75rem;" oninput="handleImageUrlInput(event)">
           </div>
 
-          <!-- Status Toggle -->
+          <!-- Credit Allocation Section -->
+          <div class="form-group" id="credits-allocation-group">
+            <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.4rem;">
+              <label class="form-label" for="inp-credits" style="margin-bottom: 0;">Credits to Spend on This Ad</label>
+              <span style="font-size: 0.78rem; color: var(--text-secondary);" id="label-avail-credits">
+                Available: <strong id="val-avail-credits">0 Credits</strong> (<span id="val-avail-money">&pound;0</span>)
+              </span>
+            </div>
+            <div style="display: flex; gap: 0.6rem; align-items: center;">
+              <input type="number" id="inp-credits" class="form-input" min="1" placeholder="Enter credits to allocate" required oninput="validateCreditInput()">
+              <span style="font-size: 0.85rem; font-weight: 700; color: var(--text); padding-right: 0.5rem; white-space: nowrap;">Credits</span>
+            </div>
+            <div class="form-hint" id="credits-hint">
+              1 Credit = &pound;2 delivery value. Allocated credits are deducted upon submission and cannot exceed your available balance.
+            </div>
+            <div id="no-credits-warning" style="display: none; margin-top: 0.6rem; padding: 0.65rem 0.9rem; background: #fef2f2; border: 1px solid #fecaca; border-radius: 10px; font-size: 0.8rem; color: #b91c1c;">
+              ⚠️ <strong>Insufficient Balance:</strong> You have 0 available credits. <a href="how-it-works.html#calculator" style="color: var(--accent); font-weight: 700; text-decoration: underline;">Buy Credits Here &rarr;</a>
+            </div>
+          </div>
+
+          <!-- Mandatory Admin Review & Publishing Status -->
           <div class="form-group">
-            <label class="form-label" for="inp-status">Feed Delivery Status</label>
-            <select id="inp-status" class="form-input" style="cursor: pointer;">
-              <option value="Active">Active (Serving after every 4th feed card)</option>
-              <option value="Paused">Paused (Preserve credits)</option>
-            </select>
+            <label class="form-label">Review & Publishing Gate</label>
+            <div style="padding: 0.85rem 1rem; background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.25); border-radius: 12px; display: flex; align-items: flex-start; gap: 0.75rem;">
+              <span style="font-size: 1.25rem; line-height: 1;">🛡️</span>
+              <div>
+                <div style="font-size: 0.85rem; font-weight: 700; color: #92400e;">Mandatory Admin Review Required</div>
+                <div style="font-size: 0.78rem; color: #78350f; line-height: 1.45; margin-top: 0.2rem;">
+                  Every campaign submitted by advertisers undergoes administrative review and malware/safety verification before entering the live WIPA feed. Without admin approval, ads cannot be served.
+                </div>
+              </div>
+            </div>
           </div>
 
           <!-- Save / Cancel Buttons -->
           <div class="btn-row">
             <a href="dashboard.html" class="cancel-btn">Cancel</a>
-            <button type="submit" class="save-btn" id="btn-save">Save & Sync to Live Feed</button>
+            <button type="submit" class="save-btn" id="btn-save">Submit for Admin Approval &rarr;</button>
           </div>
         </form>
       </div>
@@ -648,6 +675,7 @@
     if (!adId && !isNew) adId = 'camp1';
 
     let currentCampaign = null;
+    let userAvailableCredits = 0;
 
     async function initForm() {
       const auth = getWipaAuth();
@@ -656,6 +684,39 @@
         return;
       }
 
+      // 1. Calculate Available Credits for this Advertiser
+      const isPartner = (auth.name === 'Global Tech' && auth.mode === 'partner');
+      userAvailableCredits = isPartner ? 50 : Number(localStorage.getItem(`wipa_credits_${auth.name}`) || 0);
+
+      const valCreditsElem = document.getElementById('val-avail-credits');
+      const valMoneyElem = document.getElementById('val-avail-money');
+      const inpCredits = document.getElementById('inp-credits');
+      const warningElem = document.getElementById('no-credits-warning');
+      const btnSave = document.getElementById('btn-save');
+
+      if (valCreditsElem) valCreditsElem.textContent = `${userAvailableCredits} Credits`;
+      if (valMoneyElem) valMoneyElem.textContent = `£${userAvailableCredits * 2}`;
+
+      if (userAvailableCredits <= 0) {
+        if (inpCredits) {
+          inpCredits.disabled = true;
+          inpCredits.placeholder = '0 Credits available';
+        }
+        if (warningElem) warningElem.style.display = 'block';
+        if (btnSave) {
+          btnSave.disabled = true;
+          btnSave.textContent = 'Insufficient Credits to Publish';
+          btnSave.style.opacity = '0.6';
+          btnSave.style.cursor = 'not-allowed';
+        }
+      } else {
+        if (inpCredits) {
+          inpCredits.max = userAvailableCredits;
+          inpCredits.value = Math.min(10, userAvailableCredits);
+        }
+      }
+
+      // 2. Pre-fill form fields
       if (isNew) {
         document.getElementById('page-title').textContent = 'Create In-Feed Campaign';
         document.getElementById('inp-company').value = auth.name;
@@ -675,7 +736,16 @@
         document.getElementById('inp-url').value = currentCampaign.target_url || '';
         document.getElementById('inp-copy').value = currentCampaign.description || '';
         document.getElementById('inp-cta').value = currentCampaign.cta_label || 'Explore Offer →';
-        document.getElementById('inp-status').value = currentCampaign.is_active ? 'Active' : 'Paused';
+
+        // Check if existing campaign had allocated credits
+        if (currentCampaign.target_audience && currentCampaign.target_audience.includes('credits_allocated')) {
+          try {
+            const parsed = JSON.parse(currentCampaign.target_audience);
+            if (parsed.credits_allocated) {
+              inpCredits.value = parsed.credits_allocated;
+            }
+          } catch (e) {}
+        }
         
         const imgSrc = currentCampaign.banner_image_url || 'assets/patent_ad_creative.jpg';
         document.getElementById('form-thumb-img').src = imgSrc;
@@ -684,6 +754,28 @@
 
         syncLivePreview();
       }
+    }
+
+    function validateCreditInput() {
+      const inp = document.getElementById('inp-credits');
+      const val = parseInt(inp.value, 10);
+      const hint = document.getElementById('credits-hint');
+
+      if (isNaN(val) || val < 1) {
+        hint.style.color = '#ef4444';
+        hint.textContent = 'Please enter at least 1 credit to allocate.';
+        return false;
+      }
+
+      if (val > userAvailableCredits) {
+        hint.style.color = '#ef4444';
+        hint.textContent = `Cannot allocate ${val} credits. Your maximum available balance is ${userAvailableCredits} credits.`;
+        return false;
+      }
+
+      hint.style.color = 'var(--text-secondary)';
+      hint.textContent = `Allocating ${val} credits (£${val * 2} balance value). Deducted upon submission.`;
+      return true;
     }
 
     function syncLivePreview() {
@@ -700,33 +792,178 @@
       document.getElementById('prev-img').src = img;
     }
 
-    function handleImageFile(e) {
-      const file = e.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function(evt) {
-          document.getElementById('form-thumb-img').src = evt.target.result;
-          document.getElementById('prev-img').src = evt.target.result;
+    // --- MALWARE & FILE INTEGRITY SECURITY SCANNER ---
+    async function validateImageSecurity(file) {
+      // 1. Size Limit (5MB)
+      const MAX_SIZE = 5 * 1024 * 1024;
+      if (file.size > MAX_SIZE) {
+        throw new Error('File exceeds maximum allowed size of 5MB.');
+      }
+
+      // 2. Extension & Double Extension Inspection
+      const fileName = file.name.toLowerCase();
+      const validExtensions = ['.jpg', '.jpeg', '.png', '.webp'];
+      const hasValidExt = validExtensions.some(ext => fileName.endsWith(ext));
+      if (!hasValidExt) {
+        throw new Error('Only valid .jpg, .jpeg, .png, or .webp image files are accepted.');
+      }
+
+      if (/\.(php|phtml|phar|exe|sh|bat|cmd|vbs|js|html|htm|py|pl|cgi|jar|war)\./i.test(fileName)) {
+        throw new Error('Security Alert: Malicious file name pattern detected. File rejected.');
+      }
+
+      // 3. Magic Number Byte Signature Verification
+      const headerBuf = await file.slice(0, 512).arrayBuffer();
+      const bytes = new Uint8Array(headerBuf);
+
+      const isJPEG = bytes[0] === 0xFF && bytes[1] === 0xD8 && bytes[2] === 0xFF;
+      const isPNG = bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4E && bytes[3] === 0x47;
+      const isWEBP = bytes[0] === 0x52 && bytes[1] === 0x49 && bytes[2] === 0x46 && bytes[3] === 0x46 && // RIFF
+                     bytes[8] === 0x57 && bytes[9] === 0x45 && bytes[10] === 0x42 && bytes[11] === 0x50; // WEBP
+
+      if (!isJPEG && !isPNG && !isWEBP) {
+        throw new Error('Security Error: Invalid image signature. The file is disguised and not a genuine JPEG, PNG, or WEBP image.');
+      }
+
+      // 4. Binary String Scan for Embedded Executable / Script Payloads
+      const fullBuffer = await file.arrayBuffer();
+      const fullBytes = new Uint8Array(fullBuffer);
+      let binarySample = '';
+      const sampleLimit = Math.min(fullBytes.length, 65536);
+      for (let i = 0; i < sampleLimit; i += 4096) {
+        const sub = fullBytes.subarray(i, i + 4096);
+        binarySample += String.fromCharCode.apply(null, sub);
+      }
+
+      const dangerousPatterns = [
+        /<\?php/i,
+        /<\?=/i,
+        /<script/i,
+        /<\/script/i,
+        /<svg/i,
+        /<iframe/i,
+        /javascript:/i,
+        /eval\s*\(/i,
+        /base64_decode\s*\(/i,
+        /system\s*\(/i,
+        /passthru\s*\(/i,
+        /shell_exec\s*\(/i,
+        /powershell/i,
+        /\/bin\/sh/i,
+        /\/bin\/bash/i
+      ];
+
+      for (const pattern of dangerousPatterns) {
+        if (pattern.test(binarySample)) {
+          throw new Error('Security Alert: Malicious code pattern detected inside image payload. File rejected for security.');
+        }
+      }
+
+      // 5. Canvas Re-Rasterization (Cleansing pass to discard any non-image binary chunks)
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        const objUrl = URL.createObjectURL(file);
+
+        img.onload = () => {
+          URL.revokeObjectURL(objUrl);
+          if (img.width < 400 || img.height < 200) {
+            return reject(new Error('Image dimensions too small. Minimum 400x200px required for 16:9 feed banner.'));
+          }
+
+          const canvas = document.createElement('canvas');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0);
+
+          // Re-encode clean JPEG
+          const cleanDataUrl = canvas.toDataURL('image/jpeg', 0.92);
+          resolve(cleanDataUrl);
         };
-        reader.readAsDataURL(file);
+
+        img.onerror = () => {
+          URL.revokeObjectURL(objUrl);
+          reject(new Error('Security Error: Corrupted or unreadable image stream.'));
+        };
+
+        img.src = objUrl;
+      });
+    }
+
+    async function handleImageFile(e) {
+      const file = e.target.files[0];
+      const statusElem = document.getElementById('img-security-status');
+      if (!file) return;
+
+      if (statusElem) {
+        statusElem.style.display = 'block';
+        statusElem.style.background = '#fefce8';
+        statusElem.style.color = '#854d0e';
+        statusElem.style.border = '1px solid #fef08a';
+        statusElem.innerHTML = '🔍 Scanning image signature & scanning for malware...';
+      }
+
+      try {
+        const cleanDataUrl = await validateImageSecurity(file);
+        document.getElementById('form-thumb-img').src = cleanDataUrl;
+        document.getElementById('prev-img').src = cleanDataUrl;
+
+        if (statusElem) {
+          statusElem.style.background = '#f0fdf4';
+          statusElem.style.color = '#15803d';
+          statusElem.style.border = '1px solid #bbf7d0';
+          statusElem.innerHTML = '✓ <strong>Security Verified:</strong> Genuine JPEG/PNG confirmed. No malware or scripts detected.';
+        }
+      } catch (err) {
+        console.error('Security scan rejected:', err);
+        e.target.value = '';
+        if (statusElem) {
+          statusElem.style.background = '#fef2f2';
+          statusElem.style.color = '#b91c1c';
+          statusElem.style.border = '1px solid #fecaca';
+          statusElem.innerHTML = `⚠️ <strong>${err.message}</strong>`;
+        }
+        alert(err.message);
       }
     }
 
     function handleImageUrlInput(e) {
       const url = e.target.value.trim();
       if (url) {
+        if (/javascript:|<script|data:text\/html/i.test(url)) {
+          alert('Security Error: Invalid or malicious image URL.');
+          e.target.value = '';
+          return;
+        }
         document.getElementById('form-thumb-img').src = url;
         document.getElementById('prev-img').src = url;
       }
     }
 
-    // Save and Publish Campaign
+    // Save and Submit Campaign for Admin Review
     async function handleFormSubmit(e) {
       e.preventDefault();
+      const auth = getWipaAuth();
+
+      // 1. Validate Credits Allocation
+      const inpCredits = document.getElementById('inp-credits');
+      const allocatedCredits = parseInt(inpCredits ? inpCredits.value : '0', 10);
+
+      if (isNaN(allocatedCredits) || allocatedCredits < 1) {
+        alert('Please allocate at least 1 credit to publish this campaign.');
+        return;
+      }
+
+      if (allocatedCredits > userAvailableCredits) {
+        alert(`You cannot allocate ${allocatedCredits} credits. Your maximum available balance is ${userAvailableCredits} credits.`);
+        return;
+      }
+
       const btn = document.getElementById('btn-save');
       btn.disabled = true;
-      btn.textContent = 'Syncing Campaign...';
+      btn.textContent = 'Submitting for Admin Review...';
 
+      // 2. Build Campaign Payload strictly requiring Admin Approval
       const updated = {
         id: isNew ? undefined : (currentCampaign?.id || adId),
         company_name: document.getElementById('inp-company').value.trim(),
@@ -735,26 +972,41 @@
         target_url: document.getElementById('inp-url').value.trim(),
         description: document.getElementById('inp-copy').value.trim(),
         cta_label: document.getElementById('inp-cta').value.trim(),
-        is_active: document.getElementById('inp-status').value === 'Active',
+        // MANDATORY: Never live immediately upon advertiser submission!
+        is_active: false,
+        badge_text: 'Pending Review',
+        target_audience: JSON.stringify({
+          credits_allocated: allocatedCredits,
+          review_status: 'pending_review',
+          submitted_at: new Date().toISOString()
+        }),
         banner_image_url: document.getElementById('form-thumb-img').src,
-        slot_placement: 'feed_native'
+        slot_placement: 'feed_native',
+        credits_allocated: allocatedCredits
       };
 
       try {
         await saveCampaignToDb(updated);
-        showToast('✓ Campaign synced to live WIPA feed database!');
+
+        // Deduct allocated credits from user's local balance
+        if (auth.name !== 'Global Tech') {
+          const newBal = Math.max(0, userAvailableCredits - allocatedCredits);
+          localStorage.setItem(`wipa_credits_${auth.name}`, newBal);
+        }
+
+        showToast('✓ Campaign submitted! Awaiting WIPA Administrator review.');
         setTimeout(() => {
           window.location.href = 'dashboard.html';
-        }, 1200);
+        }, 1500);
       } catch (err) {
-        console.error('Save failed:', err);
-        showToast('Saved locally. Database sync queued.');
+        console.error('Submission failed:', err);
+        showToast('Submission queued. Awaiting administrator approval.');
         setTimeout(() => {
           window.location.href = 'dashboard.html';
         }, 1500);
       } finally {
         btn.disabled = false;
-        btn.textContent = 'Save & Sync to Live Feed';
+        btn.textContent = 'Submit for Admin Approval →';
       }
     }
 

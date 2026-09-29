@@ -181,6 +181,7 @@ async function fetchCampaignById(id) {
 
 // Save or Update Campaign in Supabase
 async function saveCampaignToDb(campaign) {
+  const auth = typeof getWipaAuth === 'function' ? getWipaAuth() : { name: campaign.company_name || 'Verified Partner' };
   try {
     const res = await fetch('/api/campaigns', {
       method: 'POST',
@@ -191,7 +192,7 @@ async function saveCampaignToDb(campaign) {
     if (res.ok) {
       const result = await res.json();
       const savedItem = (result && result.data) || campaign;
-      const cName = campaign.company_name || auth.name;
+      const cName = campaign.company_name || (auth && auth.name) || 'Verified Partner';
       const userKey = `wipa_campaigns_${cName}`;
       const userList = JSON.parse(localStorage.getItem(userKey) || '[]');
       const idx = userList.findIndex(c => c.id === savedItem.id);

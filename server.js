@@ -66,6 +66,9 @@ const handler = (req, res) => {
     
     // API endpoint routing for Supabase campaigns integration
     if (parsedUrl.pathname === '/api/campaigns' || parsedUrl.pathname.startsWith('/api/campaigns/')) {
+      try {
+        delete require.cache[require.resolve('./api/campaigns.js')];
+      } catch (e) {}
       const campaignsHandler = require('./api/campaigns.js');
       return campaignsHandler(req, res);
     }

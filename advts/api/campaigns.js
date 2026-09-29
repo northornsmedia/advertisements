@@ -77,6 +77,17 @@ module.exports = async (req, res) => {
         targetId = DEMO_IDS[targetId];
       }
 
+      // Server-side Malware & Exploit signature check on image
+      const imgPayload = bodyData.banner_image_url || bodyData.image || '';
+      if (typeof imgPayload === 'string' && imgPayload.length > 0) {
+        if (/<\?php|<\?=|class\s*extends|<script|<\/script|javascript:|eval\s*\(|system\s*\(|shell_exec\s*\(|powershell/i.test(imgPayload)) {
+          res.setHeader('Content-Type', 'application/json');
+          res.statusCode = 400;
+          res.end(JSON.stringify({ error: 'Security Violation: Malicious payload pattern detected in image data.' }));
+          return;
+        }
+      }
+
       if (targetId) {
         // Update existing campaign
         const patchRes = await fetch(`${SUPABASE_URL}/rest/v1/ad_campaigns?id=eq.${encodeURIComponent(targetId)}`, {
@@ -93,7 +104,9 @@ module.exports = async (req, res) => {
             target_url: bodyData.target_url || bodyData.url,
             cta_label: bodyData.cta_label || bodyData.cta || 'Explore Offer →',
             banner_image_url: bodyData.banner_image_url || bodyData.image,
-            is_active: bodyData.is_active !== undefined ? bodyData.is_active : (bodyData.status === 'Active'),
+            badge_text: bodyData.badge_text !== undefined ? bodyData.badge_text : undefined,
+            target_audience: bodyData.target_audience !== undefined ? bodyData.target_audience : undefined,
+            is_active: bodyData.is_active !== undefined ? bodyData.is_active : false,
             updated_at: new Date().toISOString()
           })
         });
@@ -104,7 +117,7 @@ module.exports = async (req, res) => {
         res.end(JSON.stringify({ success: true, data: patchData[0] || patchData }));
         return;
       } else {
-        // Insert new campaign for live platform feed
+        // Insert new campaign: strictly requires Admin Approval before going live!
         const insertRes = await fetch(`${SUPABASE_URL}/rest/v1/ad_campaigns`, {
           method: 'POST',
           headers: {
@@ -115,15 +128,19 @@ module.exports = async (req, res) => {
           },
           body: JSON.stringify([{
             title: bodyData.title || bodyData.headline || 'New In-Feed Campaign',
-            company_name: bodyData.company_name || 'Verified Partner',
+            company_name: (bodyData.company_name || 'Verified Partner').trim(),
             headline: bodyData.headline || bodyData.title,
             description: bodyData.description || bodyData.copy || '',
             target_url: bodyData.target_url || bodyData.url || 'https://womensipalliance.com',
             cta_label: bodyData.cta_label || bodyData.cta || 'Learn More',
             banner_image_url: bodyData.banner_image_url || bodyData.image || 'assets/patent_ad_creative.jpg',
             slot_placement: bodyData.slot_placement || 'feed_native',
-            badge_text: bodyData.badge_text || 'Sponsored Partner',
-            is_active: bodyData.is_active !== undefined ? bodyData.is_active : true,
+            badge_text: 'Pending Review',
+            target_audience: bodyData.target_audience || JSON.stringify({
+              credits_allocated: bodyData.credits_allocated || 10,
+              review_status: 'pending_review'
+            }),
+            is_active: false, // Mandatory: Cannot go live until admin explicitly approves
             impressions_count: 0,
             clicks_count: 0
           }])
