@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>How Advertising Works | WIPA ADS</title>
   <meta name="description" content="Discover how advertising on WIPA ADS works. Injected after every 4 cards across a verified global community of IP professionals. 1 Credit = £2, minimum 10 credits.">
+  <script src="assets/supabase-config.js?v=20260929_clean_v4"></script>
   <style>
     :root {
       --bg: #ffffff;
@@ -799,7 +800,7 @@
               <li>Live click & impression tracking</li>
             </ul>
           </div>
-          <a href="#calculator" class="action-btn secondary">Select 10 Credits</a>
+          <a href="#calculator" class="action-btn secondary" onclick="selectPackage(10); return false;">Select 10 Credits</a>
         </div>
 
         <!-- Tier 2 (Featured) -->
@@ -815,7 +816,7 @@
               <li>Weekly performance analytics summary</li>
             </ul>
           </div>
-          <a href="#calculator" class="action-btn primary">Select 25 Credits</a>
+          <a href="#calculator" class="action-btn primary" onclick="selectPackage(25); return false;">Select 25 Credits</a>
         </div>
 
         <!-- Tier 3 -->
@@ -830,7 +831,7 @@
               <li>Dedicated account support</li>
             </ul>
           </div>
-          <a href="#calculator" class="action-btn secondary">Select 50 Credits</a>
+          <a href="#calculator" class="action-btn secondary" onclick="selectPackage(50); return false;">Select 50 Credits</a>
         </div>
       </div>
     </section>
@@ -869,7 +870,7 @@
           <span class="summary-label">Est. In-Feed Reach</span>
           <span class="summary-val" id="res-reach">Approx. 2,500 - 3,500</span>
         </div>
-        <button class="action-btn primary" onclick="alert('Order for ' + document.getElementById('res-credits').innerText + ' credits (£' + document.getElementById('res-cost').innerText.replace('£','') + ') confirmed. Redirecting to checkout.')">
+        <button class="action-btn primary" id="btn-checkout" onclick="handleProceedToCheckout()">
           Proceed to Checkout &rarr;
         </button>
       </div>
@@ -908,6 +909,35 @@
 
     slider.addEventListener('input', updateCalc);
     updateCalc();
+
+    function selectPackage(credits) {
+      slider.value = credits;
+      updateCalc();
+      const calcSection = document.getElementById('calculator');
+      if (calcSection) calcSection.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function handleProceedToCheckout() {
+      const creditsToAdd = parseInt(slider.value, 10);
+      const auth = typeof getWipaAuth === 'function' ? getWipaAuth() : null;
+      let companyName = (auth && auth.name) || sessionStorage.getItem('wipa_auth_name');
+      
+      if (!companyName) {
+        if (confirm(`You selected ${creditsToAdd} Credits (£${creditsToAdd * 2}). Please sign in or register your advertiser account to complete checkout. Proceed to Sign In?`)) {
+          sessionStorage.setItem('wipa_pending_credits', creditsToAdd);
+          window.location.href = 'login.html';
+        }
+        return;
+      }
+
+      const key = `wipa_credits_${companyName}`;
+      const current = Number(localStorage.getItem(key) || 0);
+      const newBal = current + creditsToAdd;
+      localStorage.setItem(key, newBal);
+
+      alert(`✓ Payment Confirmed: ${creditsToAdd} Credits (£${creditsToAdd * 2}) added to your account! Total available: ${newBal} Credits.`);
+      window.location.href = 'dashboard.html';
+    }
   </script>
 </body>
 </html>

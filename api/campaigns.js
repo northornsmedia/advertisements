@@ -58,7 +58,7 @@ module.exports = async (req, res) => {
     }
 
     // POST / PATCH - Save or Update campaign
-    if (req.method === 'POST') {
+    if (req.method === 'POST' || req.method === 'PATCH') {
       let bodyData = req.body;
       if (typeof bodyData === 'string') {
         try { bodyData = JSON.parse(bodyData); } catch (e) {}
@@ -106,7 +106,7 @@ module.exports = async (req, res) => {
             banner_image_url: bodyData.banner_image_url || bodyData.image,
             badge_text: bodyData.badge_text !== undefined ? bodyData.badge_text : undefined,
             target_audience: bodyData.target_audience !== undefined ? bodyData.target_audience : undefined,
-            is_active: bodyData.is_active !== undefined ? bodyData.is_active : false,
+            is_active: bodyData.is_active !== undefined ? bodyData.is_active : undefined,
             updated_at: new Date().toISOString()
           })
         });

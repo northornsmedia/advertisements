@@ -518,7 +518,7 @@
           <!-- Company / Partner Name -->
           <div class="form-group">
             <label class="form-label" for="inp-company">Advertiser / Law Firm Name</label>
-            <input type="text" id="inp-company" class="form-input" value="Global Tech" required oninput="syncLivePreview()">
+            <input type="text" id="inp-company" class="form-input" placeholder="Your Firm / Advertiser Name" required oninput="syncLivePreview()">
           </div>
 
           <!-- Headline -->
@@ -625,7 +625,7 @@
           <!-- Native Feed Card Preview -->
           <div class="native-feed-card">
             <div class="feed-card-header">
-              <span class="feed-sponsor-pill" id="prev-company">Global Tech • Sponsored</span>
+              <span class="feed-sponsor-pill" id="prev-company">Sponsored</span>
               <span class="feed-cadence-label">Cadence 4:1</span>
             </div>
 
@@ -634,8 +634,8 @@
             </div>
 
             <div class="feed-card-body">
-              <h3 class="feed-card-headline" id="prev-title">Global Patent Practice & AI Innovation Banner</h3>
-              <p class="feed-card-copy" id="prev-copy">Leading strategic advisory and European IP litigation for high-growth tech innovators.</p>
+              <h3 class="feed-card-headline" id="prev-title">Your Campaign Headline</h3>
+              <p class="feed-card-copy" id="prev-copy">Supporting tagline appearing natively in WIPA feed.</p>
               <a href="#" id="prev-cta" class="feed-card-cta-btn" onclick="return false;">
                 Explore Offer &rarr;
               </a>
@@ -717,6 +717,7 @@
       }
 
       // 2. Pre-fill form fields
+      const navAnalyticsLink = document.getElementById('nav-analytics-link');
       if (isNew) {
         document.getElementById('page-title').textContent = 'Create In-Feed Campaign';
         document.getElementById('inp-company').value = auth.name;
@@ -725,6 +726,7 @@
         document.getElementById('inp-copy').value = '';
         document.getElementById('inp-cta').value = 'Learn More →';
         document.getElementById('form-thumb-img').src = 'assets/patent_ad_creative.jpg';
+        if (navAnalyticsLink) navAnalyticsLink.style.display = 'none';
         syncLivePreview();
         return;
       }
@@ -750,8 +752,22 @@
         const imgSrc = currentCampaign.banner_image_url || 'assets/patent_ad_creative.jpg';
         document.getElementById('form-thumb-img').src = imgSrc;
         document.getElementById('inp-img-url').value = imgSrc.startsWith('data:') ? '' : imgSrc;
-        document.getElementById('nav-analytics-link').href = 'analytics.html?id=' + currentCampaign.id;
+        if (navAnalyticsLink) {
+          navAnalyticsLink.style.display = 'inline-flex';
+          navAnalyticsLink.href = 'analytics.html?id=' + currentCampaign.id;
+        }
 
+        syncLivePreview();
+      } else {
+        // Fallback cleanly to create state
+        document.getElementById('page-title').textContent = 'Create In-Feed Campaign';
+        document.getElementById('inp-company').value = auth.name;
+        document.getElementById('inp-title').value = '';
+        document.getElementById('inp-url').value = 'https://womensipalliance.com';
+        document.getElementById('inp-copy').value = '';
+        document.getElementById('inp-cta').value = 'Learn More →';
+        document.getElementById('form-thumb-img').src = 'assets/patent_ad_creative.jpg';
+        if (navAnalyticsLink) navAnalyticsLink.style.display = 'none';
         syncLivePreview();
       }
     }
@@ -965,8 +981,8 @@
 
       // 2. Build Campaign Payload strictly requiring Admin Approval
       const updated = {
-        id: isNew ? undefined : (currentCampaign?.id || adId),
-        company_name: document.getElementById('inp-company').value.trim(),
+        id: (isNew || !currentCampaign || currentCampaign.id === 'camp1' || currentCampaign.id === 'camp2') ? undefined : currentCampaign.id,
+        company_name: document.getElementById('inp-company').value.trim() || auth.name,
         title: document.getElementById('inp-title').value.trim(),
         headline: document.getElementById('inp-title').value.trim(),
         target_url: document.getElementById('inp-url').value.trim(),

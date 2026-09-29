@@ -597,8 +597,8 @@
           <span>In-Feed Impressions</span>
           <span class="pulse-dot"></span>
         </div>
-        <div class="metric-card-val" id="stat-impressions">3,820</div>
-        <div class="metric-card-sub">Live delivered in WIPA feed</div>
+        <div class="metric-card-val" id="stat-impressions">0</div>
+        <div class="metric-card-sub" id="stat-impressions-sub">Live delivered in WIPA feed</div>
       </div>
 
       <div class="metric-card">
@@ -606,8 +606,8 @@
           <span>Verified Clicks</span>
           <span>🎯 Feed Clicks</span>
         </div>
-        <div class="metric-card-val" id="stat-clicks">168</div>
-        <div class="metric-card-sub" id="stat-cpc">£0.23 Effective CPC</div>
+        <div class="metric-card-val" id="stat-clicks">0</div>
+        <div class="metric-card-sub" id="stat-cpc">£0.00 Effective CPC</div>
       </div>
 
       <div class="metric-card">
@@ -615,7 +615,7 @@
           <span>Click-Through Rate</span>
           <span>⚡ High Intent</span>
         </div>
-        <div class="metric-card-val" id="stat-ctr">4.40%</div>
+        <div class="metric-card-val" id="stat-ctr">0.00%</div>
         <div class="metric-card-sub">vs Legal benchmark 1.2%</div>
       </div>
 
@@ -624,7 +624,7 @@
           <span>Counsel Reach</span>
           <span>👥 Members</span>
         </div>
-        <div class="metric-card-val" id="stat-reach">3,110</div>
+        <div class="metric-card-val" id="stat-reach">0</div>
         <div class="metric-card-sub">Unique verified IP profiles</div>
       </div>
     </div>
@@ -744,19 +744,75 @@
   </footer>
 
   <script>
+    const auth = getWipaAuth();
+    if (!auth.name) {
+      window.location.replace('login.html');
+    }
+
     const urlParams = new URLSearchParams(window.location.search);
-    let adId = urlParams.get('id') || 'camp1';
+    let adId = urlParams.get('id');
 
     let currentCampaign = null;
 
     async function loadCampaignData() {
       try {
-        currentCampaign = await fetchCampaignById(adId);
+        const userCampaigns = await fetchCampaigns();
+        
+        // If specific adId not passed, pick the user's first campaign
+        if (!adId && userCampaigns && userCampaigns.length > 0) {
+          adId = userCampaigns[0].id;
+        }
+
+        // Only default to demo campaign if logged in as Global Tech partner
+        if (!adId && auth.name === 'Global Tech' && auth.mode === 'partner') {
+          adId = WIPA_SUPABASE_CONFIG.demoCampaignId;
+        }
+
+        if (adId) {
+          currentCampaign = await fetchCampaignById(adId);
+        }
+
         if (currentCampaign) {
           renderCampaignAnalytics(currentCampaign);
+          subscribeToCampaignMetrics(adId, onMetricsUpdate);
+        } else {
+          renderEmptyAnalytics();
         }
       } catch (e) {
         console.error('Error fetching campaign analytics:', e);
+        renderEmptyAnalytics();
+      }
+    }
+
+    function renderEmptyAnalytics() {
+      document.getElementById('ad-title').textContent = 'No Active Campaigns Yet';
+      document.getElementById('ad-status').textContent = 'Ready';
+      document.getElementById('ad-status').className = 'status-badge paused';
+      document.getElementById('ad-id-label').textContent = 'Campaign ID: None';
+      document.getElementById('ad-link-text').textContent = 'https://womensipalliance.com';
+      document.getElementById('ad-description').textContent = 'Welcome, ' + auth.name + '. Create your first in-feed campaign to start delivering natively to verified IP counsel.';
+      document.getElementById('ad-target-audience').textContent = 'All WIPA Members';
+      
+      const navEdit = document.getElementById('nav-edit-link');
+      if (navEdit) {
+        navEdit.textContent = '+ Create First Ad';
+        navEdit.href = 'edit-ad.html?new=1';
+      }
+
+      document.getElementById('stat-impressions').textContent = '0';
+      document.getElementById('stat-clicks').textContent = '0';
+      document.getElementById('stat-ctr').textContent = '0.00%';
+      document.getElementById('stat-reach').textContent = '0';
+      document.getElementById('stat-cpc').textContent = '£0.00 Effective CPC';
+
+      const chartContainer = document.getElementById('barchart-row');
+      if (chartContainer) {
+        chartContainer.innerHTML = '<div style="text-align: center; width: 100%; padding: 2rem 0; color: var(--text-secondary); font-size: 0.85rem;">No impression telemetry recorded yet. Live metrics will appear here once your ad is approved and served in the platform feed.</div>';
+      }
+
+      const logBody = document.getElementById('log-table-body');
+      if (logBody) {
+        logBody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 2rem 0; color: var(--text-secondary);">No member interaction events recorded yet.</td></tr>';
       }
     }
 
@@ -848,8 +904,7 @@
     // Initialize
     loadCampaignData();
 
-    // Listen for live Realtime events from main WIPA feed!
-    subscribeToCampaignMetrics(adId, (updated) => {
+    function onMetricsUpdate(updated) {
       if (!updated) return;
       currentCampaign = updated;
       const impressions = Number(updated.impressions_count || 0);
@@ -875,7 +930,7 @@
       }
 
       renderDailyChart(impressions, clicks);
-    });
+    }
   </script>
 </body>
 </html>

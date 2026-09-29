@@ -456,31 +456,54 @@
               }
             } catch (pe) {}
 
-            sessionStorage.setItem('wipa_auth_name', companyName || data.user.email.split('@')[0]);
+            const finalName = companyName || data.user.email.split('@')[0];
+            sessionStorage.setItem('wipa_auth_name', finalName);
             sessionStorage.setItem('wipa_auth_email', data.user.email);
             sessionStorage.setItem('wipa_user_id', data.user.id);
             sessionStorage.setItem('wipa_auth_mode', 'live');
+
+            applyPendingCredits(finalName);
             window.location.href = 'dashboard.html';
             return;
           }
         }
 
-        // Check local saved user
-        const savedUser = localStorage.getItem('wipa_mock_user');
-        if (savedUser && user === savedUser) {
-          sessionStorage.setItem('wipa_auth_name', user);
-          sessionStorage.setItem('wipa_auth_mode', 'live');
-          window.location.href = 'dashboard.html';
-          return;
+        // Check registered account records by email or company name
+        const localKey = `wipa_account_${user.toLowerCase()}`;
+        const rawSaved = localStorage.getItem(localKey);
+        if (rawSaved) {
+          try {
+            const acc = JSON.parse(rawSaved);
+            if (acc.pass === pass) {
+              const finalName = acc.name || user;
+              sessionStorage.setItem('wipa_auth_name', finalName);
+              sessionStorage.setItem('wipa_auth_email', acc.email || '');
+              sessionStorage.setItem('wipa_auth_mode', 'live');
+
+              applyPendingCredits(finalName);
+              window.location.href = 'dashboard.html';
+              return;
+            }
+          } catch (e) {}
         }
 
-        throw new Error('Invalid credentials. Please check your email and password.');
+        throw new Error('Invalid credentials. Please check your username/email and password.');
       } catch (err) {
         errorMsg.textContent = err.message || 'Invalid credentials. Please check your email and password.';
         errorMsg.style.display = 'block';
       } finally {
         submitBtn.disabled = false;
         submitBtn.textContent = 'Sign In →';
+      }
+    }
+
+    function applyPendingCredits(companyName) {
+      const pendingCredits = Number(sessionStorage.getItem('wipa_pending_credits') || 0);
+      if (pendingCredits > 0) {
+        const key = `wipa_credits_${companyName}`;
+        const curr = Number(localStorage.getItem(key) || 0);
+        localStorage.setItem(key, curr + pendingCredits);
+        sessionStorage.removeItem('wipa_pending_credits');
       }
     }
 
@@ -498,6 +521,13 @@
       submitBtn.textContent = 'Creating account...';
 
       try {
+        // Save local account credential record
+        const accRecord = { name, email, pass };
+        localStorage.setItem(`wipa_account_${email.toLowerCase()}`, JSON.stringify(accRecord));
+        if (name) {
+          localStorage.setItem(`wipa_account_${name.toLowerCase()}`, JSON.stringify(accRecord));
+        }
+
         const sb = getSupabaseClient();
         if (sb) {
           const { data, error } = await sb.auth.signUp({
@@ -509,20 +539,24 @@
           });
 
           if (!error && data && data.user) {
-            sessionStorage.setItem('wipa_auth_name', name || email.split('@')[0]);
+            const finalName = name || email.split('@')[0];
+            sessionStorage.setItem('wipa_auth_name', finalName);
             sessionStorage.setItem('wipa_auth_email', email);
             sessionStorage.setItem('wipa_user_id', data.user.id);
             sessionStorage.setItem('wipa_auth_mode', 'live');
+
+            applyPendingCredits(finalName);
             window.location.href = 'dashboard.html';
             return;
           }
         }
 
-        // Fallback for new registrant
-        localStorage.setItem('wipa_mock_user', email);
-        sessionStorage.setItem('wipa_auth_name', name || email.split('@')[0] || 'Advertiser');
+        const finalName = name || email.split('@')[0] || 'Advertiser';
+        sessionStorage.setItem('wipa_auth_name', finalName);
         sessionStorage.setItem('wipa_auth_email', email);
         sessionStorage.setItem('wipa_auth_mode', 'live');
+
+        applyPendingCredits(finalName);
         window.location.href = 'dashboard.html';
       } catch (err) {
         errorMsg.textContent = err.message || 'Registration failed. Please try again.';

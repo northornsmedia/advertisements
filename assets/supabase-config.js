@@ -174,9 +174,9 @@ async function fetchCampaignById(id) {
     console.warn('Single campaign fetch error:', e);
   }
 
-  // Check all campaigns
+  // Check all campaigns for current advertiser
   const all = await fetchCampaigns();
-  return all.find(c => c.id === id || c.id === WIPA_SUPABASE_CONFIG.demoCampaignId) || all[0];
+  return all.find(c => c.id === id) || null;
 }
 
 // Save or Update Campaign in Supabase
@@ -217,6 +217,8 @@ async function saveCampaignToDb(campaign) {
           target_url: campaign.target_url,
           cta_label: campaign.cta_label,
           banner_image_url: campaign.banner_image_url,
+          badge_text: campaign.badge_text,
+          target_audience: campaign.target_audience,
           is_active: campaign.is_active,
           updated_at: new Date().toISOString()
         })
