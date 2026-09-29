@@ -23,16 +23,16 @@ function getSupabaseClient() {
 
 // Session & Authentication Helper
 function getWipaAuth() {
-  const mode = sessionStorage.getItem('wipa_auth_mode') || (sessionStorage.getItem('wipa_auth_name') ? 'demo' : null);
-  const name = sessionStorage.getItem('wipa_auth_name') || 'Global Tech';
+  const mode = sessionStorage.getItem('wipa_auth_mode') || '';
+  const name = (sessionStorage.getItem('wipa_auth_name') || '').trim();
   const email = sessionStorage.getItem('wipa_auth_email') || '';
   const userId = sessionStorage.getItem('wipa_user_id') || '';
-  const isDemo = (mode === 'demo' || name === 'Global Tech' || !mode);
+  const isDemo = (mode === 'partner' && name === 'Global Tech');
 
   return {
-    isLoggedIn: !!sessionStorage.getItem('wipa_auth_name') || !!sessionStorage.getItem('wipa_auth_mode'),
+    isLoggedIn: !!name,
     isDemo: isDemo,
-    mode: isDemo ? 'demo' : 'live',
+    mode: mode || (name === 'Global Tech' ? 'partner' : 'live'),
     name: name,
     email: email,
     userId: userId
@@ -40,7 +40,7 @@ function getWipaAuth() {
 }
 
 function setWipaAuthDemo(name = 'Global Tech') {
-  sessionStorage.setItem('wipa_auth_mode', 'demo');
+  sessionStorage.setItem('wipa_auth_mode', 'partner');
   sessionStorage.setItem('wipa_auth_name', name);
   sessionStorage.setItem('wipa_is_demo', 'true');
   sessionStorage.removeItem('wipa_auth_email');
@@ -64,12 +64,17 @@ function clearWipaAuth() {
 
 // Load Campaigns from Supabase or Backend API for the current advertiser
 async function fetchCampaigns() {
-  const sb = getSupabaseClient();
   const auth = getWipaAuth();
-  const companyName = auth.name || 'Global Tech';
+  const companyName = (auth.name || '').trim();
 
-  // 1. If logged in as Global Tech (demo/partner account 1 / 1)
-  if (companyName === 'Global Tech') {
+  // If no company name / not authenticated, return empty array
+  if (!companyName) {
+    return [];
+  }
+
+  // 1. Partner demo account ONLY (credentials 1 / 1 -> Global Tech)
+  if (companyName === 'Global Tech' && auth.mode === 'partner') {
+    const sb = getSupabaseClient();
     try {
       if (sb) {
         const { data, error } = await sb
@@ -77,7 +82,7 @@ async function fetchCampaigns() {
           .select('*')
           .ilike('company_name', '%Global Tech%')
           .order('created_at', { ascending: false });
-        if (!error && data && data.length > 0) return data;
+        if (!error && Array.isArray(data) && data.length > 0) return data;
       }
       const res = await fetch('/api/campaigns?company=Global%20Tech');
       if (res.ok) {
@@ -104,7 +109,9 @@ async function fetchCampaigns() {
     ];
   }
 
-  // 2. Real registered advertiser (e.g. INTA or user email)
+  // 2. Real registered advertiser (e.g. MEASURE, or new law firm)
+  // A brand new account has strictly 0 campaigns, 0 impressions, 0 clicks until they launch an ad!
+  const sb = getSupabaseClient();
   try {
     if (sb) {
       const { data, error } = await sb
@@ -114,26 +121,32 @@ async function fetchCampaigns() {
         .order('created_at', { ascending: false });
 
       if (!error && Array.isArray(data)) {
-        return data; // Return exact campaigns for this advertiser (or empty [] if brand new)
+        return data; // Returns [] for a new user with no campaigns
       }
     }
+  } catch (e) {
+    console.warn('Direct DB error:', e);
+  }
 
+  try {
     const res = await fetch(`/api/campaigns?company=${encodeURIComponent(companyName)}`);
     if (res.ok) {
       const data = await res.json();
       if (Array.isArray(data)) return data;
     }
   } catch (e) {
-    console.warn('Campaign fetch error:', e);
+    console.warn('Campaign API error:', e);
   }
 
-  // Check if this advertiser created campaigns stored locally under their name
-  const saved = JSON.parse(localStorage.getItem(`wipa_campaigns_${companyName}`) || '[]');
-  if (Array.isArray(saved) && saved.length > 0) {
-    return saved;
-  }
+  // Check if this advertiser created campaigns stored in localStorage
+  try {
+    const saved = JSON.parse(localStorage.getItem(`wipa_campaigns_${companyName}`) || '[]');
+    if (Array.isArray(saved) && saved.length > 0) {
+      return saved;
+    }
+  } catch (e) {}
 
-  // Brand new user has 0 campaigns - return empty array! Do NOT show mock campaigns!
+  // Brand new account has 0 campaigns - return empty array! Do NOT show mock campaigns or other companies' ads!
   return [];
 }
 

@@ -96,7 +96,7 @@ const handler = (req, res) => {
     res.writeHead(200, {
       'Content-Type': contentType,
       'Access-Control-Allow-Origin': '*',
-      'Cache-Control': ext === '.html' ? 'public, max-age=0, must-revalidate' : 'public, max-age=31536000, immutable'
+      'Cache-Control': 'no-cache, no-store, must-revalidate'
     });
 
     fs.createReadStream(filePath).pipe(res);

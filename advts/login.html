@@ -6,7 +6,7 @@
   <title>Advertiser Portal | WIPA ADS</title>
   <meta name="description" content="Sign in or create an account for WIPA ADS. Manage in-feed campaigns and ad credits.">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="assets/supabase-config.js"></script>
+  <script src="assets/supabase-config.js?v=20260929_clean_v4"></script>
   <style>
     :root {
       --bg: #ffffff;
@@ -469,7 +469,7 @@
         const savedUser = localStorage.getItem('wipa_mock_user');
         if (savedUser && user === savedUser) {
           sessionStorage.setItem('wipa_auth_name', user);
-          sessionStorage.setItem('wipa_auth_mode', 'partner');
+          sessionStorage.setItem('wipa_auth_mode', 'live');
           window.location.href = 'dashboard.html';
           return;
         }
@@ -518,9 +518,11 @@
           }
         }
 
-        // Fallback
+        // Fallback for new registrant
         localStorage.setItem('wipa_mock_user', email);
-        sessionStorage.setItem('wipa_auth_name', name || 'Global Tech');
+        sessionStorage.setItem('wipa_auth_name', name || email.split('@')[0] || 'Advertiser');
+        sessionStorage.setItem('wipa_auth_email', email);
+        sessionStorage.setItem('wipa_auth_mode', 'live');
         window.location.href = 'dashboard.html';
       } catch (err) {
         errorMsg.textContent = err.message || 'Registration failed. Please try again.';

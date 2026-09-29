@@ -6,7 +6,7 @@
   <title>Advertiser Dashboard | WIPA ADS</title>
   <meta name="description" content="Manage live in-feed campaigns and ad credits on WIPA ADS.">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="assets/supabase-config.js"></script>
+  <script src="assets/supabase-config.js?v=20260929_clean_v4"></script>
   <style>
     :root {
       --bg: #ffffff;
@@ -479,14 +479,14 @@
   <main class="dashboard-wrapper">
     <div class="dash-header">
       <div>
-        <h1 class="dash-greeting" id="dash-greeting">Welcome, Global Tech</h1>
+        <h1 class="dash-greeting" id="dash-greeting">Welcome</h1>
         <div class="dash-meta">
           <span class="meta-tag">
             <span class="pulse-dot"></span>
             Guaranteed Cadence 4:1 Feed Injection
           </span>
-          <span class="meta-tag">
-            Verified Partner Placement
+          <span class="meta-tag" id="dash-tier-tag">
+            Verified Advertiser Placement
           </span>
         </div>
       </div>
@@ -504,26 +504,26 @@
       <div class="stat-card">
         <div class="stat-card-title">
           <span>Available Credits</span>
-          <span>⚡ Active</span>
+          <span id="stat-credits-status">⚡ Active</span>
         </div>
-        <div class="stat-card-num" id="stat-credits">50</div>
-        <div class="stat-card-sub">&pound;100 Balance Value</div>
+        <div class="stat-card-num" id="stat-credits">0</div>
+        <div class="stat-card-sub" id="stat-credits-sub">&pound;0 Balance Value</div>
       </div>
       <div class="stat-card">
         <div class="stat-card-title">
           <span>Total In-Feed Impressions</span>
           <span class="pulse-dot" title="Live telemetry tracking"></span>
         </div>
-        <div class="stat-card-num" id="stat-total-impressions">6,420</div>
-        <div class="stat-card-sub" id="stat-imp-sub">Live delivered from WIPA feed</div>
+        <div class="stat-card-num" id="stat-total-impressions">0</div>
+        <div class="stat-card-sub" id="stat-imp-sub">No feed delivery yet</div>
       </div>
       <div class="stat-card">
         <div class="stat-card-title">
           <span>Average Click-Through Rate</span>
           <span>🎯 Verified</span>
         </div>
-        <div class="stat-card-num" id="stat-avg-ctr">4.39%</div>
-        <div class="stat-card-sub" id="stat-clicks-sub">282 Total clicks captured</div>
+        <div class="stat-card-num" id="stat-avg-ctr">0.00%</div>
+        <div class="stat-card-sub" id="stat-clicks-sub">0 clicks captured</div>
       </div>
     </div>
 
@@ -559,20 +559,39 @@
   <script>
     // 1. Identify User
     const auth = getWipaAuth();
+    if (!auth.name) {
+      window.location.replace('login.html');
+    }
+
     const dashGreeting = document.getElementById('dash-greeting');
-    dashGreeting.textContent = `Welcome, ${auth.name || 'Global Tech'}`;
+    if (dashGreeting && auth.name) {
+      dashGreeting.textContent = `Welcome, ${auth.name}`;
+    }
+
+    const dashTierTag = document.getElementById('dash-tier-tag');
+    if (dashTierTag) {
+      dashTierTag.textContent = (auth.name === 'Global Tech' && auth.mode === 'partner')
+        ? 'Verified Partner Placement'
+        : 'Verified Advertiser Placement';
+    }
 
     // 2. Fetch and render campaigns from live database
     let currentCampaigns = [];
 
+    // Immediately display clean zero state on page load
+    updateAggregateKPIs([]);
+
     async function loadCampaigns() {
       try {
         const campaigns = await fetchCampaigns();
-        currentCampaigns = campaigns;
-        renderCampaigns(campaigns);
-        updateAggregateKPIs(campaigns);
+        currentCampaigns = Array.isArray(campaigns) ? campaigns : [];
+        renderCampaigns(currentCampaigns);
+        updateAggregateKPIs(currentCampaigns);
       } catch (err) {
         console.error('Error loading campaigns:', err);
+        currentCampaigns = [];
+        renderCampaigns([]);
+        updateAggregateKPIs([]);
       }
     }
 
@@ -652,10 +671,12 @@
       let totalImp = 0;
       let totalClicks = 0;
 
-      campaigns.forEach(c => {
-        totalImp += Number(c.impressions_count || 0);
-        totalClicks += Number(c.clicks_count || 0);
-      });
+      if (Array.isArray(campaigns)) {
+        campaigns.forEach(c => {
+          totalImp += Number(c.impressions_count || 0);
+          totalClicks += Number(c.clicks_count || 0);
+        });
+      }
 
       const avgCtr = totalImp > 0 ? ((totalClicks / totalImp) * 100).toFixed(2) + '%' : '0.00%';
 
@@ -670,22 +691,29 @@
       if (impSub) impSub.textContent = totalImp > 0 ? 'Live delivered from WIPA feed' : 'No feed delivery yet';
 
       // Update Credits display
-      const isPartner = auth.name === 'Global Tech';
+      const isPartner = (auth.name === 'Global Tech' && auth.mode === 'partner');
       const credits = isPartner ? 50 : Number(localStorage.getItem(`wipa_credits_${auth.name}`) || 0);
       const credElem = document.getElementById('stat-credits');
       const credSub = document.getElementById('stat-credits-sub');
+      const credStatus = document.getElementById('stat-credits-status');
+      
       if (credElem) credElem.textContent = credits;
-      if (credSub) credSub.textContent = credits > 0 ? `£${credits * 2} Balance Value` : '0 Balance (Buy credits to launch)';
+      if (credSub) credSub.textContent = credits > 0 ? `£${credits * 2} Balance Value` : '£0 Balance Value';
+      if (credStatus) credStatus.textContent = isPartner ? '⚡ Partner Active' : (credits > 0 ? '⚡ Active' : '⚪ 0 Balance');
     }
 
     // 3. Initialize & Listen for Realtime Metrics Updates
     loadCampaigns().then(() => {
       // Subscribe to updates for this user's active campaigns
-      currentCampaigns.forEach(c => {
-        subscribeToCampaignMetrics(c.id, (updated) => {
-          handleLiveMetricsUpdate(updated);
+      if (Array.isArray(currentCampaigns) && currentCampaigns.length > 0) {
+        currentCampaigns.forEach(c => {
+          if (c && c.id) {
+            subscribeToCampaignMetrics(c.id, (updated) => {
+              handleLiveMetricsUpdate(updated);
+            });
+          }
         });
-      });
+      }
     });
 
     function handleLiveMetricsUpdate(updated) {

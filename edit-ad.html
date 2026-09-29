@@ -6,7 +6,7 @@
   <title>Edit In-Feed Campaign | WIPA ADS</title>
   <meta name="description" content="Configure and publish in-feed campaign creatives directly to WIPA platform feed.">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="assets/supabase-config.js"></script>
+  <script src="assets/supabase-config.js?v=20260929_clean_v4"></script>
   <style>
     :root {
       --bg: #ffffff;
@@ -650,9 +650,15 @@
     let currentCampaign = null;
 
     async function initForm() {
+      const auth = getWipaAuth();
+      if (!auth.name) {
+        window.location.replace('login.html');
+        return;
+      }
+
       if (isNew) {
         document.getElementById('page-title').textContent = 'Create In-Feed Campaign';
-        document.getElementById('inp-company').value = sessionStorage.getItem('wipa_auth_name') || 'Global Tech';
+        document.getElementById('inp-company').value = auth.name;
         document.getElementById('inp-title').value = '';
         document.getElementById('inp-url').value = 'https://womensipalliance.com';
         document.getElementById('inp-copy').value = '';
@@ -664,7 +670,7 @@
 
       currentCampaign = await fetchCampaignById(adId);
       if (currentCampaign) {
-        document.getElementById('inp-company').value = currentCampaign.company_name || 'Global Tech';
+        document.getElementById('inp-company').value = currentCampaign.company_name || auth.name;
         document.getElementById('inp-title').value = currentCampaign.headline || currentCampaign.title || '';
         document.getElementById('inp-url').value = currentCampaign.target_url || '';
         document.getElementById('inp-copy').value = currentCampaign.description || '';

@@ -33,10 +33,14 @@ module.exports = async (req, res) => {
 
       if (id) {
         endpoint = `${SUPABASE_URL}/rest/v1/ad_campaigns?id=eq.${encodeURIComponent(id)}&select=*`;
-      } else if (company) {
-        endpoint = `${SUPABASE_URL}/rest/v1/ad_campaigns?company_name=ilike.*${encodeURIComponent(company)}*&select=*&order=created_at.desc`;
+      } else if (company && company.trim().length > 0) {
+        endpoint = `${SUPABASE_URL}/rest/v1/ad_campaigns?company_name=ilike.*${encodeURIComponent(company.trim())}*&select=*&order=created_at.desc`;
       } else {
-        endpoint = `${SUPABASE_URL}/rest/v1/ad_campaigns?select=*&order=created_at.desc`;
+        // Safe default: An advertiser portal must never dump all advertisers' data without a filter
+        res.setHeader('Content-Type', 'application/json');
+        res.statusCode = 200;
+        res.end(JSON.stringify([]));
+        return;
       }
 
       const response = await fetch(endpoint, {
