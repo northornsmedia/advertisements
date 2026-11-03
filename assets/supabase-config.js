@@ -5,7 +5,7 @@
 
 const WIPA_SUPABASE_CONFIG = {
   url: 'https://bepavczocyvaegkfxtvd.supabase.co',
-  anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJlcGF2Y3pvY3l2YWVna2Z4dHZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUxMTg1NTcsImV4cCI6MjEwMDY5NDU1N30.-i3uVvZyjtKfcyzRCiTX4E3UbCkaDin94T_BQeXeBro',
+  anonKey: (typeof window !== 'undefined' && window.__SUPABASE_ANON_KEY__) ? window.__SUPABASE_ANON_KEY__ : '',
   demoCampaignId: '0e4d082e-90e6-4453-a700-28e603dd87c6',
   demoSecondaryId: '2d4e9c89-9ee8-4c1b-b34d-f9d8ff728e4f'
 };

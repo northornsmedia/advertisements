@@ -1,5 +1,5 @@
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://bepavczocyvaegkfxtvd.supabase.co';
-const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJlcGF2Y3pvY3l2YWVna2Z4dHZkIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4NTExODU1NywiZXhwIjoyMTAwNjk0NTU3fQ.4yAo5-luUH9FWTKXS_vzKmEYGAsISrqUDN-q5XN-zM8';
+const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 const DEMO_IDS = {
   camp1: '0e4d082e-90e6-4453-a700-28e603dd87c6',
@@ -15,6 +15,13 @@ module.exports = async (req, res) => {
   if (req.method === 'OPTIONS') {
     res.statusCode = 200;
     res.end();
+    return;
+  }
+
+  if (!SUPABASE_SERVICE_KEY) {
+    res.statusCode = 500;
+    res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify({ error: 'Server configuration error: SUPABASE_SERVICE_ROLE_KEY is required' }));
     return;
   }
 
